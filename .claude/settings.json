@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx @shopify/create-hydrogen@latest -- --language ts --styling-library tailwindcss --path .)",
+      "Bash(npx @shopify/create-hydrogen@latest --quickstart --path . --language ts)",
+      "Bash(npx @shopify/create-hydrogen@latest --quickstart --path hydrogen-app --language ts)",
+      "Bash(shopt -s dotglob)",
+      "Bash(mv hydrogen-app/* .)",
+      "Bash(rmdir hydrogen-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}
