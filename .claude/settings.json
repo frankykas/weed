@@ -8,7 +8,23 @@
       "Bash(mv hydrogen-app/* .)",
       "Bash(rmdir hydrogen-app:*)",
       "Bash(npm install:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "WebSearch",
+      "WebFetch(domain:pngimg.com)",
+      "WebFetch(domain:commons.wikimedia.org)",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Acapulco_gold.jpg/480px-Acapulco_gold.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Dank_Nug_Xyren.jpg/440px-Dank_Nug_Xyren.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Green_Crack.jpg/440px-Green_Crack.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Acapulco_gold.jpg/400px-Acapulco_gold.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/b/bc/Acapulco_gold.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/8/83/Acapulco_gold.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/1/1d/Green_Crack.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/2/2e/Purple_Erkle.jpg\")",
+      "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/b/b0/White_Tahoe_Cookie.jpg\")",
+      "Bash(grep -v \"^$\")",
+      "Read(//c/Users/Cheet/.claude/projects/c--dev-shop-shop2/**)",
+      "Bash(grep -o '\"content\":\\\\[{\"type\":\"text\",\"text\":\"[^\"]*\"')"
     ]
   }
 }
