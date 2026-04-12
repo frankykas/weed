@@ -1,6 +1,9 @@
 import type {Route} from './+types/account_.login';
 
 export async function loader({request, context}: Route.LoaderArgs) {
+  if (!context.storefront) {
+    throw new Response('Shopify store not connected', {status: 503});
+  }
   const url = new URL(request.url);
   const acrValues = url.searchParams.get('acr_values') || undefined;
   const loginHint = url.searchParams.get('login_hint') || undefined;

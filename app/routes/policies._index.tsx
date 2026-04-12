@@ -3,6 +3,9 @@ import type {Route} from './+types/policies._index';
 import type {PoliciesQuery, PolicyItemFragment} from 'storefrontapi.generated';
 
 export async function loader({context}: Route.LoaderArgs) {
+  if (!context.storefront) {
+    throw new Response('Shopify store not connected', {status: 503});
+  }
   const data: PoliciesQuery = await context.storefront.query(POLICIES_QUERY);
 
   const shopPolicies = data.shop;

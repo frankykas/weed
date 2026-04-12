@@ -21,6 +21,9 @@ export async function loader(args: Route.LoaderArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
+  if (!context.storefront) {
+    throw new Response('Shopify store not connected', {status: 503});
+  }
   if (!params.handle) {
     throw new Error('Missing page handle');
   }

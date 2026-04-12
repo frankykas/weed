@@ -68,13 +68,32 @@ export function links() {
 }
 
 export async function loader(args: Route.LoaderArgs) {
+  const {env, storefront} = args.context;
+
+  // If no Shopify store is connected, return mock data so the UI still renders
+  if (!storefront) {
+    return {
+      header: null,
+      footer: null,
+      cart: Promise.resolve(null),
+      isLoggedIn: Promise.resolve(false),
+      publicStoreDomain: '',
+      shop: null,
+      consent: {
+        checkoutDomain: '',
+        storefrontAccessToken: '',
+        withPrivacyBanner: false,
+        country: 'US',
+        language: 'EN',
+      },
+    };
+  }
+
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
 
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
-  const {storefront, env} = args.context;
 
   return {
     ...deferredData,
@@ -172,19 +191,28 @@ export default function App() {
     return <Outlet />;
   }
 
+  // When no Shopify store is connected, render without Analytics
+  const content = (
+    <CartProvider>
+      <QuickViewProvider>
+        <PageLayout {...data}>
+          <Outlet />
+        </PageLayout>
+      </QuickViewProvider>
+    </CartProvider>
+  );
+
+  if (!data.shop) {
+    return content;
+  }
+
   return (
     <Analytics.Provider
       cart={data.cart}
       shop={data.shop}
       consent={data.consent}
     >
-      <CartProvider>
-        <QuickViewProvider>
-          <PageLayout {...data}>
-            <Outlet />
-          </PageLayout>
-        </QuickViewProvider>
-      </CartProvider>
+      {content}
     </Analytics.Provider>
   );
 }

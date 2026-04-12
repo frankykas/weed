@@ -11,6 +11,9 @@ export const meta: Route.MetaFunction = () => {
 export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;
 
 export async function action({request, context}: Route.ActionArgs) {
+  if (!context.cart) {
+    throw new Response('Shopify store not connected', {status: 503});
+  }
   const {cart} = context;
 
   const formData = await request.formData();
@@ -97,6 +100,9 @@ export async function action({request, context}: Route.ActionArgs) {
 }
 
 export async function loader({context}: Route.LoaderArgs) {
+  if (!context.cart) {
+    throw new Response('Shopify store not connected', {status: 503});
+  }
   const {cart} = context;
   return await cart.get();
 }

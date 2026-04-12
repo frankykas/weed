@@ -12,7 +12,11 @@
 import {Hono} from 'hono';
 import {serveStatic} from '@hono/node-server/serve-static';
 import * as serverBuild from 'virtual:react-router/server-build';
-import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
+import {
+  createRequestHandler as createHydrogenHandler,
+  storefrontRedirect,
+} from '@shopify/hydrogen';
+import {createRequestHandler as createBaseHandler} from 'react-router';
 import {createHydrogenRouterContext} from '~/lib/context';
 
 /* ------------------------------------------------------------------ */
@@ -55,6 +59,9 @@ app.use(
   serveStatic({root: './dist/client', rewriteRequestPath: (p) => p}),
 );
 
+// Check if a Shopify store is connected
+const hasShopifyStore = () => !!process.env.PUBLIC_STORE_DOMAIN;
+
 // All other routes → Hydrogen SSR
 app.all('*', async (c) => {
   const request = c.req.raw;
@@ -83,36 +90,56 @@ app.all('*', async (c) => {
   };
 
   try {
-    const hydrogenContext = await createHydrogenRouterContext(
-      request,
-      env,
-      executionContext,
-    );
-
-    const handleRequest = createRequestHandler({
-      build: serverBuild,
-      mode: process.env.NODE_ENV,
-      getLoadContext: () => hydrogenContext,
-    });
-
-    const response = await handleRequest(request);
-
-    if (hydrogenContext.session.isPending) {
-      response.headers.set(
-        'Set-Cookie',
-        await hydrogenContext.session.commit(),
-      );
-    }
-
-    if (response.status === 404) {
-      return storefrontRedirect({
+    if (hasShopifyStore()) {
+      // Full Hydrogen mode — connected to a real Shopify store
+      const hydrogenContext = await createHydrogenRouterContext(
         request,
-        response,
-        storefront: hydrogenContext.storefront,
-      });
-    }
+        env,
+        executionContext,
+      );
 
-    return response;
+      const handleRequest = createHydrogenHandler({
+        build: serverBuild,
+        mode: process.env.NODE_ENV,
+        getLoadContext: () => hydrogenContext,
+      });
+
+      const response = await handleRequest(request);
+
+      if (hydrogenContext.session.isPending) {
+        response.headers.set(
+          'Set-Cookie',
+          await hydrogenContext.session.commit(),
+        );
+      }
+
+      if (response.status === 404) {
+        return storefrontRedirect({
+          request,
+          response,
+          storefront: hydrogenContext.storefront,
+        });
+      }
+
+      return response;
+    } else {
+      // Mock mode — no Shopify store connected
+      // Uses the base React Router handler (no Hydrogen validation)
+      const mockContext = {
+        env,
+        storefront: null,
+        customerAccount: null,
+        cart: null,
+        session: {isPending: false, commit: async () => ''},
+        waitUntil: executionContext.waitUntil,
+      };
+
+      const handleRequest = createBaseHandler(serverBuild, {
+        getLoadContext: () => mockContext,
+      });
+
+      return await handleRequest(request);
+    }
   } catch (error) {
     console.error(error);
     return new Response('An unexpected error occurred', {status: 500});

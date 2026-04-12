@@ -12,6 +12,9 @@ export const meta: Route.MetaFunction = ({data}) => {
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {
+  if (!context.storefront) {
+    throw new Response('Shopify store not connected', {status: 503});
+  }
   if (!params.handle) {
     throw new Response('No handle was passed in', {status: 404});
   }

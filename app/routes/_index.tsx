@@ -7,27 +7,10 @@ export const meta: Route.MetaFunction = () => {
   return [{title: 'Greenly — Premium Cannabis'}];
 };
 
-export async function loader(args: Route.LoaderArgs) {
-  const criticalData = await loadCriticalData(args);
-  const deferredData = loadDeferredData(args);
-  return {...criticalData, ...deferredData};
-}
-
-async function loadCriticalData({context}: Route.LoaderArgs) {
-  const [{collections}] = await Promise.all([
-    context.storefront.query(FEATURED_COLLECTION_QUERY),
-  ]);
-  return {featuredCollection: collections.nodes[0]};
-}
-
-function loadDeferredData({context}: Route.LoaderArgs) {
-  const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
-    .catch((error: Error) => {
-      console.error(error);
-      return null;
-    });
-  return {recommendedProducts};
+export async function loader({context}: Route.LoaderArgs) {
+  // When a Shopify store is connected, you can query real data here.
+  // For now, the page renders entirely from mock data defined below.
+  return {};
 }
 
 // ============================================================
