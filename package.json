@@ -8,15 +8,18 @@
     "build": "shopify hydrogen build --codegen",
     "dev": "shopify hydrogen dev --codegen",
     "preview": "shopify hydrogen preview --build",
+    "build:vercel": "bash scripts/build-vercel.sh",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "react-router typegen && tsc --noEmit",
     "codegen": "shopify hydrogen codegen && react-router typegen"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
+    "@hono/node-server": "^1.19.13",
     "@shopify/hydrogen": "2026.4.0",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
+    "hono": "^4.12.12",
     "isbot": "^5.1.22",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
