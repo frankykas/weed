@@ -17,7 +17,7 @@ export const meta: Route.MetaFunction = ({data}) => {
   ];
 };
 
-export async function loader({params}: Route.LoaderArgs) {
+export async function clientLoader({params}: Route.ClientLoaderArgs) {
   const {handle} = params;
   if (!handle) {
     throw new Response('Product not found', {status: 404});
@@ -62,7 +62,7 @@ const STRAIN_BLOB: Record<StrainType, string> = {
 // ============================================================
 
 export default function Product() {
-  const {product, related} = useLoaderData<typeof loader>();
+  const {product, related} = useLoaderData<typeof clientLoader>();
   const {addLine} = useCart();
 
   const [selectedWeight, setSelectedWeight] = useState(

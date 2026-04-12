@@ -80,9 +80,9 @@ export function Header({
 
       {/* Desktop nav */}
       <HeaderMenu
-        menu={header.menu}
+        menu={header?.menu}
         viewport="desktop"
-        primaryDomainUrl={header.shop.primaryDomain.url}
+        primaryDomainUrl={header?.shop?.primaryDomain?.url ?? ''}
         publicStoreDomain={publicStoreDomain}
       />
 

@@ -39,14 +39,12 @@ export function PageLayout({
       <QuickViewModal />
       <SearchAside />
       <MobileMenuAside />
-      {header && (
-        <Header
-          header={header}
-          cart={cart}
-          isLoggedIn={isLoggedIn}
-          publicStoreDomain={publicStoreDomain}
-        />
-      )}
+      <Header
+        header={header}
+        cart={cart}
+        isLoggedIn={isLoggedIn}
+        publicStoreDomain={publicStoreDomain}
+      />
       <main>{children}</main>
       <Footer
         footer={footer}

@@ -6,12 +6,12 @@ export const meta: Route.MetaFunction = () => {
   return [{title: 'Greenly - Tags'}];
 };
 
-export async function loader() {
+export async function clientLoader() {
   return {tags: mockTags};
 }
 
 export default function TagsIndex() {
-  const {tags} = useLoaderData<typeof loader>();
+  const {tags} = useLoaderData<typeof clientLoader>();
 
   return (
     <div className="max-w-content mx-auto px-gutter pb-section">

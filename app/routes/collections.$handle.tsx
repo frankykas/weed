@@ -19,7 +19,7 @@ export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Greenly — ${data?.collection.title ?? 'Collection'}`}];
 };
 
-export async function loader({params}: Route.LoaderArgs) {
+export async function clientLoader({params}: Route.ClientLoaderArgs) {
   const {handle} = params;
   if (!handle) {
     throw new Response('Collection not found', {status: 404});
@@ -43,7 +43,7 @@ export async function loader({params}: Route.LoaderArgs) {
 // ============================================================
 
 export default function Collection() {
-  const {collection, products, related} = useLoaderData<typeof loader>();
+  const {collection, products, related} = useLoaderData<typeof clientLoader>();
 
   return (
     <div className="max-w-content mx-auto px-gutter pb-section">

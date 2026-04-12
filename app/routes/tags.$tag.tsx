@@ -6,7 +6,7 @@ export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Greenly - ${data?.tag.title ?? 'Tag'}`}];
 };
 
-export async function loader({params}: Route.LoaderArgs) {
+export async function clientLoader({params}: Route.ClientLoaderArgs) {
   const handle = params.tag;
   if (!handle) {
     throw new Response('Tag not found', {status: 404});
@@ -32,7 +32,7 @@ const PASTEL_BGS = [
 ];
 
 export default function TagPage() {
-  const {tag, products} = useLoaderData<typeof loader>();
+  const {tag, products} = useLoaderData<typeof clientLoader>();
 
   return (
     <div className="max-w-content mx-auto px-gutter pb-section">
