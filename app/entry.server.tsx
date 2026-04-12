@@ -1,63 +1,53 @@
 import {ServerRouter} from 'react-router';
 import {isbot} from 'isbot';
-import {renderToPipeableStream} from 'react-dom/server';
+import {renderToReadableStream} from 'react-dom/server';
+import {
+  createContentSecurityPolicy,
+  type HydrogenRouterContextProvider,
+} from '@shopify/hydrogen';
 import type {EntryContext} from 'react-router';
-import {PassThrough} from 'node:stream';
 
-const ABORT_DELAY = 5000;
-
-export default function handleRequest(
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   reactRouterContext: EntryContext,
+  context: HydrogenRouterContextProvider,
 ) {
-  return new Promise<Response>((resolve, reject) => {
-    let shellRendered = false;
+  const {nonce, header, NonceProvider} = createContentSecurityPolicy({
+    shop: {
+      checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
+      storeDomain: context.env.PUBLIC_STORE_DOMAIN,
+    },
+  });
 
-    const {pipe, abort} = renderToPipeableStream(
-      <ServerRouter context={reactRouterContext} url={request.url} />,
-      {
-        onShellReady() {
-          shellRendered = true;
-          const body = new PassThrough();
-          const stream = new ReadableStream({
-            start(controller) {
-              body.on('data', (chunk) => {
-                controller.enqueue(new Uint8Array(chunk));
-              });
-              body.on('end', () => {
-                controller.close();
-              });
-              body.on('error', (err) => {
-                controller.error(err);
-              });
-            },
-          });
-
-          responseHeaders.set('Content-Type', 'text/html');
-
-          resolve(
-            new Response(stream, {
-              headers: responseHeaders,
-              status: responseStatusCode,
-            }),
-          );
-
-          pipe(body);
-        },
-        onShellError(error: unknown) {
-          reject(error);
-        },
-        onError(error: unknown) {
-          responseStatusCode = 500;
-          if (shellRendered) {
-            console.error(error);
-          }
-        },
+  const body = await renderToReadableStream(
+    <NonceProvider>
+      <ServerRouter
+        context={reactRouterContext}
+        url={request.url}
+        nonce={nonce}
+      />
+    </NonceProvider>,
+    {
+      nonce,
+      signal: request.signal,
+      onError(error) {
+        console.error(error);
+        responseStatusCode = 500;
       },
-    );
+    },
+  );
 
-    setTimeout(abort, ABORT_DELAY);
+  if (isbot(request.headers.get('user-agent'))) {
+    await body.allReady;
+  }
+
+  responseHeaders.set('Content-Type', 'text/html');
+  responseHeaders.set('Content-Security-Policy', header);
+
+  return new Response(body, {
+    headers: responseHeaders,
+    status: responseStatusCode,
   });
 }

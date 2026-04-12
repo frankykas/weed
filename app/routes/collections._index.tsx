@@ -11,7 +11,7 @@ export const meta: Route.MetaFunction = () => {
   return [{title: 'Greenly — All Collections'}];
 };
 
-export async function clientLoader() {
+export async function loader() {
   const collections = mockCollections.map((collection) => ({
     ...collection,
     productCount: getProductsForCollection(collection.handle).length,
@@ -33,7 +33,7 @@ type EnrichedCollection = MockCollection & {
 // ============================================================
 
 export default function Collections() {
-  const {collections, totalProducts} = useLoaderData<typeof clientLoader>();
+  const {collections, totalProducts} = useLoaderData<typeof loader>();
   const featured = collections[0];
   const rest = collections.slice(1);
 

@@ -7,8 +7,27 @@ export const meta: Route.MetaFunction = () => {
   return [{title: 'Greenly — Premium Cannabis'}];
 };
 
-export async function clientLoader() {
-  return {};
+export async function loader(args: Route.LoaderArgs) {
+  const criticalData = await loadCriticalData(args);
+  const deferredData = loadDeferredData(args);
+  return {...criticalData, ...deferredData};
+}
+
+async function loadCriticalData({context}: Route.LoaderArgs) {
+  const [{collections}] = await Promise.all([
+    context.storefront.query(FEATURED_COLLECTION_QUERY),
+  ]);
+  return {featuredCollection: collections.nodes[0]};
+}
+
+function loadDeferredData({context}: Route.LoaderArgs) {
+  const recommendedProducts = context.storefront
+    .query(RECOMMENDED_PRODUCTS_QUERY)
+    .catch((error: Error) => {
+      console.error(error);
+      return null;
+    });
+  return {recommendedProducts};
 }
 
 // ============================================================
@@ -940,3 +959,58 @@ function ShieldIcon() {
   );
 }
 
+// ============================================================
+//  GRAPHQL
+// ============================================================
+
+const FEATURED_COLLECTION_QUERY = `#graphql
+  fragment FeaturedCollection on Collection {
+    id
+    title
+    image {
+      id
+      url
+      altText
+      width
+      height
+    }
+    handle
+  }
+  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
+      nodes {
+        ...FeaturedCollection
+      }
+    }
+  }
+` as const;
+
+const RECOMMENDED_PRODUCTS_QUERY = `#graphql
+  fragment RecommendedProduct on Product {
+    id
+    title
+    handle
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    featuredImage {
+      id
+      url
+      altText
+      width
+      height
+    }
+  }
+  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+      nodes {
+        ...RecommendedProduct
+      }
+    }
+  }
+` as const;

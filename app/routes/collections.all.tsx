@@ -14,7 +14,7 @@ export const meta: Route.MetaFunction = () => {
   return [{title: 'Greenly — All Products'}];
 };
 
-export async function clientLoader() {
+export async function loader() {
   return {products: getAllMockProducts()};
 }
 
@@ -23,7 +23,7 @@ export async function clientLoader() {
 // ============================================================
 
 export default function AllProducts() {
-  const {products} = useLoaderData<typeof clientLoader>();
+  const {products} = useLoaderData<typeof loader>();
 
   return (
     <div className="max-w-content mx-auto px-gutter pb-section">
