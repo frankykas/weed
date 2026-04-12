@@ -1,310 +1,312 @@
-import {useState} from 'react';
-import {redirect, useLoaderData, Link} from 'react-router';
+import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/collections.$handle';
-import {getPaginationVariables, Analytics, Image, Money} from '@shopify/hydrogen';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import type {ProductItemFragment} from 'storefrontapi.generated';
-import {useVariantUrl} from '~/lib/variants';
+import {
+  getMockCollectionByHandle,
+  getProductsForCollection,
+  mockCollections,
+  type MockCollection,
+} from '~/lib/mockCatalog';
+import {CollectionControls} from '~/components/CollectionControls';
+import {CollectionProductCard} from '~/components/CollectionProductCard';
+import {
+  InlinePromoCard,
+  QuickEffectsBar,
+  StrainFinderCTA,
+  ValuePropsStrip,
+} from '~/components/CollectionExtras';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Greenly — ${data?.collection.title ?? ''}`}];
+  return [{title: `Greenly — ${data?.collection.title ?? 'Collection'}`}];
 };
 
-export async function loader(args: Route.LoaderArgs) {
-  const deferredData = loadDeferredData(args);
-  const criticalData = await loadCriticalData(args);
-  return {...deferredData, ...criticalData};
-}
-
-async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
+export async function loader({params}: Route.LoaderArgs) {
   const {handle} = params;
-  const {storefront} = context;
-  const paginationVariables = getPaginationVariables(request, {
-    pageBy: 12,
-  });
-
   if (!handle) {
-    throw redirect('/collections');
+    throw new Response('Collection not found', {status: 404});
   }
 
-  const [{collection}] = await Promise.all([
-    storefront.query(COLLECTION_QUERY, {
-      variables: {handle, ...paginationVariables},
-    }),
-  ]);
-
+  const collection = getMockCollectionByHandle(handle);
   if (!collection) {
-    throw new Response(`Collection ${handle} not found`, {
-      status: 404,
-    });
+    throw new Response(`Collection "${handle}" not found`, {status: 404});
   }
 
-  redirectIfHandleIsLocalized(request, {handle, data: collection});
+  const products = getProductsForCollection(handle);
+  const related = mockCollections
+    .filter((c) => c.handle !== handle && c.handle !== 'all')
+    .slice(0, 4);
 
-  return {collection};
+  return {collection, products, related};
 }
-
-function loadDeferredData({context}: Route.LoaderArgs) {
-  return {};
-}
-
-// ============================================================
-//  STRAIN FILTER TABS (mock — visual only)
-// ============================================================
-
-const FILTER_TABS = ['All', 'Sativa', 'Indica', 'Hybrid', 'CBD'] as const;
 
 // ============================================================
 //  PAGE
 // ============================================================
 
 export default function Collection() {
-  const {collection} = useLoaderData<typeof loader>();
-  const [activeFilter, setActiveFilter] = useState('All');
+  const {collection, products, related} = useLoaderData<typeof loader>();
 
   return (
     <div className="max-w-content mx-auto px-gutter pb-section">
-      {/* Header */}
-      <div className="pt-6 pb-2 sm:pt-8">
-        <div className="flex items-center gap-2 text-xs text-tertiary mb-2">
-          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+      {/* Breadcrumb */}
+      <div className="pt-6 sm:pt-8">
+        <div className="flex items-center gap-2 text-xs text-tertiary mb-4">
+          <Link to="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
           <ChevronRightIcon />
-          <Link to="/collections" className="hover:text-primary transition-colors">Collections</Link>
+          <Link
+            to="/collections"
+            className="hover:text-primary transition-colors"
+          >
+            Collections
+          </Link>
           <ChevronRightIcon />
           <span className="text-primary font-medium">{collection.title}</span>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight mb-1">
-          {collection.title}
-        </h1>
+        {/* Hero card */}
+        <div
+          className={`
+            relative overflow-hidden rounded-3xl
+            bg-gradient-to-br ${collection.accent} via-white to-surface-sunken
+            border border-border-light
+            px-5 py-6 sm:px-8 sm:py-10
+            mb-6
+          `}
+        >
+          <div className="absolute -right-10 -top-10 size-40 rounded-full bg-white/40 blur-2xl" />
+          <div className="absolute right-20 -bottom-10 size-32 rounded-full bg-white/30 blur-2xl" />
 
-        {collection.description && (
-          <p className="text-sm text-secondary leading-relaxed max-w-xl mb-4">
-            {collection.description}
-          </p>
-        )}
-      </div>
-
-      {/* Filter tabs */}
-      <div className="overflow-x-auto scrollbar-none -mx-gutter px-gutter">
-        <div className="flex gap-2 pb-4">
-          {FILTER_TABS.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveFilter(tab)}
-              className={`
-                shrink-0 px-4 py-2
-                rounded-xl text-sm font-medium
-                transition-all duration-200 ease-[var(--ease-out)]
-                active:scale-95
-                ${activeFilter === tab
-                  ? 'bg-accent text-white shadow-card'
-                  : 'bg-surface text-secondary border border-border-light hover:border-accent/30 hover:text-primary'}
-              `.trim()}
-            >
-              {tab}
-            </button>
-          ))}
+          <div className="relative z-10 max-w-2xl">
+            <span className="inline-block mb-2 px-2.5 py-1 bg-white/80 backdrop-blur-sm text-[0.6rem] font-bold tracking-widest uppercase text-accent rounded-full">
+              {collection.eyebrow}
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight mb-2">
+              {collection.title}
+            </h1>
+            <p className="text-sm sm:text-base text-secondary leading-relaxed max-w-xl mb-4">
+              {collection.description}
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-3 py-1 bg-white border border-border-light rounded-full text-xs font-semibold text-primary">
+                {products.length}{' '}
+                {products.length === 1 ? 'product' : 'products'}
+              </span>
+              <span className="px-3 py-1 bg-white border border-border-light rounded-full text-xs font-medium text-secondary">
+                Lab tested
+              </span>
+              <span className="px-3 py-1 bg-white border border-border-light rounded-full text-xs font-medium text-secondary">
+                Free shipping $50+
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Product grid */}
-      <PaginatedResourceSection<ProductItemFragment>
-        connection={collection.products}
-        resourcesClassName="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-5"
-      >
-        {({node: product, index}) => (
-          <CollectionProductCard
-            key={product.id}
-            product={product}
-            index={index}
+      {/* Trust strip */}
+      <ValuePropsStrip />
+
+      {/* Controls + product grid */}
+      <CollectionControls
+        products={products}
+        renderBeforeToolbar={({filters, setFilters, facets}) => (
+          <QuickEffectsBar
+            filters={filters}
+            setFilters={setFilters}
+            facets={facets}
           />
         )}
-      </PaginatedResourceSection>
+      >
+        {({filtered, view, resetFilters, hasActiveFilters}) => (
+          <>
+            {filtered.length === 0 ? (
+              <EmptyState
+                onReset={hasActiveFilters ? resetFilters : undefined}
+              />
+            ) : view === 'list' ? (
+              <div className="flex flex-col gap-3">
+                {filtered.map((product, index) => (
+                  <CollectionProductCard
+                    key={product.id}
+                    product={product}
+                    index={index}
+                    view="list"
+                  />
+                ))}
+              </div>
+            ) : (
+              <ProductGridWithPromo filtered={filtered} />
+            )}
+          </>
+        )}
+      </CollectionControls>
 
-      <Analytics.CollectionView
-        data={{
-          collection: {
-            id: collection.id,
-            handle: collection.handle,
-          },
-        }}
-      />
+      {/* Strain Finder CTA */}
+      <StrainFinderCTA />
+
+      {/* Related collections */}
+      {related.length > 0 && (
+        <RelatedCollections collections={related} />
+      )}
     </div>
   );
 }
 
 // ============================================================
-//  COLLECTION PRODUCT CARD
+//  PRODUCT GRID WITH INLINE PROMO
+//  Inserts the promo card at position 4 if there are enough products
 // ============================================================
 
-const PASTEL_BGS = [
-  'bg-lime-50',
-  'bg-purple-50',
-  'bg-amber-50',
-  'bg-sky-50',
-  'bg-rose-50',
-  'bg-teal-50',
-  'bg-orange-50',
-  'bg-violet-50',
-];
-
-const BLOB_COLORS = [
-  'bg-lime-200/40',
-  'bg-purple-200/40',
-  'bg-amber-200/40',
-  'bg-sky-200/40',
-  'bg-rose-200/40',
-  'bg-teal-200/40',
-  'bg-orange-200/40',
-  'bg-violet-200/40',
-];
-
-function CollectionProductCard({
-  product,
-  index,
+function ProductGridWithPromo({
+  filtered,
 }: {
-  product: ProductItemFragment;
-  index: number;
+  filtered: ReturnType<typeof getProductsForCollection>;
 }) {
-  const variantUrl = useVariantUrl(product.handle);
-  const image = product.featuredImage;
-  const bg = PASTEL_BGS[index % PASTEL_BGS.length];
-  const blob = BLOB_COLORS[index % BLOB_COLORS.length];
+  const PROMO_INDEX = 4;
+  const showPromo = filtered.length >= PROMO_INDEX;
+  const head = showPromo ? filtered.slice(0, PROMO_INDEX) : filtered;
+  const tail = showPromo ? filtered.slice(PROMO_INDEX) : [];
 
   return (
-    <Link
-      to={variantUrl}
-      prefetch="intent"
-      className="group block"
-    >
-      {/* Image */}
-      <div className={`relative rounded-2xl overflow-hidden ${bg} aspect-square flex items-center justify-center mb-2.5`}>
-        <div className={`absolute inset-4 rounded-[40%_60%_55%_45%/50%_40%_60%_50%] ${blob}`} />
-        {image ? (
-          <Image
-            alt={image.altText || product.title}
-            data={image}
-            loading={index < 8 ? 'eager' : 'lazy'}
-            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="relative z-10 w-[62%] h-[62%] object-contain drop-shadow-lg transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-105"
-          />
-        ) : (
-          <div className="relative z-10 w-[62%] h-[62%] flex items-center justify-center">
-            <img src="/bud.webp" alt={product.title} className="w-full h-full object-contain drop-shadow-lg transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-105" />
-          </div>
-        )}
-
-        {/* Quick add */}
-        <button
-          type="button"
-          onClick={(e) => e.preventDefault()}
-          className="
-            absolute bottom-2.5 right-2.5 z-20
-            size-8 flex items-center justify-center
-            bg-white/90 backdrop-blur-sm
-            rounded-xl shadow-card
-            text-accent
-            opacity-0 translate-y-1
-            transition-all duration-200 ease-[var(--ease-out)]
-            group-hover:opacity-100 group-hover:translate-y-0
-            active:scale-90
-          "
-        >
-          <svg className="size-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Info */}
-      <h3 className="text-sm font-semibold text-primary leading-snug mb-0.5 line-clamp-1">
-        {product.title}
-      </h3>
-      <span className="text-sm font-bold text-accent">
-        <Money data={product.priceRange.minVariantPrice} />
-      </span>
-    </Link>
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-5">
+      {head.map((product, index) => (
+        <CollectionProductCard
+          key={product.id}
+          product={product}
+          index={index}
+        />
+      ))}
+      {showPromo && <InlinePromoCard />}
+      {tail.map((product, index) => (
+        <CollectionProductCard
+          key={product.id}
+          product={product}
+          index={index + PROMO_INDEX}
+        />
+      ))}
+    </div>
   );
 }
 
 // ============================================================
-//  ICONS
+//  RELATED COLLECTIONS
 // ============================================================
+
+function RelatedCollections({collections}: {collections: MockCollection[]}) {
+  return (
+    <section className="mt-12 pt-10 border-t border-border-light">
+      <div className="flex items-end justify-between mb-5">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-primary tracking-tight">
+            Keep browsing
+          </h2>
+          <p className="text-sm text-tertiary">
+            More collections you might like
+          </p>
+        </div>
+        <Link
+          to="/collections"
+          className="text-xs sm:text-sm font-semibold text-accent hover:underline underline-offset-2"
+        >
+          View all →
+        </Link>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {collections.map((c) => (
+          <Link
+            key={c.id}
+            to={`/collections/${c.handle}`}
+            prefetch="intent"
+            className="group block"
+          >
+            <div
+              className={`
+                relative overflow-hidden rounded-2xl
+                bg-gradient-to-br ${c.accent} via-white to-surface-sunken
+                border border-border-light
+                aspect-[4/3] p-4
+                transition-all duration-300 ease-[var(--ease-out)]
+                group-hover:shadow-raised group-hover:-translate-y-0.5
+              `}
+            >
+              <div className="absolute -right-4 -top-4 size-20 rounded-full bg-white/40 blur-xl" />
+              <div className="relative z-10 flex flex-col h-full">
+                <span className="inline-block self-start px-2 py-0.5 bg-white/90 backdrop-blur-sm text-[0.55rem] font-bold tracking-widest uppercase text-accent rounded-full mb-auto">
+                  {c.eyebrow}
+                </span>
+                <div>
+                  <h3 className="text-base font-bold text-primary group-hover:text-accent transition-colors">
+                    {c.title}
+                  </h3>
+                  <p className="text-[0.65rem] text-tertiary">
+                    {c.productHandles.length}{' '}
+                    {c.productHandles.length === 1 ? 'item' : 'items'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ============================================================
+//  EMPTY STATE
+// ============================================================
+
+function EmptyState({onReset}: {onReset?: () => void}) {
+  return (
+    <div className="text-center py-16 px-4">
+      <div className="inline-flex size-16 rounded-2xl bg-surface-sunken items-center justify-center mb-4">
+        <svg
+          className="size-7 text-tertiary"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15.75 15.75 21 21m-4.5-10.5a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"
+          />
+        </svg>
+      </div>
+      <h3 className="text-lg font-bold text-primary mb-1">
+        No products found
+      </h3>
+      <p className="text-sm text-tertiary mb-4 max-w-xs mx-auto">
+        Try removing a filter or two — you might find something you like.
+      </p>
+      {onReset && (
+        <button
+          type="button"
+          onClick={onReset}
+          className="px-4 py-2 bg-accent text-white text-sm font-semibold rounded-xl shadow-card hover:shadow-raised active:scale-95 transition-all duration-200 ease-[var(--ease-out)]"
+        >
+          Reset filters
+        </button>
+      )}
+    </div>
+  );
+}
 
 function ChevronRightIcon() {
   return (
-    <svg className="size-3 text-border" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+    <svg
+      className="size-3 text-border"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2.5}
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m8.25 4.5 7.5 7.5-7.5 7.5"
+      />
     </svg>
   );
 }
-
-// ============================================================
-//  GRAPHQL
-// ============================================================
-
-const PRODUCT_ITEM_FRAGMENT = `#graphql
-  fragment MoneyProductItem on MoneyV2 {
-    amount
-    currencyCode
-  }
-  fragment ProductItem on Product {
-    id
-    handle
-    title
-    featuredImage {
-      id
-      altText
-      url
-      width
-      height
-    }
-    priceRange {
-      minVariantPrice {
-        ...MoneyProductItem
-      }
-      maxVariantPrice {
-        ...MoneyProductItem
-      }
-    }
-  }
-` as const;
-
-const COLLECTION_QUERY = `#graphql
-  ${PRODUCT_ITEM_FRAGMENT}
-  query Collection(
-    $handle: String!
-    $country: CountryCode
-    $language: LanguageCode
-    $first: Int
-    $last: Int
-    $startCursor: String
-    $endCursor: String
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      handle
-      title
-      description
-      products(
-        first: $first,
-        last: $last,
-        before: $startCursor,
-        after: $endCursor
-      ) {
-        nodes {
-          ...ProductItem
-        }
-        pageInfo {
-          hasPreviousPage
-          hasNextPage
-          endCursor
-          startCursor
-        }
-      }
-    }
-  }
-` as const;

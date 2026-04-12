@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {Link} from 'react-router';
 import type {Route} from './+types/_index';
 import {StrainFinder} from '~/components/StrainFinder';
@@ -51,63 +50,6 @@ interface Product {
 // ============================================================
 //  MOCK DATA
 // ============================================================
-
-const MOODS = [
-  {
-    id: 'relax',
-    label: 'Relax',
-    icon: <MoodRelaxIcon />,
-    color: 'from-violet-100 to-purple-50',
-    border: 'border-violet-200',
-    text: 'text-violet-700',
-    to: '/collections/indica',
-  },
-  {
-    id: 'energize',
-    label: 'Energize',
-    icon: <MoodEnergizeIcon />,
-    color: 'from-amber-100 to-yellow-50',
-    border: 'border-amber-200',
-    text: 'text-amber-700',
-    to: '/collections/sativa',
-  },
-  {
-    id: 'create',
-    label: 'Create',
-    icon: <MoodCreateIcon />,
-    color: 'from-sky-100 to-blue-50',
-    border: 'border-sky-200',
-    text: 'text-sky-700',
-    to: '/collections/hybrid',
-  },
-  {
-    id: 'sleep',
-    label: 'Sleep',
-    icon: <MoodSleepIcon />,
-    color: 'from-indigo-100 to-slate-50',
-    border: 'border-indigo-200',
-    text: 'text-indigo-700',
-    to: '/collections/indica',
-  },
-  {
-    id: 'social',
-    label: 'Social',
-    icon: <MoodSocialIcon />,
-    color: 'from-emerald-100 to-green-50',
-    border: 'border-emerald-200',
-    text: 'text-emerald-700',
-    to: '/collections/hybrid',
-  },
-  {
-    id: 'relief',
-    label: 'Relief',
-    icon: <MoodReliefIcon />,
-    color: 'from-teal-100 to-cyan-50',
-    border: 'border-teal-200',
-    text: 'text-teal-700',
-    to: '/collections/cbd',
-  },
-];
 
 const CATEGORIES = [
   {label: 'Flower', icon: <CatFlowerIcon />, to: '/collections/flower'},
@@ -243,8 +185,6 @@ const STRAIN_COLORS: Record<StrainType, string> = {
 // ============================================================
 
 export default function Homepage() {
-  const [activeCategory, setActiveCategory] = useState('All');
-
   return (
     <div className="pb-24 sm:pb-0 bg-bg min-h-screen">
       {/* ---- Hero ---- */}
@@ -264,45 +204,6 @@ export default function Homepage() {
       {/* ---- Strain Finder CTA ---- */}
       <div className="px-gutter pt-4">
         <StrainFinder />
-      </div>
-
-      {/* ---- Shop by Mood ---- */}
-      <div className="pt-7">
-        <div className="flex items-center justify-between px-gutter mb-3">
-          <h2 className="text-lg font-bold text-primary tracking-tight">
-            Shop by Mood
-          </h2>
-          <span className="text-[0.6rem] text-tertiary font-medium uppercase tracking-wider">
-            How are you feeling?
-          </span>
-        </div>
-        <div className="overflow-x-auto scrollbar-none">
-          <div className="flex gap-2.5 px-gutter pb-1">
-            {MOODS.map((mood) => (
-              <Link
-                key={mood.id}
-                to={mood.to}
-                prefetch="intent"
-                className={`
-                  shrink-0 w-[5.5rem]
-                  flex flex-col items-center
-                  px-3 py-3.5
-                  rounded-2xl
-                  bg-gradient-to-b ${mood.color}
-                  border ${mood.border}
-                  transition-all duration-200 ease-[var(--ease-out)]
-                  hover:shadow-card hover:-translate-y-0.5
-                  active:scale-95
-                `}
-              >
-                <span className="mb-1.5 text-primary">{mood.icon}</span>
-                <span className={`text-xs font-semibold ${mood.text}`}>
-                  {mood.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* ---- Categories ---- */}

@@ -24,7 +24,15 @@
       "Bash(curl -sI \"https://upload.wikimedia.org/wikipedia/commons/b/b0/White_Tahoe_Cookie.jpg\")",
       "Bash(grep -v \"^$\")",
       "Read(//c/Users/Cheet/.claude/projects/c--dev-shop-shop2/**)",
-      "Bash(grep -o '\"content\":\\\\[{\"type\":\"text\",\"text\":\"[^\"]*\"')"
+      "Bash(grep -o '\"content\":\\\\[{\"type\":\"text\",\"text\":\"[^\"]*\"')",
+      "Bash(echo \"exit=$?\")",
+      "Read(//tmp/**)",
+      "Bash(npx eslint:*)",
+      "Bash(echo \"tsc=$?\")",
+      "Bash(echo \"lint=$?\")",
+      "Bash(ls app/components/Aside*)",
+      "Bash(ls app/components/CartMain*)",
+      "Bash(npx react-router:*)"
     ]
   }
 }

@@ -1,60 +1,31 @@
-import {useLoaderData, Link} from 'react-router';
+import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/collections._index';
-import {getPaginationVariables, Image} from '@shopify/hydrogen';
-import type {CollectionFragment} from 'storefrontapi.generated';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {
+  mockCollections,
+  mockProducts,
+  getProductsForCollection,
+  type MockCollection,
+} from '~/lib/mockCatalog';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Greenly — All Collections'}];
 };
 
-export async function loader(args: Route.LoaderArgs) {
-  const deferredData = loadDeferredData(args);
-  const criticalData = await loadCriticalData(args);
-  return {...deferredData, ...criticalData};
+export async function loader() {
+  const collections = mockCollections.map((collection) => ({
+    ...collection,
+    productCount: getProductsForCollection(collection.handle).length,
+    previewImage: '/bud.webp',
+  }));
+  return {
+    collections,
+    totalProducts: mockProducts.length,
+  };
 }
 
-async function loadCriticalData({context, request}: Route.LoaderArgs) {
-  const paginationVariables = getPaginationVariables(request, {
-    pageBy: 12,
-  });
-
-  const [{collections}] = await Promise.all([
-    context.storefront.query(COLLECTIONS_QUERY, {
-      variables: paginationVariables,
-    }),
-  ]);
-
-  return {collections};
-}
-
-function loadDeferredData({context}: Route.LoaderArgs) {
-  return {};
-}
-
-// ============================================================
-//  COLLECTION BG PALETTE
-// ============================================================
-
-const COLLECTION_BGS = [
-  {bg: 'bg-lime-50', accent: 'from-lime-200/60'},
-  {bg: 'bg-purple-50', accent: 'from-purple-200/60'},
-  {bg: 'bg-amber-50', accent: 'from-amber-200/60'},
-  {bg: 'bg-sky-50', accent: 'from-sky-200/60'},
-  {bg: 'bg-rose-50', accent: 'from-rose-200/60'},
-  {bg: 'bg-teal-50', accent: 'from-teal-200/60'},
-  {bg: 'bg-orange-50', accent: 'from-orange-200/60'},
-  {bg: 'bg-violet-50', accent: 'from-violet-200/60'},
-];
-
-const COLLECTION_ICONS: Record<string, string> = {
-  flower: 'M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z',
-  'pre-rolls':
-    'M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z',
-  edibles:
-    'M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75-1.5.75a3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0 3.354 3.354 0 0 0-3 0 3.354 3.354 0 0 1-3 0L3 16.5m15-3.379a48.474 48.474 0 0 0-6-.371c-2.032 0-4.034.126-6 .371m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.169c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 0 1 3 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 0 1 6 13.12M12.265 3.11a.375.375 0 1 1-.53 0L12 2.845l.265.265Z',
-  concentrates:
-    'M12 2.25c0 0-6.75 8.25-6.75 12.375a6.75 6.75 0 0 0 13.5 0C18.75 10.5 12 2.25 12 2.25Z',
+type EnrichedCollection = MockCollection & {
+  productCount: number;
+  previewImage: string;
 };
 
 // ============================================================
@@ -62,11 +33,13 @@ const COLLECTION_ICONS: Record<string, string> = {
 // ============================================================
 
 export default function Collections() {
-  const {collections} = useLoaderData<typeof loader>();
+  const {collections, totalProducts} = useLoaderData<typeof loader>();
+  const featured = collections[0];
+  const rest = collections.slice(1);
 
   return (
     <div className="max-w-content mx-auto px-gutter pb-section">
-      {/* Header */}
+      {/* Breadcrumb + header */}
       <div className="pt-6 pb-2 sm:pt-8">
         <div className="flex items-center gap-2 text-xs text-tertiary mb-2">
           <Link to="/" className="hover:text-primary transition-colors">
@@ -80,25 +53,92 @@ export default function Collections() {
           Browse Collections
         </h1>
         <p className="text-sm text-secondary leading-relaxed max-w-xl">
-          Explore our curated categories — from flower and pre-rolls to edibles
-          and concentrates.
+          Explore our curated categories — from top-shelf flower and pre-rolls
+          to edibles, concentrates, and CBD wellness picks.
         </p>
       </div>
 
+      {/* Stat strip */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-5 mb-6">
+        <StatCard value={String(collections.length)} label="Collections" />
+        <StatCard value={String(totalProducts)} label="Products" />
+        <StatCard value="4.7★" label="Avg rating" />
+      </div>
+
+      {/* Featured hero collection */}
+      {featured && <FeaturedCollection collection={featured} />}
+
       {/* Grid */}
-      <PaginatedResourceSection<CollectionFragment>
-        connection={collections}
-        resourcesClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-6"
-      >
-        {({node: collection, index}) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-6">
+        {rest.map((collection, index) => (
           <CollectionCard
             key={collection.id}
             collection={collection}
             index={index}
           />
-        )}
-      </PaginatedResourceSection>
+        ))}
+      </div>
     </div>
+  );
+}
+
+// ============================================================
+//  FEATURED COLLECTION
+// ============================================================
+
+function FeaturedCollection({collection}: {collection: EnrichedCollection}) {
+  return (
+    <Link
+      to={`/collections/${collection.handle}`}
+      prefetch="intent"
+      className="group block"
+    >
+      <div
+        className={`
+          relative overflow-hidden rounded-3xl
+          bg-gradient-to-br ${collection.accent} via-white to-surface-sunken
+          border border-border-light
+          px-5 py-6 sm:px-10 sm:py-12
+          transition-all duration-300 ease-[var(--ease-out)]
+          group-hover:shadow-raised group-hover:-translate-y-0.5
+        `}
+      >
+        <div className="absolute -right-10 -top-10 size-48 rounded-full bg-white/40 blur-3xl" />
+        <div className="absolute left-20 -bottom-10 size-40 rounded-full bg-white/30 blur-3xl" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="flex-1">
+            <span className="inline-flex items-center gap-1.5 mb-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm text-[0.6rem] font-bold tracking-widest uppercase text-accent rounded-full">
+              <SparkleIcon className="size-3" />
+              Featured
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-primary tracking-tight mb-2">
+              {collection.title}
+            </h2>
+            <p className="text-sm sm:text-base text-secondary leading-relaxed max-w-lg mb-4">
+              {collection.description}
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-3 py-1 bg-white border border-border-light rounded-full text-xs font-semibold text-primary">
+                {collection.productCount} products
+              </span>
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-accent text-white rounded-full text-xs font-bold group-hover:gap-2 transition-all duration-200">
+                Shop now
+                <ArrowRightIcon className="size-3" />
+              </span>
+            </div>
+          </div>
+          <div className="relative shrink-0 size-40 sm:size-56">
+            <div className="absolute inset-0 rounded-[40%_60%_55%_45%/50%_40%_60%_50%] bg-white/50" />
+            <img
+              src={collection.previewImage}
+              alt={collection.title}
+              className="relative z-10 w-full h-full object-contain drop-shadow-xl transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-105"
+            />
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -110,11 +150,9 @@ function CollectionCard({
   collection,
   index,
 }: {
-  collection: CollectionFragment;
+  collection: EnrichedCollection;
   index: number;
 }) {
-  const palette = COLLECTION_BGS[index % COLLECTION_BGS.length];
-
   return (
     <Link
       to={`/collections/${collection.handle}`}
@@ -122,52 +160,58 @@ function CollectionCard({
       className="group block"
     >
       <div
-        className={`relative rounded-2xl overflow-hidden ${palette.bg} aspect-[4/3] flex items-center justify-center`}
+        className={`
+          relative rounded-3xl overflow-hidden
+          bg-gradient-to-br ${collection.accent} via-white to-surface-sunken
+          border border-border-light
+          aspect-[4/3]
+          flex items-center justify-center
+          transition-all duration-300 ease-[var(--ease-out)]
+          group-hover:shadow-raised group-hover:-translate-y-0.5
+        `}
       >
-        {/* Gradient overlay at bottom */}
-        <div
-          className={`absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t ${palette.accent} to-transparent`}
+        <div className="absolute -right-6 -top-6 size-28 rounded-full bg-white/40 blur-2xl" />
+        <div className="absolute left-6 -bottom-6 size-24 rounded-full bg-white/30 blur-2xl" />
+
+        <img
+          src={collection.previewImage}
+          alt={collection.title}
+          loading={index < 3 ? 'eager' : 'lazy'}
+          className="relative z-10 w-[50%] h-[50%] object-contain drop-shadow-xl transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-105"
         />
 
-        {collection.image ? (
-          <Image
-            alt={collection.image.altText || collection.title}
-            data={collection.image}
-            loading={index < 3 ? 'eager' : 'lazy'}
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="relative z-10 w-[55%] h-[55%] object-contain drop-shadow-lg transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-105"
-          />
-        ) : (
-          <div className="relative z-10 flex flex-col items-center gap-2">
-            <div className="size-14 rounded-2xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-card">
-              <svg
-                className="size-7 text-accent"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path
-                  d={
-                    COLLECTION_ICONS[collection.handle] ||
-                    COLLECTION_ICONS.flower
-                  }
-                />
-              </svg>
-            </div>
-          </div>
-        )}
-
-        {/* Product count badge */}
-        <div className="absolute top-3 right-3 z-20 px-2.5 py-1 bg-white/80 backdrop-blur-sm rounded-full text-[0.65rem] font-semibold text-primary shadow-xs">
-          Shop now
+        {/* Badge */}
+        <div className="absolute top-3 left-3 z-20 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[0.6rem] font-bold tracking-widest uppercase text-accent">
+          {collection.eyebrow}
+        </div>
+        <div className="absolute top-3 right-3 z-20 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[0.65rem] font-semibold text-primary shadow-xs">
+          {collection.productCount}{' '}
+          {collection.productCount === 1 ? 'item' : 'items'}
         </div>
       </div>
 
       <div className="mt-3 px-0.5">
-        <h3 className="text-sm font-bold text-primary group-hover:text-accent transition-colors">
+        <h3 className="text-base font-bold text-primary group-hover:text-accent transition-colors">
           {collection.title}
         </h3>
+        <p className="text-xs text-tertiary leading-snug line-clamp-2 mt-0.5">
+          {collection.description}
+        </p>
       </div>
     </Link>
+  );
+}
+
+function StatCard({value, label}: {value: string; label: string}) {
+  return (
+    <div className="rounded-2xl border border-border-light bg-surface px-3 py-3 text-center sm:text-left">
+      <div className="text-lg sm:text-xl font-bold text-primary leading-none">
+        {value}
+      </div>
+      <div className="text-[0.65rem] sm:text-xs font-medium text-tertiary mt-1 uppercase tracking-wider">
+        {label}
+      </div>
+    </div>
   );
 }
 
@@ -193,46 +237,37 @@ function ChevronRightIcon() {
   );
 }
 
-// ============================================================
-//  GRAPHQL
-// ============================================================
+function ArrowRightIcon({className}: {className?: string}) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2.5}
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+      />
+    </svg>
+  );
+}
 
-const COLLECTIONS_QUERY = `#graphql
-  fragment Collection on Collection {
-    id
-    title
-    handle
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-  }
-  query StoreCollections(
-    $country: CountryCode
-    $endCursor: String
-    $first: Int
-    $language: LanguageCode
-    $last: Int
-    $startCursor: String
-  ) @inContext(country: $country, language: $language) {
-    collections(
-      first: $first,
-      last: $last,
-      before: $startCursor,
-      after: $endCursor
-    ) {
-      nodes {
-        ...Collection
-      }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-    }
-  }
-` as const;
+function SparkleIcon({className}: {className?: string}) {
+  return (
+    <svg
+      className={className}
+      fill="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        fillRule="evenodd"
+        d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}

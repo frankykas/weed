@@ -1,5 +1,5 @@
-import {Await, Link, NavLink} from 'react-router';
-import {Suspense, useId} from 'react';
+import {Link, NavLink} from 'react-router';
+import {useId} from 'react';
 import type {
   CartApiQueryFragment,
   FooterQuery,
@@ -8,7 +8,8 @@ import type {
 import {Aside, useAside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
 import {Header} from '~/components/Header';
-import {CartMain} from '~/components/CartMain';
+import {CartDrawer} from '~/components/CartDrawer';
+import {QuickViewModal} from '~/components/QuickViewModal';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
@@ -34,7 +35,8 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
-      <CartAside cart={cart} />
+      <CartDrawer />
+      <QuickViewModal />
       <SearchAside />
       <MobileMenuAside />
       {header && (
@@ -52,20 +54,6 @@ export function PageLayout({
         publicStoreDomain={publicStoreDomain}
       />
     </Aside.Provider>
-  );
-}
-
-function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
-  return (
-    <Aside type="cart" heading="Your Bag">
-      <Suspense fallback={<p>Loading cart ...</p>}>
-        <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
-          }}
-        </Await>
-      </Suspense>
-    </Aside>
   );
 }
 

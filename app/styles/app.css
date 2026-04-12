@@ -331,3 +331,32 @@ button.reset {
 .animate-scale-in {
   animation: scale-in 250ms var(--ease-out) both;
 }
+
+@keyframes cart-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); background-color: var(--color-accent-light); }
+  100% { transform: scale(1); }
+}
+
+.animate-cart-pop {
+  animation: cart-pop 600ms var(--ease-out) both;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 300ms var(--ease-out) both;
+}
+
+@keyframes check-pop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-check-pop {
+  animation: check-pop 500ms var(--ease-out) both;
+}

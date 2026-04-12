@@ -18,13 +18,29 @@ interface QuizStep {
   options: QuizOption[];
 }
 
-interface Recommendation {
+export type RecommendationStrain = 'Sativa' | 'Indica' | 'Hybrid' | 'CBD';
+
+export interface StrainFinderRecommendation {
   title: string;
   description: string;
-  strain: string;
+  strain: RecommendationStrain;
   collection: string;
   bg: string;
   accent: string;
+  thc: string;
+  price: string;
+  vibeLabel: string;
+}
+
+interface RecommendationProduct {
+  id: string;
+  title: string;
+  strain: RecommendationStrain;
+  thc: string;
+  price: string;
+  image: string;
+  bgColor: string;
+  blobColor: string;
 }
 
 // ============================================================
@@ -137,7 +153,7 @@ const QUIZ_STEPS: QuizStep[] = [
 ];
 
 // Simple mapping of answers → recommendation
-const RECOMMENDATIONS: Record<string, Recommendation> = {
+const RECOMMENDATIONS: Record<string, StrainFinderRecommendation> = {
   relax: {
     title: 'Granddaddy Purple',
     description:
@@ -146,6 +162,9 @@ const RECOMMENDATIONS: Record<string, Recommendation> = {
     collection: '/collections/indica',
     bg: 'from-violet-600 to-purple-900',
     accent: 'bg-violet-400',
+    thc: '20%',
+    price: '$48.00',
+    vibeLabel: 'Deep unwind',
   },
   energize: {
     title: 'Green Crack',
@@ -155,6 +174,9 @@ const RECOMMENDATIONS: Record<string, Recommendation> = {
     collection: '/collections/sativa',
     bg: 'from-amber-500 to-orange-700',
     accent: 'bg-amber-400',
+    thc: '24%',
+    price: '$52.00',
+    vibeLabel: 'Bright energy',
   },
   create: {
     title: 'Blue Dream',
@@ -164,6 +186,9 @@ const RECOMMENDATIONS: Record<string, Recommendation> = {
     collection: '/collections/hybrid',
     bg: 'from-sky-500 to-blue-800',
     accent: 'bg-sky-400',
+    thc: '21%',
+    price: '$45.00',
+    vibeLabel: 'Creative lift',
   },
   social: {
     title: 'Pineapple Express',
@@ -173,6 +198,9 @@ const RECOMMENDATIONS: Record<string, Recommendation> = {
     collection: '/collections/hybrid',
     bg: 'from-emerald-500 to-teal-800',
     accent: 'bg-emerald-400',
+    thc: '22%',
+    price: '$49.00',
+    vibeLabel: 'Good company',
   },
   sleep: {
     title: 'Northern Lights',
@@ -182,6 +210,9 @@ const RECOMMENDATIONS: Record<string, Recommendation> = {
     collection: '/collections/indica',
     bg: 'from-indigo-600 to-slate-900',
     accent: 'bg-indigo-400',
+    thc: '18%',
+    price: '$40.00',
+    vibeLabel: 'Night mode',
   },
   relief: {
     title: 'ACDC',
@@ -191,6 +222,9 @@ const RECOMMENDATIONS: Record<string, Recommendation> = {
     collection: '/collections/cbd',
     bg: 'from-teal-500 to-cyan-800',
     accent: 'bg-teal-400',
+    thc: '8%',
+    price: '$38.00',
+    vibeLabel: 'Calm relief',
   },
 };
 
@@ -200,6 +234,152 @@ const STRAIN_BADGE: Record<string, string> = {
   Hybrid: 'bg-emerald-400/20 text-emerald-300',
   CBD: 'bg-sky-400/20 text-sky-300',
 };
+
+const RESULT_SECTION_BADGES: Record<RecommendationStrain, string> = {
+  Sativa: 'bg-amber-400/15 text-amber-100 ring-1 ring-white/15',
+  Indica: 'bg-violet-400/15 text-violet-100 ring-1 ring-white/15',
+  Hybrid: 'bg-emerald-400/15 text-emerald-100 ring-1 ring-white/15',
+  CBD: 'bg-sky-400/15 text-sky-100 ring-1 ring-white/15',
+};
+
+const RELATED_RECOMMENDATIONS: Record<RecommendationStrain, RecommendationProduct[]> = {
+  Sativa: [
+    {
+      id: 'sf-s1',
+      title: 'Kali Mist',
+      strain: 'Sativa',
+      thc: '22%',
+      price: '$42.00',
+      image: '/bud.webp',
+      bgColor: 'bg-amber-50',
+      blobColor: 'bg-amber-200/50',
+    },
+    {
+      id: 'sf-s2',
+      title: 'Amnesia Haze',
+      strain: 'Sativa',
+      thc: '24%',
+      price: '$52.00',
+      image: '/bud.webp',
+      bgColor: 'bg-lime-50',
+      blobColor: 'bg-lime-200/50',
+    },
+    {
+      id: 'sf-s3',
+      title: 'Super Lemon Haze',
+      strain: 'Sativa',
+      thc: '23%',
+      price: '$46.00',
+      image: '/bud.webp',
+      bgColor: 'bg-yellow-50',
+      blobColor: 'bg-yellow-200/60',
+    },
+  ],
+  Indica: [
+    {
+      id: 'sf-i1',
+      title: 'Northern Lights',
+      strain: 'Indica',
+      thc: '18%',
+      price: '$40.00',
+      image: '/bud.webp',
+      bgColor: 'bg-violet-50',
+      blobColor: 'bg-violet-200/60',
+    },
+    {
+      id: 'sf-i2',
+      title: 'Gorilla Glue',
+      strain: 'Indica',
+      thc: '26%',
+      price: '$58.00',
+      image: '/bud.webp',
+      bgColor: 'bg-teal-50',
+      blobColor: 'bg-teal-200/50',
+    },
+    {
+      id: 'sf-i3',
+      title: 'Purple Punch',
+      strain: 'Indica',
+      thc: '24%',
+      price: '$50.00',
+      image: '/bud.webp',
+      bgColor: 'bg-fuchsia-50',
+      blobColor: 'bg-fuchsia-200/60',
+    },
+  ],
+  Hybrid: [
+    {
+      id: 'sf-h1',
+      title: 'Blue Dream',
+      strain: 'Hybrid',
+      thc: '21%',
+      price: '$45.00',
+      image: '/bud.webp',
+      bgColor: 'bg-sky-50',
+      blobColor: 'bg-sky-200/60',
+    },
+    {
+      id: 'sf-h2',
+      title: 'Wedding Cake',
+      strain: 'Hybrid',
+      thc: '25%',
+      price: '$55.00',
+      image: '/bud.webp',
+      bgColor: 'bg-rose-50',
+      blobColor: 'bg-rose-200/50',
+    },
+    {
+      id: 'sf-h3',
+      title: 'Gelato',
+      strain: 'Hybrid',
+      thc: '23%',
+      price: '$51.00',
+      image: '/bud.webp',
+      bgColor: 'bg-emerald-50',
+      blobColor: 'bg-emerald-200/60',
+    },
+  ],
+  CBD: [
+    {
+      id: 'sf-c1',
+      title: 'Charlottes Web',
+      strain: 'CBD',
+      thc: '9%',
+      price: '$39.00',
+      image: '/bud.webp',
+      bgColor: 'bg-sky-50',
+      blobColor: 'bg-sky-200/60',
+    },
+    {
+      id: 'sf-c2',
+      title: 'Harlequin',
+      strain: 'CBD',
+      thc: '10%',
+      price: '$41.00',
+      image: '/bud.webp',
+      bgColor: 'bg-cyan-50',
+      blobColor: 'bg-cyan-200/60',
+    },
+    {
+      id: 'sf-c3',
+      title: 'Cannatonic',
+      strain: 'CBD',
+      thc: '11%',
+      price: '$43.00',
+      image: '/bud.webp',
+      bgColor: 'bg-teal-50',
+      blobColor: 'bg-teal-200/60',
+    },
+  ],
+};
+
+function getRelatedRecommendations(
+  recommendation: StrainFinderRecommendation,
+): RecommendationProduct[] {
+  return RELATED_RECOMMENDATIONS[recommendation.strain].filter(
+    (product) => product.title !== recommendation.title,
+  );
+}
 
 // ============================================================
 //  COMPONENT
@@ -253,23 +433,25 @@ export function StrainFinder() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm animate-fade-in"
         onClick={handleClose}
       />
 
       {/* Modal */}
-      <div className="fixed inset-x-0 bottom-0 z-50 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+      <div className="fixed inset-0 z-[60] flex items-end sm:items-center sm:justify-center pointer-events-none">
         <div
           className="
             relative w-full sm:max-w-lg
             bg-surface rounded-t-3xl sm:rounded-3xl
             shadow-overlay
-            max-h-[90dvh] overflow-y-auto
+            max-h-[85dvh] sm:max-h-[90dvh]
+            flex flex-col
+            pointer-events-auto
             animate-slide-up sm:animate-scale-in
           "
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 bg-surface/95 backdrop-blur-xl px-5 pt-4 pb-3 border-b border-border-light">
+          <div className="shrink-0 bg-surface rounded-t-3xl px-5 pt-4 pb-3 border-b border-border-light">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {step > 0 && !isResult && (
@@ -313,7 +495,7 @@ export function StrainFinder() {
           </div>
 
           {/* Body */}
-          <div className="px-5 py-5">
+          <div className="flex-1 overflow-y-auto px-5 py-5">
             {isResult && recommendation ? (
               <ResultView
                 recommendation={recommendation}
@@ -460,9 +642,11 @@ function ResultView({
   recommendation,
   onRetake,
 }: {
-  recommendation: Recommendation;
+  recommendation: StrainFinderRecommendation;
   onRetake: () => void;
 }) {
+  const relatedRecommendations = getRelatedRecommendations(recommendation);
+
   return (
     <div>
       <div className="text-center mb-5">
@@ -473,68 +657,126 @@ function ResultView({
         <h3 className="text-xl font-bold text-primary tracking-tight">
           We think you'll love...
         </h3>
+        <p className="mt-1 text-sm text-tertiary">
+          Personalized for {recommendation.vibeLabel.toLowerCase()}.
+        </p>
       </div>
 
-      {/* Result card */}
-      <div
-        className={`relative rounded-2xl overflow-hidden bg-gradient-to-br ${recommendation.bg} p-5 mb-5`}
-      >
-        <div className="absolute -right-6 -top-6 size-32 rounded-full bg-white/[0.07]" />
-        <div className="absolute right-16 -bottom-6 size-24 rounded-full bg-white/[0.05]" />
+      <div className="relative overflow-hidden rounded-3xl bg-slate-950 p-4 sm:p-5">
+        <div className="absolute -right-10 -top-10 size-40 rounded-full bg-white/[0.06]" />
+        <div className="absolute right-10 bottom-0 size-28 rounded-full bg-white/[0.05]" />
 
-        <div className="relative z-10">
-          <span
-            className={`inline-block px-2.5 py-0.5 text-[0.6rem] font-bold rounded-lg mb-3 ${STRAIN_BADGE[recommendation.strain]}`}
-          >
-            {recommendation.strain}
-          </span>
+        <div className={`relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br ${recommendation.bg} p-5 mb-4`}>
+          <div className="absolute -right-4 top-4 size-24 rounded-full bg-white/[0.08]" />
+          <div className="absolute bottom-0 right-0 w-[34%] opacity-25 pointer-events-none">
+            <img
+              src="/bud.webp"
+              alt=""
+              className="w-full h-full object-contain"
+            />
+          </div>
 
-          <h4 className="text-lg font-bold text-white mb-2">
-            {recommendation.title}
-          </h4>
-          <p className="text-sm text-white/80 leading-relaxed mb-4">
-            {recommendation.description}
-          </p>
-
-          <div className="flex items-center gap-3">
-            <Link
-              to={recommendation.collection}
-              className="
-                inline-flex items-center gap-1.5
-                px-5 py-2.5
-                bg-white text-primary
-                text-sm font-semibold
-                rounded-full
-                transition-all duration-200
-                hover:shadow-raised
-                active:scale-95
-              "
+          <div className="relative z-10 max-w-[78%]">
+            <span
+              className={`inline-flex rounded-full px-2.5 py-1 text-[0.65rem] font-bold ${RESULT_SECTION_BADGES[recommendation.strain]}`}
             >
-              Browse {recommendation.strain}
-              <svg
-                className="size-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
+              {recommendation.strain}
+            </span>
+
+            <h4 className="mt-3 text-xl font-bold text-white">
+              {recommendation.title}
+            </h4>
+            <p className="mt-2 text-sm leading-relaxed text-white/80">
+              {recommendation.description}
+            </p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <ResultMetaPill label={recommendation.thc} value="THC" />
+              <ResultMetaPill label={recommendation.price} value="From" />
+            </div>
+
+            <div className="mt-5">
+              <Link
+                to={recommendation.collection}
+                className="
+                  inline-flex items-center gap-1.5
+                  px-5 py-2.5
+                  bg-white text-primary
+                  text-sm font-semibold
+                  rounded-full
+                  transition-all duration-200
+                  hover:shadow-raised
+                  active:scale-95
+                "
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-                />
-              </svg>
-            </Link>
+                Shop this match
+                <svg
+                  className="size-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Bud image */}
-        <div className="absolute right-2 bottom-2 w-[35%] opacity-30 pointer-events-none">
-          <img
-            src="/bud.webp"
-            alt=""
-            className="w-full h-full object-contain"
-          />
+        <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.05] p-4">
+          <div className="mb-3">
+            <h5 className="text-sm font-bold text-white">Keep the vibe going</h5>
+            <p className="text-[0.7rem] text-white/55">
+              Similar picks from the same profile
+            </p>
+          </div>
+
+          <div className="grid gap-3">
+            {relatedRecommendations.map((product) => (
+              <Link
+                key={product.id}
+                to={recommendation.collection}
+                className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-3 transition-all duration-200 hover:border-white/20 hover:bg-white/[0.09]"
+              >
+                <div
+                  className={`relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl ${product.bgColor}`}
+                >
+                  <div
+                    className={`absolute inset-2 rounded-[45%_55%_50%_50%/55%_45%_55%_45%] ${product.blobColor}`}
+                  />
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="relative z-10 h-[65%] w-[65%] object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[0.55rem] font-bold ${STRAIN_BADGE[product.strain]}`}
+                    >
+                      {product.strain}
+                    </span>
+                    <span className="text-[0.6rem] font-medium text-white/45">
+                      THC {product.thc}
+                    </span>
+                  </div>
+                  <p className="mt-1 truncate text-sm font-semibold text-white">
+                    {product.title}
+                  </p>
+                  <p className="text-xs font-bold text-white/75">{product.price}</p>
+                </div>
+                <span className="text-white/40 transition-colors group-hover:text-white/70">
+                  <ArrowRightIcon />
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -549,9 +791,30 @@ function ResultView({
   );
 }
 
+function ResultMetaPill({label, value}: {label: string; value: string}) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-white/12 px-2.5 py-1 text-[0.7rem] font-semibold text-white/85 ring-1 ring-white/10">
+      <span className="text-white">{label}</span>
+      <span className="text-white/55">{value}</span>
+    </span>
+  );
+}
+
 // ============================================================
 //  ICONS
 // ============================================================
+
+function ArrowRightIcon() {
+  return (
+    <svg className="size-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+      />
+    </svg>
+  );
+}
 
 function WandIcon() {
   return (

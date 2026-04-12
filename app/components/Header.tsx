@@ -1,12 +1,7 @@
-import {Suspense} from 'react';
-import {Await, NavLink, useAsyncValue} from 'react-router';
-import {
-  type CartViewPayload,
-  useAnalytics,
-  useOptimisticCart,
-} from '@shopify/hydrogen';
+import {NavLink} from 'react-router';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+import {useCart} from '~/lib/mockCart';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -92,7 +87,7 @@ export function Header({
       />
 
       {/* Right actions */}
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+      <HeaderCtas isLoggedIn={isLoggedIn} />
     </header>
   );
 }
@@ -152,13 +147,12 @@ export function HeaderMenu({
 // ============================================================
 
 function HeaderCtas({
-  isLoggedIn,
-  cart,
-}: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
+  isLoggedIn: _isLoggedIn,
+}: Pick<HeaderProps, 'isLoggedIn'>) {
   return (
     <nav className="header-ctas" role="navigation">
       <SearchToggle />
-      <CartToggle cart={cart} />
+      <CartToggle />
       <HeaderMenuMobileToggleRight />
     </nav>
   );
@@ -199,48 +193,24 @@ function SearchToggle() {
 //  CART BADGE
 // ============================================================
 
-function CartBadge({count}: {count: number}) {
-  const {open} = useAside();
-  const {publish, shop, cart, prevCart} = useAnalytics();
+function CartToggle() {
+  const {totalQuantity, openCart, hydrated} = useCart();
+  const count = hydrated ? totalQuantity : 0;
 
   return (
     <button
       className="relative size-9 flex items-center justify-center rounded-xl text-secondary hover:text-primary hover:bg-surface-sunken transition-colors"
-      onClick={() => {
-        open('cart');
-        publish('cart_viewed', {
-          cart,
-          prevCart,
-          shop,
-          url: window.location.href || '',
-        } as CartViewPayload);
-      }}
+      onClick={openCart}
       aria-label={`Cart (${count} items)`}
     >
       <BagIconSmall />
       {count > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 size-4 flex items-center justify-center bg-accent text-white text-[0.55rem] font-bold rounded-full ring-2 ring-surface">
+        <span className="absolute -top-0.5 -right-0.5 size-4 flex items-center justify-center bg-accent text-white text-[0.55rem] font-bold rounded-full ring-2 ring-surface animate-cart-pop">
           {count}
         </span>
       )}
     </button>
   );
-}
-
-function CartToggle({cart}: Pick<HeaderProps, 'cart'>) {
-  return (
-    <Suspense fallback={<CartBadge count={0} />}>
-      <Await resolve={cart}>
-        <CartBanner />
-      </Await>
-    </Suspense>
-  );
-}
-
-function CartBanner() {
-  const originalCart = useAsyncValue() as CartApiQueryFragment | null;
-  const cart = useOptimisticCart(originalCart);
-  return <CartBadge count={cart?.totalQuantity ?? 0} />;
 }
 
 // ============================================================
