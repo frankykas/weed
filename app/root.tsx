@@ -73,8 +73,17 @@ export async function loader(args: Route.LoaderArgs) {
   // If no Shopify store is connected, return mock data so the UI still renders
   if (!storefront) {
     return {
-      header: null,
-      footer: null,
+      header: {
+        shop: {
+          id: 'mock',
+          name: 'Greenly',
+          description: 'Premium Cannabis',
+          primaryDomain: {url: 'https://localhost'},
+          brand: null,
+        },
+        menu: null, // Header component uses FALLBACK_HEADER_MENU when null
+      },
+      footer: Promise.resolve(null),
       cart: Promise.resolve(null),
       isLoggedIn: Promise.resolve(false),
       publicStoreDomain: '',
