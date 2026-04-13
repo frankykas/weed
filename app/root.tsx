@@ -86,7 +86,7 @@ export async function loader(args: Route.LoaderArgs) {
       footer: Promise.resolve(null),
       cart: Promise.resolve(null),
       isLoggedIn: Promise.resolve(false),
-      publicStoreDomain: '',
+      publicStoreDomain: 'localhost',
       shop: null,
       consent: {
         checkoutDomain: '',
