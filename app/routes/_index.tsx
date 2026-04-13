@@ -21,6 +21,7 @@ type StrainType = 'Sativa' | 'Indica' | 'Hybrid' | 'CBD';
 
 interface Product {
   id: string;
+  handle: string;
   title: string;
   strain: StrainType;
   thc: string;
@@ -56,6 +57,7 @@ const DEAL_OF_THE_DAY = {
 const POPULAR_STRAINS: Product[] = [
   {
     id: 'p1',
+    handle: 'blue-dream',
     title: 'Blue Dream',
     strain: 'Hybrid',
     thc: '21%',
@@ -66,6 +68,7 @@ const POPULAR_STRAINS: Product[] = [
   },
   {
     id: 'p2',
+    handle: 'girl-scout-cookies',
     title: 'Girl Scout Cookies',
     strain: 'Hybrid',
     thc: '25%',
@@ -76,6 +79,7 @@ const POPULAR_STRAINS: Product[] = [
   },
   {
     id: 'p3',
+    handle: 'northern-lights',
     title: 'Northern Lights',
     strain: 'Indica',
     thc: '18%',
@@ -89,6 +93,7 @@ const POPULAR_STRAINS: Product[] = [
 const PRODUCTS: Product[] = [
   {
     id: '1',
+    handle: 'kali-mist',
     title: 'Kali Mist',
     strain: 'Sativa',
     thc: '22%',
@@ -99,6 +104,7 @@ const PRODUCTS: Product[] = [
   },
   {
     id: '2',
+    handle: 'granddaddy-purple',
     title: 'Granddaddy Purple',
     strain: 'Indica',
     thc: '20%',
@@ -109,6 +115,7 @@ const PRODUCTS: Product[] = [
   },
   {
     id: '3',
+    handle: 'orange-bud',
     title: 'Orange Bud',
     strain: 'Hybrid',
     thc: '19%',
@@ -119,6 +126,7 @@ const PRODUCTS: Product[] = [
   },
   {
     id: '4',
+    handle: 'amnesia-haze',
     title: 'Amnesia Haze',
     strain: 'Sativa',
     thc: '24%',
@@ -129,6 +137,7 @@ const PRODUCTS: Product[] = [
   },
   {
     id: '5',
+    handle: 'wedding-cake-flower',
     title: 'Wedding Cake',
     strain: 'Hybrid',
     thc: '25%',
@@ -139,6 +148,7 @@ const PRODUCTS: Product[] = [
   },
   {
     id: '6',
+    handle: 'gorilla-glue-flower',
     title: 'Gorilla Glue',
     strain: 'Indica',
     thc: '26%',
@@ -409,7 +419,11 @@ export default function Homepage() {
 
 function DealCard() {
   return (
-    <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 p-5 min-h-[230px]">
+    <Link
+      to="/products/og-kush"
+      prefetch="intent"
+      className="block relative rounded-3xl overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 p-5 min-h-[230px]"
+    >
       {/* Decorative shapes */}
       <div className="absolute -right-6 -top-6 size-36 rounded-full bg-white/[0.07]" />
       <div className="absolute right-16 -bottom-8 size-28 rounded-full bg-white/[0.05]" />
@@ -449,8 +463,7 @@ function DealCard() {
           </p>
         </div>
 
-        <button
-          type="button"
+        <span
           className="
             mt-3
             inline-flex items-center gap-1
@@ -464,8 +477,8 @@ function DealCard() {
             active:scale-95
           "
         >
-          Add to Bag
-        </button>
+          Shop Now
+        </span>
       </div>
 
       {/* Product image */}
@@ -476,7 +489,7 @@ function DealCard() {
           className="w-[75%] h-[75%] object-contain drop-shadow-2xl"
         />
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -511,7 +524,11 @@ function TimerBlock({value}: {value: string}) {
 
 function PopularStrainCard({product}: {product: Product}) {
   return (
-    <article className="group shrink-0 w-[140px]">
+    <Link
+      to={`/products/${product.handle}`}
+      prefetch="intent"
+      className="group shrink-0 w-[140px]"
+    >
       <div
         className={`
           relative rounded-2xl overflow-hidden
@@ -544,7 +561,7 @@ function PopularStrainCard({product}: {product: Product}) {
           THC {product.thc}
         </span>
       </div>
-    </article>
+    </Link>
   );
 }
 
@@ -554,7 +571,11 @@ function PopularStrainCard({product}: {product: Product}) {
 
 function ProductCard({product}: {product: Product}) {
   return (
-    <article className="group">
+    <Link
+      to={`/products/${product.handle}`}
+      prefetch="intent"
+      className="group"
+    >
       <div
         className={`
           relative rounded-2xl overflow-hidden
@@ -583,8 +604,7 @@ function ProductCard({product}: {product: Product}) {
           {product.thc} THC
         </span>
 
-        <button
-          type="button"
+        <span
           className="
             absolute bottom-2.5 right-2.5 z-20
             size-8 flex items-center justify-center
@@ -594,7 +614,6 @@ function ProductCard({product}: {product: Product}) {
             opacity-0 translate-y-1
             transition-all duration-200 ease-[var(--ease-out)]
             group-hover:opacity-100 group-hover:translate-y-0
-            active:scale-90
           "
         >
           <svg
@@ -610,10 +629,10 @@ function ProductCard({product}: {product: Product}) {
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-        </button>
+        </span>
       </div>
 
-      <h3 className="text-sm font-semibold text-primary leading-snug mb-0.5">
+      <h3 className="text-sm font-semibold text-primary leading-snug mb-0.5 group-hover:text-accent transition-colors">
         {product.title}
       </h3>
       <div className="flex items-center justify-between">
@@ -622,7 +641,7 @@ function ProductCard({product}: {product: Product}) {
           {product.thc} THC
         </span>
       </div>
-    </article>
+    </Link>
   );
 }
 
