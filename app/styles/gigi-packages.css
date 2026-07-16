@@ -1,0 +1,427 @@
+/* ============================================================
+   GIGI PACKAGES / GET STARTED PAGE
+   Full-viewport image hero with the Calmius display title,
+   followed by a full-bleed Classes & Packages section.
+   ============================================================ */
+
+.gigi-packages-page {
+  background: var(--gigi-burgundy);
+}
+
+/* ----------------------------- HERO ----------------------------- */
+.gigi-packages-page .gigi-pk-hero {
+  position: relative;
+  height: 100svh;
+  min-height: 100svh;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--gigi-cream);
+  background-image:
+    linear-gradient(rgba(18, 8, 12, 0.34), rgba(18, 8, 12, 0.46)),
+    url('/gigi/packages/packages-hero.jpg');
+  background-size: cover;
+  /* pushed down the frame so the mirror lettering drops out of view and the
+     figure on the reformer is fully in shot */
+  background-position: center 66%;
+}
+
+.gigi-pk-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(1.5rem, 3.4vh, 2.4rem) clamp(1.8rem, 4vw, 3.2rem);
+}
+
+.gigi-pk-logo {
+  display: block;
+  width: clamp(7.5rem, 11vw, 12rem); /* match the main-page .gigi-logo sizing */
+  line-height: 0;
+}
+
+.gigi-pk-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gigi-pk-menu {
+  border: 1px solid rgba(245, 237, 207, 0.55);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-cream);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.55rem;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-pk-menu:hover {
+  background: var(--gigi-cream);
+  color: var(--gigi-burgundy);
+}
+
+.gigi-pk-title {
+  margin: 0;
+  padding: 0 clamp(1rem, 4vw, 3rem);
+  font-family: 'Calmius Sans', 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(2.8rem, 12.5vw, 12rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--gigi-cream);
+}
+
+/* ------------------------- FOCUS BAND --------------------------- */
+.gigi-packages-page .gigi-pk-focus {
+  min-height: 0; /* override the global .gigi-site section { min-height: 100svh } */
+  display: grid;
+  place-items: center;
+  background: var(--gigi-olive);
+  color: var(--gigi-burgundy);
+  text-align: center;
+  padding: clamp(1.8rem, 4.5vh, 3rem) 1.5rem;
+}
+
+.gigi-pk-focus p {
+  margin: 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: clamp(0.95rem, 1.25vw, 1.2rem);
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.gigi-pk-focus strong {
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+/* --------------------- PACKAGE CARDS SECTION -------------------- */
+.gigi-packages-page .gigi-pk-packages {
+  position: relative;
+  box-sizing: border-box;
+  padding: clamp(2.5rem, 6vh, 5rem) clamp(1rem, 4vw, 3rem);
+  background-image:
+    linear-gradient(rgba(16, 7, 11, 0.52), rgba(16, 7, 11, 0.6)),
+    url('/gigi/packages/packages-section2.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.gigi-pk-packages__list {
+  display: grid;
+  gap: clamp(0.9rem, 2vh, 1.5rem);
+  width: min(100%, 62rem);
+  margin: 0 auto;
+}
+
+.gigi-pk-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.4rem);
+  box-sizing: border-box;
+  min-height: clamp(8.5rem, 15vh, 11rem);
+  padding: clamp(1.4rem, 2.6vw, 2.2rem) clamp(1.6rem, 3.2vw, 3rem);
+}
+
+.gigi-pk-card--burgundy-rose {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-rose);
+}
+
+.gigi-pk-card--burgundy-cream {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-cream);
+}
+
+.gigi-pk-card--rose {
+  background: var(--gigi-rose);
+  color: var(--gigi-burgundy);
+}
+
+.gigi-pk-card--olive {
+  background: var(--gigi-olive);
+  color: var(--gigi-burgundy);
+}
+
+.gigi-pk-card__title {
+  margin: 0;
+  font-family: 'Bodoni Moda', Georgia, 'Times New Roman', serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: clamp(2.1rem, 3.9vw, 3.5rem);
+  line-height: 0.94;
+}
+
+.gigi-pk-card__body {
+  display: grid;
+  gap: 0.35rem;
+  align-content: center;
+  max-width: 24rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+}
+
+.gigi-pk-card__blurb,
+.gigi-pk-card__valid {
+  margin: 0;
+  font-size: clamp(0.78rem, 0.92vw, 0.9rem);
+  line-height: 1.32;
+}
+
+.gigi-pk-card__blurb {
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+.gigi-pk-card__valid {
+  opacity: 0.82;
+}
+
+.gigi-pk-card__price {
+  margin: 0.25rem 0 0;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* Specificity kept above the global `.gigi-site button` rule (this is a
+   <button> now, so it would otherwise inherit that pill's padding/size). */
+.gigi-packages-page .gigi-pk-card__cta {
+  justify-self: start;
+  margin-top: 0.7rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.42rem 1.2rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: currentColor;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-pk-card--burgundy-rose .gigi-pk-card__cta:hover,
+.gigi-pk-card--burgundy-cream .gigi-pk-card__cta:hover {
+  background: rgba(245, 237, 207, 0.16);
+}
+
+.gigi-pk-card--rose .gigi-pk-card__cta:hover,
+.gigi-pk-card--olive .gigi-pk-card__cta:hover {
+  background: rgba(75, 15, 32, 0.12);
+}
+
+@media (max-width: 760px) {
+  .gigi-packages-page .gigi-pk-hero {
+    background-position: center 62%;
+  }
+
+  .gigi-pk-title {
+    font-size: clamp(2.6rem, 17vw, 5rem);
+  }
+
+  .gigi-pk-card {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    text-align: left;
+  }
+
+  .gigi-pk-card__body {
+    max-width: none;
+  }
+}
+
+/* -------------------- BOOKING / SIGN-IN MODAL ------------------- */
+.gigi-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(24, 10, 15, 0.55);
+  backdrop-filter: blur(2px);
+  animation: gigi-modal-fade 200ms ease both;
+}
+
+.gigi-modal {
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 34rem);
+  padding: clamp(2.2rem, 4vw, 3.2rem) clamp(1.8rem, 4vw, 3.4rem)
+    clamp(2rem, 3.5vw, 2.8rem);
+  background: var(--gigi-paper);
+  color: var(--gigi-burgundy);
+  border-radius: 0.4rem;
+  box-shadow: 0 30px 80px rgba(24, 10, 15, 0.35);
+  text-align: center;
+  animation: gigi-modal-rise 240ms ease both;
+}
+
+.gigi-modal .gigi-modal__close {
+  position: absolute;
+  top: clamp(0.9rem, 2vw, 1.35rem);
+  right: clamp(0.9rem, 2vw, 1.35rem);
+  width: 2.1rem;
+  height: 2.1rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.gigi-modal .gigi-modal__close:hover {
+  opacity: 0.6;
+}
+
+.gigi-modal__close svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.gigi-modal__title {
+  margin: 0;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(2.1rem, 4.5vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gigi-modal__subtitle {
+  margin: 0.35rem 0 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  font-weight: 400;
+}
+
+.gigi-modal__form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  justify-items: center;
+}
+
+.gigi-modal .gigi-modal__field {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--gigi-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  padding: 0.9rem 1.4rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.gigi-modal__field::placeholder {
+  color: var(--gigi-burgundy);
+  opacity: 0.85;
+}
+
+.gigi-modal__field:focus {
+  outline: none;
+  border-color: var(--gigi-burgundy);
+}
+
+.gigi-modal .gigi-modal__link {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.1rem 0;
+  color: var(--gigi-burgundy);
+  font-family: 'Bodoni 72 Book Italic', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 0.98rem;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.gigi-modal .gigi-modal__link:hover {
+  opacity: 0.7;
+}
+
+.gigi-modal .gigi-modal__submit {
+  margin: 0.3rem 0;
+  min-width: 11rem;
+  display: inline-block;
+  border: 1px solid var(--gigi-burgundy);
+  border-radius: 999px;
+  background: var(--gigi-burgundy);
+  color: var(--gigi-cream);
+  padding: 0.85rem 2.2rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-modal .gigi-modal__submit:hover {
+  background: transparent;
+  color: var(--gigi-burgundy);
+}
+
+@keyframes gigi-modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gigi-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gigi-modal-overlay,
+  .gigi-modal {
+    animation: none;
+  }
+}

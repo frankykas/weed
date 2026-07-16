@@ -1,0 +1,335 @@
+/* ============================================================
+   GIGI SHOP PAGE
+   Paper-themed storefront: hero, clothing grid, lifestyle band,
+   accessories grid. Interactive category filter + add-to-cart.
+   Product imagery uses placeholder tiles until real photos land.
+   ============================================================ */
+
+.gigi-shop-page {
+  min-height: 100vh;
+  background: var(--gigi-paper);
+  color: var(--gigi-burgundy);
+}
+
+.gigi-shop-page section {
+  min-height: 0; /* override global .gigi-site section { min-height: 100svh } */
+}
+
+/* Shared centered content column — the same width used on every page so the
+   containers line up site-wide. Full-bleed bands (hero, lifestyle) opt out. */
+.gigi-shop-header,
+.gigi-shop-filter,
+.gigi-shop-section {
+  width: min(100%, 86rem);
+  margin-inline: auto;
+  box-sizing: border-box;
+  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* --------------------------- HEADER ----------------------------- */
+.gigi-shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: clamp(1.4rem, 3vw, 2.2rem);
+  padding-bottom: clamp(0.6rem, 1.5vw, 1rem);
+}
+
+.gigi-shop-logo {
+  display: block;
+  width: clamp(7.5rem, 11vw, 12rem); /* same logo lockup + size as every page */
+  line-height: 0;
+}
+
+.gigi-shop-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gigi-shop-header__actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 1.8rem);
+}
+
+.gigi-shop-bag {
+  position: relative;
+  display: block;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--gigi-burgundy);
+}
+
+.gigi-shop-bag svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gigi-shop-bag__count {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.5rem;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 0.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--gigi-rose);
+  color: var(--gigi-paper);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.58rem;
+  line-height: 1;
+}
+
+.gigi-shop-menu {
+  border: 1px solid rgba(75, 15, 32, 0.5);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.4rem;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.gigi-shop-menu:hover {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+}
+
+/* ------------------------- FILTER TABS -------------------------- */
+.gigi-shop-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(0.4rem, 1.5vw, 1rem);
+  padding-bottom: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+
+.gigi-shop-tabs {
+  display: flex;
+  gap: clamp(1.6rem, 3.5vw, 3rem);
+}
+
+.gigi-shop-page .gigi-shop-tab {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.2rem 0;
+  color: rgba(75, 15, 32, 0.55);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.gigi-shop-page .gigi-shop-tab:hover {
+  color: var(--gigi-burgundy);
+}
+
+.gigi-shop-page .gigi-shop-tab.is-active {
+  color: var(--gigi-burgundy);
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+}
+
+/* ------------------- FULL-HEIGHT HERO BLOCK --------------------- */
+/* Header + filter + hero together fill one viewport, like the other pages'
+   heroes; the hero grows to take whatever space the header/filter leave. */
+.gigi-shop-top {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+/* --------------------------- HERO ------------------------------- */
+/* Full-bleed band — spills past the shared content column. */
+.gigi-shop-page .gigi-shop-hero {
+  position: relative;
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  min-height: clamp(30rem, 50vw, 100rem);
+  overflow: hidden;
+  /* Placeholder background image (GIGI merch) tinted to a cohesive burgundy via
+     a multiply blend, so the frame reads on-brand behind the wordmark. */
+  background-color: #4d1727;
+  background-image: url('/gigi/mosaic-1.jpg');
+  background-size: cover;
+  background-position: center 38%;
+  background-repeat: no-repeat;
+  background-blend-mode: multiply;
+}
+
+/* Light streak + subtle vignette above the image, below the wordmark. */
+.gigi-shop-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      116deg,
+      transparent 42%,
+      rgba(255, 240, 230, 0.16) 50%,
+      transparent 58%
+    ),
+    radial-gradient(120% 120% at 50% 50%, transparent 45%, rgba(18, 6, 10, 0.5) 100%);
+}
+
+.gigi-shop-hero__mark {
+  position: relative;
+  z-index: 1;
+}
+
+.gigi-shop-hero__mark {
+  width: clamp(11rem, 26vw, 23rem);
+  height: auto;
+  filter: drop-shadow(0 6px 26px rgba(0, 0, 0, 0.35));
+}
+
+/* ------------------------ PRODUCT GRID -------------------------- */
+.gigi-shop-section {
+  padding-top: clamp(2.4rem, 5vw, 4rem);
+  padding-bottom: clamp(2.4rem, 5vw, 4rem);
+}
+
+.gigi-shop-section__title {
+  margin: 0 0 clamp(2.6rem, 5vw, 4.2rem);
+  font-family: 'Bodoni Moda', Bodoni, Didot, Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gigi-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.4rem, 3vw, 2.6rem);
+}
+
+.gigi-shop-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.gigi-shop-card__img {
+  display: block;
+  position: relative;
+  aspect-ratio: 1 / 1.04;
+  background: #d9cfbc;
+  overflow: hidden;
+}
+
+.gigi-shop-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 500ms var(--ease-out);
+}
+
+.gigi-shop-card__img:hover img {
+  transform: scale(1.03);
+}
+
+.gigi-shop-card__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.75rem 0 0.7rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+}
+
+.gigi-shop-card__name {
+  font-size: clamp(0.72rem, 0.95vw, 0.9rem);
+  color: inherit;
+  text-decoration: none;
+}
+
+.gigi-shop-card__name:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gigi-shop-card__price {
+  flex: 0 0 auto;
+  font-size: clamp(0.68rem, 0.9vw, 0.85rem);
+  color: rgba(75, 15, 32, 0.7);
+}
+
+.gigi-shop-page .gigi-shop-card__cart {
+  display: block;
+  width: 100%;
+  border: 1px solid rgba(75, 15, 32, 0.55);
+  border-radius: 0;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  padding: 0.7rem 1rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.gigi-shop-page .gigi-shop-card__cart:hover {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+}
+
+/* ------------------------- LIFESTYLE ---------------------------- */
+/* Full-bleed band — two tall images with a small gap between them. */
+.gigi-shop-lifestyle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.5rem, 1.2vw, 1rem);
+}
+
+.gigi-shop-lifestyle figure {
+  margin: 0;
+  line-height: 0;
+}
+
+.gigi-shop-lifestyle img {
+  width: 100%;
+  height: clamp(30rem, 52vw, 46rem);
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 760px) {
+  .gigi-shop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+  }
+}
+
+@media (max-width: 460px) {
+  .gigi-shop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gigi-shop-lifestyle {
+    grid-template-columns: 1fr;
+  }
+}

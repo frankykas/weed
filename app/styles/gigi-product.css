@@ -1,0 +1,498 @@
+/* ============================================================
+   GIGI PRODUCT PAGE (Shopify product route, re-skinned)
+   Paper theme, burgundy ink. Interactive colour/size/quantity,
+   add-to-cart, detail accordions, and a "You may also like" rail.
+   Product imagery uses placeholder tiles until real photos land.
+   ============================================================ */
+
+.gigi-product-page {
+  min-height: 100vh;
+  background: var(--gigi-paper);
+  color: var(--gigi-burgundy);
+}
+
+.gigi-product-page section {
+  min-height: 0; /* override global .gigi-site section { min-height: 100svh } */
+}
+
+.gigi-pd-header,
+.gigi-pd,
+.gigi-pd-related {
+  width: min(100%, 86rem);
+  margin-inline: auto;
+  box-sizing: border-box;
+  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* --------------------------- HEADER ----------------------------- */
+.gigi-pd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: clamp(1.4rem, 3vw, 2.2rem);
+  padding-bottom: clamp(0.6rem, 1.5vw, 1rem);
+}
+
+.gigi-pd-logo {
+  display: block;
+  width: clamp(7.5rem, 11vw, 12rem);
+  line-height: 0;
+}
+
+.gigi-pd-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gigi-pd-header__actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 1.8rem);
+}
+
+.gigi-pd-bag {
+  position: relative;
+  display: block;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--gigi-burgundy);
+}
+
+.gigi-pd-bag svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gigi-pd-bag__count {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.5rem;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 0.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--gigi-rose);
+  color: var(--gigi-paper);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.58rem;
+  line-height: 1;
+}
+
+.gigi-pd-menu {
+  border: 1px solid rgba(75, 15, 32, 0.5);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.4rem;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.gigi-pd-menu:hover {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+}
+
+/* ------------------------- MAIN LAYOUT -------------------------- */
+.gigi-pd {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: clamp(1.6rem, 4.5vw, 4.5rem);
+  align-items: start;
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+/* --------------------------- GALLERY ---------------------------- */
+.gigi-pd-gallery {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.6rem);
+}
+
+.gigi-pd-shot {
+  position: relative;
+  aspect-ratio: 1 / 1.08;
+  background: #d9cfbc;
+  overflow: hidden;
+}
+
+.gigi-pd-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* The back shot stays a placeholder tile until real photos land. */
+.gigi-pd-shot--back::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/gigi/gigi-mark-rose.png') center / 55% no-repeat;
+  opacity: 0.4;
+}
+
+/* ---------------------------- INFO ------------------------------ */
+.gigi-pd-info {
+  position: sticky;
+  top: 1.5rem;
+  max-width: 27rem;
+}
+
+.gigi-pd-info__title {
+  margin: 0;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.gigi-pd-info__tagline {
+  margin: 0.5rem 0 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: clamp(0.82rem, 1vw, 0.95rem);
+  line-height: 1.4;
+  color: rgba(75, 15, 32, 0.78);
+}
+
+.gigi-pd-info__price {
+  margin: clamp(1rem, 2vw, 1.5rem) 0 0;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  font-weight: 700;
+}
+
+.gigi-pd-field {
+  margin-top: clamp(1.2rem, 2.4vw, 1.7rem);
+}
+
+.gigi-pd-field__label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+}
+
+/* Colours */
+.gigi-pd-colors {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.gigi-product-page .gigi-pd-color {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(75, 15, 32, 0.25);
+  cursor: pointer;
+  box-shadow: 0 0 0 2px transparent;
+  transition: box-shadow 160ms ease;
+}
+
+.gigi-product-page .gigi-pd-color.is-active {
+  box-shadow: 0 0 0 2px var(--gigi-paper), 0 0 0 3px var(--gigi-burgundy);
+}
+
+/* Sizes */
+.gigi-pd-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.gigi-product-page .gigi-pd-size {
+  min-width: 2.5rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(75, 15, 32, 0.35);
+  border-radius: 0.3rem;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.gigi-product-page .gigi-pd-size:hover {
+  border-color: var(--gigi-burgundy);
+}
+
+.gigi-product-page .gigi-pd-size.is-active {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+  border-color: var(--gigi-burgundy);
+}
+
+/* Quantity + add to cart */
+.gigi-pd-buy {
+  display: flex;
+  align-items: stretch;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+}
+
+.gigi-pd-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(75, 15, 32, 0.35);
+  border-radius: 999px;
+}
+
+.gigi-product-page .gigi-pd-qty button {
+  width: 2rem;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.gigi-product-page .gigi-pd-qty button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.gigi-pd-qty__value {
+  min-width: 1.8rem;
+  text-align: center;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.85rem;
+}
+
+.gigi-product-page .gigi-pd-add {
+  flex: 1;
+  border: 1px solid var(--gigi-burgundy);
+  border-radius: 999px;
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+  padding: 0.7rem 1.4rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.gigi-product-page .gigi-pd-add:hover {
+  background: transparent;
+  color: var(--gigi-burgundy);
+}
+
+/* Accordions */
+.gigi-pd-acc {
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+  border-top: 1px solid rgba(75, 15, 32, 0.2);
+}
+
+.gigi-product-page .gigi-pd-acc__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 0;
+  border-bottom: 1px solid rgba(75, 15, 32, 0.2);
+  background: transparent;
+  color: var(--gigi-burgundy);
+  padding: 0.95rem 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.gigi-pd-acc__icon {
+  position: relative;
+  width: 0.85rem;
+  height: 0.85rem;
+  flex: 0 0 auto;
+}
+
+.gigi-pd-acc__icon::before,
+.gigi-pd-acc__icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.85rem;
+  height: 1px;
+  background: var(--gigi-burgundy);
+  transform: translate(-50%, -50%);
+}
+
+.gigi-pd-acc__icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.gigi-pd-acc__icon.is-open::after {
+  opacity: 0;
+}
+
+.gigi-pd-acc__body {
+  padding: 0.6rem 0 1.1rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(75, 15, 32, 0.82);
+}
+
+/* ------------------- YOU MAY ALSO LIKE -------------------------- */
+.gigi-pd-related {
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.gigi-pd-related__title {
+  margin: 0 0 clamp(1.6rem, 3vw, 2.4rem);
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  font-weight: 700;
+  text-align: center;
+}
+
+.gigi-pd-rail {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.6rem, 1.5vw, 1.2rem);
+}
+
+.gigi-product-page .gigi-pd-arrow {
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(75, 15, 32, 0.5);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.gigi-product-page .gigi-pd-arrow:hover {
+  color: var(--gigi-burgundy);
+}
+
+.gigi-pd-arrow svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gigi-pd-related__track {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+
+.gigi-pd-rcard {
+  display: flex;
+  flex-direction: column;
+}
+
+.gigi-pd-rcard__img {
+  display: block;
+  position: relative;
+  aspect-ratio: 1 / 1.04;
+  background: #d9cfbc;
+  overflow: hidden;
+}
+
+.gigi-pd-rcard__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.gigi-pd-rcard__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.7rem 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+}
+
+.gigi-pd-rcard__name {
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+  color: inherit;
+  text-decoration: none;
+}
+
+.gigi-pd-rcard__name:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gigi-pd-rcard__price {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: rgba(75, 15, 32, 0.7);
+}
+
+.gigi-product-page .gigi-pd-rcard__cart {
+  width: 100%;
+  border: 1px solid rgba(75, 15, 32, 0.55);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  padding: 0.65rem 1rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.gigi-product-page .gigi-pd-rcard__cart:hover {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+}
+
+@media (max-width: 820px) {
+  .gigi-pd {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .gigi-pd-info {
+    position: static;
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .gigi-pd-related__track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

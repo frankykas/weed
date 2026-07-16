@@ -1,0 +1,224 @@
+/* ============================================================
+   GIGI BOOK NOW PAGE
+   Olive / khaki themed schedule. Placeholder UI ahead of the
+   third-party booking integration. Interactive: studio toggle
+   and selectable class slots.
+   ============================================================ */
+
+.gigi-book-page {
+  --book-bg: #e9e1a3;
+  --book-ink: #5f4c1f;
+  --book-line: rgba(95, 76, 31, 0.4);
+  --book-full: rgba(189, 110, 145, 0.16);
+  min-height: 100vh;
+  background: var(--book-bg);
+  color: var(--book-ink);
+}
+
+.gigi-book-page .gigi-book {
+  min-height: 0;
+  box-sizing: border-box;
+  width: min(100%, 86rem); /* shared content column, same as every page */
+  margin-inline: auto;
+  padding: clamp(1.6rem, 3vw, 2.6rem) clamp(1.5rem, 4vw, 2.5rem)
+    clamp(3rem, 6vw, 5rem);
+}
+
+/* --------------------------- HEADER ----------------------------- */
+.gigi-book-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gigi-book-logo {
+  display: block;
+  width: clamp(7.5rem, 11vw, 12rem); /* same sizing as the main-page logo */
+  line-height: 0;
+}
+
+.gigi-book-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gigi-book-menu {
+  border: 1px solid rgba(95, 76, 31, 0.55);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--book-ink);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.55rem;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-book-menu:hover {
+  background: var(--book-ink);
+  color: var(--book-bg);
+}
+
+/* --------------------------- TITLE ------------------------------ */
+.gigi-book-title {
+  margin: clamp(1.5rem, 4vw, 3rem) 0 clamp(1.6rem, 3.5vw, 2.6rem);
+  font-family: 'Calmius Sans', 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(3rem, 11vw, 9rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--book-ink);
+}
+
+/* ------------------------- LOCATIONS ---------------------------- */
+.gigi-book-locations {
+  display: flex;
+  justify-content: flex-end;
+  gap: clamp(0.6rem, 1.4vw, 1rem);
+  width: min(100%, 86rem);
+  margin: 0 auto clamp(1rem, 2vw, 1.6rem);
+}
+
+.gigi-book-page .gigi-book-location {
+  border: 1px solid var(--book-ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--book-ink);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.7rem;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-book-page .gigi-book-location:hover {
+  background: rgba(95, 76, 31, 0.12);
+}
+
+.gigi-book-page .gigi-book-location.is-active {
+  background: var(--book-ink);
+  color: var(--book-bg);
+}
+
+/* --------------------------- GRID ------------------------------- */
+.gigi-book-grid-wrap {
+  width: min(100%, 86rem);
+  margin: 0 auto;
+  /* breathing room above and below the calendar */
+  padding: clamp(4.5rem, 9vw, 8rem) 0 clamp(5rem, 10vw, 9rem);
+  overflow-x: auto;
+}
+
+.gigi-book-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(6.4rem, 1fr));
+  border-top: 1px solid var(--book-line);
+  border-left: 1px solid var(--book-line);
+}
+
+.gigi-book-grid > * {
+  border-right: 1px solid var(--book-line);
+  border-bottom: 1px solid var(--book-line);
+}
+
+.gigi-book-day {
+  padding: 0.75rem 0.5rem;
+  background: var(--book-ink);
+  color: var(--book-bg);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.gigi-book-page .gigi-book-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-height: clamp(7.5rem, 11vw, 9.5rem);
+  padding: 1.1rem 0.5rem;
+  border-radius: 0;
+  background: transparent;
+  color: var(--book-ink);
+  text-align: center;
+  text-transform: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.gigi-book-slot strong {
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: clamp(0.72rem, 0.9vw, 0.85rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.gigi-book-slot em {
+  font-family: 'Bodoni 72 Book Italic', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: clamp(0.66rem, 0.85vw, 0.8rem);
+  opacity: 0.9;
+}
+
+.gigi-book-slot span {
+  margin-top: 0.15rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: clamp(0.68rem, 0.85vw, 0.8rem);
+}
+
+.gigi-book-page button.gigi-book-slot:hover {
+  background: rgba(95, 76, 31, 0.1);
+}
+
+.gigi-book-page .gigi-book-slot.is-selected {
+  background: var(--book-ink);
+  color: var(--book-bg);
+}
+
+.gigi-book-slot.is-full {
+  background: var(--book-full);
+  cursor: default;
+}
+
+.gigi-book-slot.is-full img {
+  width: clamp(3.4rem, 5vw, 4.4rem);
+  height: auto;
+  margin-bottom: 0.25rem;
+}
+
+.gigi-book-slot.is-full em {
+  color: var(--gigi-rose);
+  opacity: 1;
+}
+
+/* --------------------- OLIVE FOOTER OVERRIDE -------------------- */
+.gigi-book-page .gigi-footer {
+  background: var(--gigi-brown);
+}
+
+@media (max-width: 760px) {
+  .gigi-book-title {
+    font-size: clamp(2.6rem, 15vw, 4.4rem);
+  }
+
+  .gigi-book-locations {
+    justify-content: center;
+  }
+}
