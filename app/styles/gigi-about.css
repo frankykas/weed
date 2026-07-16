@@ -34,9 +34,19 @@
   background: var(--gigi-paper);
 }
 
-/* About-page footer uses the mauve/rose brand tone. */
+/* About-page footer: mauve panel with deep-plum type, border, and G mark. */
 .gigi-about-page .gigi-footer {
   background: #b0647f;
+  color: #5a1f26;
+}
+
+.gigi-about-page .gigi-footer > div {
+  border-color: rgba(90, 31, 38, 0.5);
+}
+
+/* Swap the cream G for a deep-plum recolor of the same mark. */
+.gigi-about-page .gigi-footer-mark {
+  content: url('/gigi/g-footer-plum.png');
 }
 
 .gigi-about-hero {
@@ -219,17 +229,12 @@
   line-height: 1.22;
 }
 
-.gigi-founder-copy span {
+.gigi-founder-copy .gigi-founder-sign {
   justify-self: center;
-  margin-top: 1.2rem;
-  color: var(--gigi-rose);
-  font-family: 'Calmius Sans', 'Sohne Halbfett', Arial, Helvetica, sans-serif;
-  font-size: clamp(2.4rem, 3.8vw, 4rem);
-  font-style: normal;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  transform: none;
+  display: block;
+  margin-top: 1.4rem;
+  width: clamp(12rem, 20vw, 18rem);
+  height: auto;
 }
 
 .gigi-founder-photo {
@@ -601,15 +606,10 @@
   align-content: center;
 }
 
-.gigi-site.gigi-about-page .gigi-founder-copy span {
-  color: var(--gigi-rose);
-  font-family: 'Calmius Sans', 'Sohne Halbfett', Arial, Helvetica, sans-serif;
-  font-size: clamp(2.4rem, 3.8vw, 4rem);
-  font-style: normal;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  transform: none;
+.gigi-site.gigi-about-page .gigi-founder-copy .gigi-founder-sign {
+  justify-self: center;
+  width: clamp(12rem, 20vw, 18rem);
+  height: auto;
 }
 
 .gigi-site.gigi-about-page .gigi-values-section {
@@ -619,7 +619,7 @@
   align-items: center;
   background: var(--gigi-paper);
   color: var(--gigi-burgundy);
-  padding: clamp(3.5rem, 6svh, 5.4rem) clamp(4.4rem, 6vw, 7rem);
+  padding: clamp(5rem, 9svh, 7.5rem) clamp(4.4rem, 6vw, 7rem);
   overflow: hidden;
 }
 
@@ -636,9 +636,9 @@
 
 .gigi-site.gigi-about-page .gigi-values-section h2 {
   justify-self: center;
-  margin: 0 0 clamp(2.8rem, 5svh, 4.5rem);
+  margin: 0 0 clamp(2.4rem, 4.5svh, 3.8rem);
   font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
-  font-size: clamp(3rem, 5vw, 7.2rem);
+  font-size: clamp(2.4rem, 3.8vw, 5rem);
   font-weight: 400;
   line-height: 0.9;
   text-align: center;

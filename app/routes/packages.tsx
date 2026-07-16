@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import type {Route} from './+types/packages';
 import packagesStyles from '~/styles/gigi-packages.css?url';
 
@@ -22,12 +22,39 @@ const img = (name: string) => `/gigi/${name}`;
 export default function PackagesPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const reduceMotionRef = useRef(false);
+
+  useEffect(() => {
+    reduceMotionRef.current = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+  }, []);
 
   return (
     <div className="gigi-site gigi-packages-page">
       <GigiNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-      <section className="gigi-pk-hero">
+      <section
+        className="gigi-pk-hero"
+        ref={heroRef}
+        onMouseMove={(e) => {
+          if (reduceMotionRef.current) return;
+          const hero = heroRef.current;
+          const title = titleRef.current;
+          if (!hero || !title) return;
+          const rect = hero.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          title.style.transform = `translate3d(${x * 48}px, ${y * 30}px, 0)`;
+        }}
+        onMouseLeave={() => {
+          if (titleRef.current) {
+            titleRef.current.style.transform = 'translate3d(0, 0, 0)';
+          }
+        }}
+      >
         <header className="gigi-pk-header">
           <a className="gigi-pk-logo" href="/" aria-label="GIGI home">
             <img src={img('gigi-logo-primary.png')} alt="GIGI" />
@@ -42,7 +69,9 @@ export default function PackagesPage() {
             Menu
           </button>
         </header>
-        <h1 className="gigi-pk-title">Get Started</h1>
+        <h1 className="gigi-pk-title" ref={titleRef}>
+          Get Started
+        </h1>
       </section>
 
       <section className="gigi-pk-focus">

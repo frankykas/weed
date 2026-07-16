@@ -107,7 +107,11 @@ export default function AboutPage() {
             that merges wellness, creativity, and luxury experiences, as Dubai
             continues to grow into a leading wellness and fitness hub.
           </p>
-          <span>Ghaliya Ahli</span>
+          <img
+            className="gigi-founder-sign"
+            src={img('signature.png')}
+            alt="Ghaliya Ahli"
+          />
         </article>
         <img
           className="gigi-founder-photo"
