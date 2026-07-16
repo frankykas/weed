@@ -622,6 +622,7 @@ body:has(.gigi-site) {
 }
 
 .gigi-menu-popover a {
+  position: relative;
   display: block;
   color: var(--gigi-burgundy);
   border-bottom: 1px solid var(--gigi-line);
@@ -630,6 +631,32 @@ body:has(.gigi-site) {
   font-weight: 700;
   font-size: 18px;
   line-height: 1.05;
+  transition: padding-left 300ms var(--ease-out);
+}
+
+/* Lively hover: a rose accent bar grows in on the left while the label
+   indents to meet it. Uses padding (not transform) so it never clashes
+   with the open-stagger animation above. */
+.gigi-menu-popover a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--gigi-rose);
+  transform: translateY(-50%);
+  transition: width 300ms var(--ease-out);
+}
+
+.gigi-menu-popover a:hover,
+.gigi-menu-popover a:focus-visible {
+  padding-left: 0.95rem;
+}
+
+.gigi-menu-popover a:hover::before,
+.gigi-menu-popover a:focus-visible::before {
+  width: 0.6rem;
 }
 
 .gigi-menu-actions + a {
