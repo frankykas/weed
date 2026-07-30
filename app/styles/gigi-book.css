@@ -143,10 +143,135 @@
   width: 100%;
   max-width: 100%;
   border: 0;
-  /* Khaki behind the frame so the loading state and any transparent edges
-     blend with the page. The opaque schedule background itself is set by
-     MindBody's own "Background" color (now #e9e1a3), inside the iframe. */
   background: var(--book-bg);
+}
+
+/* ---- Healcode class list -> GIGI-styled schedule + location toggle ---- */
+.gigi-book-live {
+  width: min(100%, 86rem);
+  margin: 0 auto;
+}
+
+/* Location CTA toggle (built in JS from the widget's locations). */
+.gigi-book-loc-cta {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: clamp(0.6rem, 1.4vw, 1rem);
+  margin: 0 0 clamp(1.4rem, 3vw, 2.4rem);
+  min-height: 2.4rem;
+}
+
+/* While a schedule loads/swaps, collapse the widget (visibility keeps its own
+   list + links laid out so our programmatic clicks still register) and show a
+   loading note in its place. */
+.gigi-book-live.is-loading .gigi-book-widget {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+}
+
+.gigi-book-live.is-loading::after {
+  content: 'Loading schedule\2026';
+  display: block;
+  padding: clamp(3rem, 8vw, 6rem) 0;
+  text-align: center;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  color: var(--book-ink);
+  opacity: 0.55;
+}
+
+/* Location with no schedule yet (e.g. a studio that hasn't published classes). */
+.gigi-book-live.is-empty .gigi-book-widget {
+  display: none;
+}
+
+.gigi-book-live.is-empty::after {
+  content: 'No classes scheduled for this studio yet \2014 check back soon.';
+  display: block;
+  padding: clamp(3rem, 8vw, 6rem) 0;
+  text-align: center;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  color: var(--book-ink);
+  opacity: 0.6;
+}
+
+/* Drop the list thumbnail; our CTAs replace the list navigation. */
+.gigi-book-widget .healcode-image-area {
+  display: none !important;
+}
+
+/* Theme the injected schedule to the GIGI olive/brown palette. */
+.gigi-book-widget .healcode,
+.gigi-book-widget .class_list {
+  color: var(--book-ink);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+}
+
+.gigi-book-widget table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--book-bg);
+}
+
+.gigi-book-widget .hc_day,
+.gigi-book-widget .hc_header,
+.gigi-book-widget thead th {
+  background: var(--book-ink);
+  color: var(--book-bg);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.6rem 0.8rem;
+}
+
+.gigi-book-widget tr.hc_class {
+  border-bottom: 1px solid var(--book-line);
+}
+
+.gigi-book-widget tr.hc_class td {
+  padding: 0.9rem 0.8rem;
+  vertical-align: middle;
+  color: var(--book-ink);
+}
+
+.gigi-book-widget .hc_time,
+.gigi-book-widget .hc_starttime {
+  font-weight: 700;
+  color: var(--book-ink);
+}
+
+/* "Sign Up" / cart buttons -> brown pill CTAs. */
+.gigi-book-widget .hc-button,
+.gigi-book-widget .hc_cart_button,
+.gigi-book-widget .hc_cart_button a,
+.gigi-book-widget .signup_button,
+.gigi-book-widget a.hc-button {
+  display: inline-block;
+  border: 1px solid var(--book-ink);
+  border-radius: 999px;
+  background: var(--book-ink);
+  color: var(--book-bg) !important;
+  padding: 0.42rem 1.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.gigi-book-widget .hc-button:hover,
+.gigi-book-widget .hc_cart_button a:hover {
+  background: transparent;
+  color: var(--book-ink) !important;
+}
+
+.gigi-book-widget .hc_footer {
+  margin-top: 1.5rem;
+  opacity: 0.6;
 }
 
 .gigi-book-grid {

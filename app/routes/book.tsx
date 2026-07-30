@@ -54,29 +54,132 @@ export default function BookPage() {
 }
 
 /**
- * MindBody Healcode "class_lists" widget (b798508380b). Unlike the branded-web
- * Schedules embed, this one renders its markup inline (no iframe), loading its
- * styles/assets from *.mindbodyonline.com. Rendered once (memo, no props) so
- * React never reconciles the nodes the loader script injects into it.
+ * MindBody Healcode "class_lists" widget (b798508380b). It renders inline (no
+ * iframe): a short list of locations, each with a "View Schedule" link that
+ * loads that location's real weekly schedule inline.
+ *
+ * We drive it into the GIGI design: build our own location CTA toggle, load
+ * the first location's schedule by default, and swap schedules when another
+ * CTA is clicked (by driving the widget's own list/back-to-list links).
+ * Rendered once (memo, no props) so React never reconciles the injected nodes.
  */
 const MindbodyWidget = memo(function MindbodyWidget() {
-  const hostRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    const ctaBar = document.createElement('div');
+    ctaBar.className = 'gigi-book-loc-cta';
+    const host = document.createElement('div');
+    host.className = 'gigi-book-widget';
     host.innerHTML =
       '<healcode-widget data-type="class_lists" data-widget-partner="object" data-widget-id="b798508380b" data-widget-version="0"></healcode-widget>';
+    root.append(ctaBar, host);
+
     const SRC = 'https://widgets.mindbodyonline.com/javascripts/healcode.js';
     if (!document.querySelector(`script[src="${SRC}"]`)) {
-      const script = document.createElement('script');
-      script.src = SRC;
-      script.async = true;
-      document.body.appendChild(script);
+      const s = document.createElement('script');
+      s.src = SRC;
+      s.async = true;
+      document.body.appendChild(s);
     }
+
+    const shortName = (n: string) =>
+      (n.split(/\s[-–—]\s/).pop() || n).trim();
+    const listLink = (id: string) =>
+      host.querySelector<HTMLAnchorElement>(
+        `.class_offered_link a[data-class-id="${id}"]`,
+      );
+    const backLink = () =>
+      Array.from(host.querySelectorAll<HTMLAnchorElement>('a')).find((a) =>
+        /back to list/i.test(a.textContent || ''),
+      );
+    const readLocations = () =>
+      Array.from(host.querySelectorAll('.class_show'))
+        .map((s) => ({
+          id:
+            s
+              .querySelector('.class_offered_link a[data-class-id]')
+              ?.getAttribute('data-class-id') || '',
+          name: (s.querySelector('.class_name')?.textContent || '').trim(),
+        }))
+        .filter((l) => l.id);
+
+    const poll = (fn: () => boolean, tries = 90) => {
+      if (fn() || tries <= 0) return;
+      window.setTimeout(() => poll(fn, tries - 1), 150);
+    };
+
+    // The selected location is driven by ?loc — clicking a CTA reloads with a
+    // new ?loc, so each location is a clean single "View Schedule" click (the
+    // one interaction the widget performs reliably) rather than an in-place
+    // back-and-forth (which the widget doesn't re-trigger cleanly).
+    const wantId = new URLSearchParams(window.location.search).get('loc') || '';
+    let current = '';
+
+    const renderCtas = (locs: {id: string; name: string}[]) => {
+      ctaBar.textContent = '';
+      locs.forEach((loc) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = shortName(loc.name);
+        b.className =
+          'gigi-book-location' + (loc.id === current ? ' is-active' : '');
+        b.addEventListener('click', () => {
+          if (loc.id === current) return;
+          const url = new URL(window.location.href);
+          url.searchParams.set('loc', loc.id);
+          window.location.assign(url.toString());
+        });
+        ctaBar.appendChild(b);
+      });
+    };
+
+    poll(() => {
+      const locs = readLocations();
+      if (!locs.length) return false;
+      current = locs.some((l) => l.id === wantId) ? wantId : locs[0].id;
+      renderCtas(locs);
+      root.classList.add('is-loading');
+      poll(() => {
+        const link = listLink(current);
+        if (link) {
+          link.click();
+          return true;
+        }
+        return false;
+      });
+      // If this studio has no schedule yet, stop loading and show a note
+      // instead of spinning forever.
+      window.setTimeout(() => {
+        if (!host.querySelector('.hc_class')) {
+          root.classList.remove('is-loading');
+          root.classList.add('is-empty');
+        }
+      }, 12000);
+      return true;
+    });
+
+    const obs = new MutationObserver(() => {
+      // Hide the widget's own "back to list" link — our CTAs drive locations.
+      const bl = backLink();
+      if (bl && bl.dataset.gigiHidden !== '1') {
+        bl.dataset.gigiHidden = '1';
+        bl.style.position = 'absolute';
+        bl.style.left = '-9999px';
+      }
+      if (host.querySelector('.hc_class')) root.classList.remove('is-loading');
+    });
+    obs.observe(host, {childList: true, subtree: true});
+    return () => {
+      obs.disconnect();
+      root.textContent = '';
+    };
   }, []);
 
-  return <div className="gigi-book-widget" ref={hostRef} />;
+  return <div className="gigi-book-live" ref={rootRef} />;
 });
 
 function GigiNav({
