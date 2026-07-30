@@ -39,6 +39,13 @@ export default async function handleRequest(
       'https://*.mindbodyonline.com',
       'https://*.mindbody.io',
     ],
+    styleSrc: ['https://*.mindbodyonline.com'],
+    fontSrc: [
+      "'self'",
+      'data:',
+      'https://cdn.shopify.com',
+      'https://*.mindbodyonline.com',
+    ],
     frameSrc: ["'self'", 'https://*.mindbodyonline.com', 'https://*.mindbody.io'],
     connectSrc: ['https://*.mindbodyonline.com', 'https://*.mindbody.io'],
   });

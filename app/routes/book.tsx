@@ -54,11 +54,10 @@ export default function BookPage() {
 }
 
 /**
- * MindBody "Schedules" widget. The schedule renders inside a cross-origin
- * iframe served from mindbodyonline.com, so the calendar's internal styling is
- * controlled from the MindBody dashboard (widget b758084380b) and can't be
- * restyled with our CSS. Rendered once (memo, no props) so React never
- * reconciles the iframe the loader script injects into it.
+ * MindBody Healcode "class_lists" widget (b798508380b). Unlike the branded-web
+ * Schedules embed, this one renders its markup inline (no iframe), loading its
+ * styles/assets from *.mindbodyonline.com. Rendered once (memo, no props) so
+ * React never reconciles the nodes the loader script injects into it.
  */
 const MindbodyWidget = memo(function MindbodyWidget() {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -67,8 +66,8 @@ const MindbodyWidget = memo(function MindbodyWidget() {
     const host = hostRef.current;
     if (!host) return;
     host.innerHTML =
-      '<div class="mindbody-widget" data-widget-type="Schedules" data-widget-id="b758084380b"></div>';
-    const SRC = 'https://brandedweb.mindbodyonline.com/embed/widget.js';
+      '<healcode-widget data-type="class_lists" data-widget-partner="object" data-widget-id="b798508380b" data-widget-version="0"></healcode-widget>';
+    const SRC = 'https://widgets.mindbodyonline.com/javascripts/healcode.js';
     if (!document.querySelector(`script[src="${SRC}"]`)) {
       const script = document.createElement('script');
       script.src = SRC;
