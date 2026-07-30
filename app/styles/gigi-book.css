@@ -121,6 +121,29 @@
   overflow-x: auto;
 }
 
+/* ---------------------- MINDBODY WIDGET ------------------------- *
+ * The schedule renders inside a cross-origin iframe from
+ * mindbodyonline.com. Its internal calendar styling is controlled in the
+ * MindBody dashboard (widget b758084380b) — same-origin policy stops us
+ * from restyling it here. We only style the frame around it. */
+.gigi-book-widget-wrap {
+  width: min(100%, 86rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(4rem, 8vw, 7rem);
+}
+
+.gigi-book-widget {
+  width: 100%;
+}
+
+.gigi-book-widget .mindbody-widget,
+.gigi-book-widget iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+}
+
 .gigi-book-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(6.4rem, 1fr));

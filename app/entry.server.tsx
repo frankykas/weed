@@ -19,6 +19,28 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    // MindBody booking widget renders a cross-origin iframe from
+    // mindbodyonline.com. Only frame-src (the iframe) and connect-src (the
+    // loader's config fetch) concern our page; everything else lives inside
+    // the iframe under MindBody's own CSP. frame-src has no default here, so
+    // include 'self' to preserve same-origin frames.
+    scriptSrc: [
+      "'self'",
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+      'https://*.mindbodyonline.com',
+      'https://*.mindbody.io',
+    ],
+    imgSrc: [
+      "'self'",
+      'data:',
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+      'https://*.mindbodyonline.com',
+      'https://*.mindbody.io',
+    ],
+    frameSrc: ["'self'", 'https://*.mindbodyonline.com', 'https://*.mindbody.io'],
+    connectSrc: ['https://*.mindbodyonline.com', 'https://*.mindbody.io'],
   });
 
   const body = await renderToReadableStream(

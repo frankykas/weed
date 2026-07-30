@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {memo, useEffect, useRef, useState} from 'react';
 import type {Route} from './+types/book';
 import bookStyles from '~/styles/gigi-book.css?url';
 
@@ -18,32 +18,8 @@ export const meta: Route.MetaFunction = () => {
 
 const img = (name: string) => `/gigi/${name}`;
 
-const LOCATIONS = [
-  {id: 'midriff', label: 'Midriff'},
-  {id: 'nad-al-sheba', label: 'Nad Al Sheba'},
-] as const;
-
-const DAYS = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
-
-const ROWS = 4;
-// Which cell shows as fully booked (row index, day index). Placeholder until the
-// booking platform feeds real availability.
-const FULL_CELL = {row: 1, day: 4};
-
 export default function BookPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [location, setLocation] = useState<(typeof LOCATIONS)[number]['id']>(
-    'midriff',
-  );
-  const [selected, setSelected] = useState<string | null>(null);
 
   return (
     <div className="gigi-site gigi-book-page">
@@ -67,69 +43,8 @@ export default function BookPage() {
 
         <h1 className="gigi-book-title">Book Now</h1>
 
-        <div className="gigi-book-locations" role="group" aria-label="Studio">
-          {LOCATIONS.map((loc) => (
-            <button
-              key={loc.id}
-              type="button"
-              className={`gigi-book-location ${
-                location === loc.id ? 'is-active' : ''
-              }`}
-              aria-pressed={location === loc.id}
-              onClick={() => setLocation(loc.id)}
-            >
-              {loc.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="gigi-book-grid-wrap">
-          <div className="gigi-book-grid" role="grid" aria-label="Weekly schedule">
-            {DAYS.map((day) => (
-              <div className="gigi-book-day" role="columnheader" key={day}>
-                {day}
-              </div>
-            ))}
-
-            {Array.from({length: ROWS}).flatMap((_, row) =>
-              DAYS.map((day, col) => {
-                const key = `${location}-${row}-${col}`;
-                const isFull = row === FULL_CELL.row && col === FULL_CELL.day;
-
-                if (isFull) {
-                  return (
-                    <div
-                      className="gigi-book-slot is-full"
-                      role="gridcell"
-                      key={key}
-                    >
-                      <img src={img('gigi-mark-rose.png')} alt="" aria-hidden="true" />
-                      <em>Class Full</em>
-                    </div>
-                  );
-                }
-
-                return (
-                  <button
-                    className={`gigi-book-slot ${
-                      selected === key ? 'is-selected' : ''
-                    }`}
-                    type="button"
-                    role="gridcell"
-                    aria-pressed={selected === key}
-                    key={key}
-                    onClick={() =>
-                      setSelected((current) => (current === key ? null : key))
-                    }
-                  >
-                    <strong>Lagree Mega Pro</strong>
-                    <em>Samantha</em>
-                    <span>7:00 AM</span>
-                  </button>
-                );
-              }),
-            )}
-          </div>
+        <div className="gigi-book-widget-wrap">
+          <MindbodyWidget />
         </div>
       </section>
 
@@ -137,6 +52,33 @@ export default function BookPage() {
     </div>
   );
 }
+
+/**
+ * MindBody "Schedules" widget. The schedule renders inside a cross-origin
+ * iframe served from mindbodyonline.com, so the calendar's internal styling is
+ * controlled from the MindBody dashboard (widget b758084380b) and can't be
+ * restyled with our CSS. Rendered once (memo, no props) so React never
+ * reconciles the iframe the loader script injects into it.
+ */
+const MindbodyWidget = memo(function MindbodyWidget() {
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    host.innerHTML =
+      '<div class="mindbody-widget" data-widget-type="Schedules" data-widget-id="b758084380b"></div>';
+    const SRC = 'https://brandedweb.mindbodyonline.com/embed/widget.js';
+    if (!document.querySelector(`script[src="${SRC}"]`)) {
+      const script = document.createElement('script');
+      script.src = SRC;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  return <div className="gigi-book-widget" ref={hostRef} />;
+});
 
 function GigiNav({
   isOpen,
