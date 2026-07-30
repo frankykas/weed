@@ -72,10 +72,10 @@ export default function Homepage() {
           <Tile image="mosaic-1.webp" />
           <Tile label="Our Story" tone="olive" to="/about" />
           <Tile image="mosaic-2.webp" />
-          <Tile label="Shop Now" tone="rose" />
+          <Tile label="Shop Now" tone="rose" to="/shop" />
           <Tile label="Book Now" tone="burgundy" to="/book" />
           <Tile image="mosaic-3.webp" />
-          <Tile label="Collaborate with GIGI" tone="cream" />
+          <Tile label="Collaborate with GIGI" tone="cream" to="/collab" />
           <Tile image="mosaic-4.webp" />
         </div>
         <div className="gigi-welcome">
