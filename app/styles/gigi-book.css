@@ -134,6 +134,7 @@
 
 .gigi-book-widget {
   width: 100%;
+  background: var(--book-bg);
 }
 
 .gigi-book-widget .mindbody-widget,
@@ -142,6 +143,10 @@
   width: 100%;
   max-width: 100%;
   border: 0;
+  /* Khaki behind the frame so the loading state and any transparent edges
+     blend with the page. The opaque schedule background itself is set by
+     MindBody's own "Background" color (now #e9e1a3), inside the iframe. */
+  background: var(--book-bg);
 }
 
 .gigi-book-grid {
