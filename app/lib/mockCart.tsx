@@ -27,6 +27,11 @@ export interface CartLine {
   quantity: number;
 }
 
+type CartProductInput = Pick<
+  MockProduct,
+  'handle' | 'title' | 'subtitle' | 'strain' | 'image' | 'price' | 'weights'
+>;
+
 interface CartContextValue {
   lines: CartLine[];
   totalQuantity: number;
@@ -35,7 +40,7 @@ interface CartContextValue {
   lastAddedId: string | null;
   hydrated: boolean;
   addLine: (
-    product: MockProduct,
+    product: CartProductInput,
     weightLabel?: string,
     qty?: number,
   ) => void;
@@ -103,7 +108,7 @@ export function CartProvider({children}: {children: ReactNode}) {
   }, [isOpen]);
 
   const addLine = useCallback(
-    (product: MockProduct, weightLabel?: string, qty = 1) => {
+    (product: CartProductInput, weightLabel?: string, qty = 1) => {
       const weight = weightLabel ?? product.weights[0]?.label ?? 'default';
       const weightOption = product.weights.find((w) => w.label === weight);
       const unitPrice = weightOption?.price ?? product.price;

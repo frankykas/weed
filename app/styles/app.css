@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 @import 'tailwindcss';
 
 /* ============================================================
@@ -147,7 +146,7 @@ html:has(.overlay.expanded) {
   overflow: hidden;
 }
 
-aside {
+.overlay aside {
   @apply bg-surface fixed top-0;
   box-shadow: var(--shadow-overlay);
   height: 100dvh;
@@ -156,29 +155,29 @@ aside {
   transition: transform 300ms var(--ease-out);
 }
 
-aside header {
+.overlay aside header {
   @apply flex items-center justify-between;
   height: var(--header-height);
   padding: 0 var(--spacing-block);
 }
 
-aside header h3 {
+.overlay aside header h3 {
   @apply text-base font-bold tracking-tight;
   margin: 0;
 }
 
-aside header .close {
+.overlay aside header .close {
   @apply size-8 flex items-center justify-center rounded-full bg-surface-sunken text-secondary;
   @apply transition-colors duration-150;
   font-size: 1.25rem;
   line-height: 1;
 }
 
-aside header .close:hover {
+.overlay aside header .close:hover {
   @apply text-primary bg-border-light;
 }
 
-aside main {
+.overlay aside main {
   padding: var(--spacing-block);
   overflow-y: auto;
   height: calc(100dvh - var(--header-height));
@@ -193,6 +192,10 @@ aside main {
   pointer-events: none;
   visibility: hidden;
   transition: opacity 300ms var(--ease-in-out);
+}
+
+.overlay:not(.expanded) {
+  display: none;
 }
 
 .overlay .close-outside {
@@ -465,7 +468,7 @@ body:has(.gigi-site) {
   color: var(--gigi-burgundy);
   background:
     linear-gradient(rgba(229, 225, 210, 0.76), rgba(229, 225, 210, 0.76)),
-    url('/gigi/pdf-image-02-25.jpg') center top / cover fixed;
+    url('/gigi/pdf-image-02-25.webp') center top / cover fixed;
   font-family: Arial, Helvetica, sans-serif;
   scroll-behavior: smooth;
 }
@@ -665,7 +668,7 @@ body:has(.gigi-site) {
 
 .gigi-menu-popover small {
   display: block;
-  max-width: 4.7rem;
+  max-width: 9.8rem;
   margin-top: 5px;
   font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
   font-size: 10px;
@@ -708,10 +711,52 @@ body:has(.gigi-site) {
   }
 }
 
+/* "Get Started" sub-links (Classes / Packages / Book Now). Kept out of the
+   parent anchor so Book Now can point to /book. */
+.gigi-menu-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem 0.6rem;
+  margin: 4px 0 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gigi-line);
+  opacity: 0;
+}
+
+.gigi-menu-popover.is-open .gigi-menu-sub {
+  animation: gigi-menu-in 500ms var(--ease-out) both 250ms;
+}
+
+.gigi-menu-sub a {
+  border: 0;
+  padding: 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--gigi-burgundy);
+  transition: opacity 180ms var(--ease-out);
+}
+
+.gigi-menu-sub a::before {
+  content: none;
+}
+
+.gigi-menu-sub a:hover,
+.gigi-menu-sub a:focus-visible {
+  padding-left: 0;
+  text-decoration: underline;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gigi-menu-popover > a {
     opacity: 1;
     transform: none;
+    animation: none;
+  }
+
+  .gigi-menu-sub {
+    opacity: 1;
     animation: none;
   }
 }
@@ -1121,6 +1166,17 @@ body:has(.gigi-site) {
   min-height: 2rem;
   font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
+  transition:
+    background-color 180ms var(--ease-out),
+    color 180ms var(--ease-out),
+    border-color 180ms var(--ease-out);
+}
+
+.gigi-footer button:hover,
+.gigi-footer button:focus-visible {
+  background: var(--gigi-cream);
+  color: var(--gigi-burgundy);
+  border-color: var(--gigi-cream);
 }
 
 .gigi-newsletter {
@@ -1136,11 +1192,15 @@ body:has(.gigi-site) {
   width: min(25rem, 70vw);
   border: 0;
   border-radius: 999px;
-  background: var(--gigi-cream);
-  color: var(--gigi-burgundy);
+  background: #5a1f26;
+  color: var(--gigi-cream);
   text-align: center;
   padding: 0.56rem 1rem;
   font-size: 1rem;
+}
+
+.gigi-footer input::placeholder {
+  color: rgba(245, 237, 207, 0.72);
 }
 
 .gigi-newsletter button {
@@ -1149,6 +1209,17 @@ body:has(.gigi-site) {
   margin-left: 0;
   font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
+  transition:
+    background-color 180ms var(--ease-out),
+    color 180ms var(--ease-out),
+    border-color 180ms var(--ease-out);
+}
+
+.gigi-site .gigi-footer button:hover,
+.gigi-site .gigi-footer button:focus-visible {
+  background: var(--gigi-cream);
+  color: var(--gigi-burgundy);
+  border-color: var(--gigi-cream);
 }
 
 .gigi-footer small {
@@ -1306,7 +1377,7 @@ body:has(.gigi-site) {
 .gigi-packages {
   background:
     linear-gradient(rgba(75, 15, 32, 0.2), rgba(75, 15, 32, 0.2)),
-    url('/gigi/pdf-image-02-25.jpg') center / cover;
+    url('/gigi/pdf-image-02-25.webp') center / cover;
 }
 
 .gigi-title-on-image {
@@ -1689,7 +1760,7 @@ body:has(.gigi-site) {
   padding: 9rem 0;
   background:
     linear-gradient(rgba(230, 226, 213, 0.42), rgba(230, 226, 213, 0.42)),
-    url('/gigi/pdf-image-02-30.jpg') center / cover;
+    url('/gigi/pdf-image-02-30.webp') center / cover;
 }
 
 .gigi-contact .gigi-footer {

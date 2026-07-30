@@ -14,6 +14,10 @@ export const meta: Route.MetaFunction = () => {
 
 const img = (name: string) => `/gigi/${name}`;
 
+export function links() {
+  return [{rel: 'preload', href: img('tag.webp'), as: 'image'}];
+}
+
 export default function Homepage() {
   const heroRef = useRef<HTMLElement>(null);
   const tagRef = useRef<HTMLDivElement>(null);
@@ -56,18 +60,23 @@ export default function Homepage() {
             Menu
           </button>
           <div className="gigi-tag" ref={tagRef}>
-            <img src={img('tag.png')} alt="GIGI hanging tag" />
+            <img
+              src={img('tag.webp')}
+              alt="GIGI hanging tag"
+              fetchPriority="high"
+              decoding="async"
+            />
           </div>
         </div>
         <div className="gigi-mosaic">
-          <Tile image="mosaic-1.jpg" />
+          <Tile image="mosaic-1.webp" />
           <Tile label="Our Story" tone="olive" to="/about" />
-          <Tile image="mosaic-2.jpg" />
+          <Tile image="mosaic-2.webp" />
           <Tile label="Shop Now" tone="rose" />
-          <Tile label="Book Now" tone="burgundy" />
-          <Tile image="mosaic-3.jpg" />
+          <Tile label="Book Now" tone="burgundy" to="/book" />
+          <Tile image="mosaic-3.webp" />
           <Tile label="Collaborate with GIGI" tone="cream" />
-          <Tile image="mosaic-4.jpg" />
+          <Tile image="mosaic-4.webp" />
         </div>
         <div className="gigi-welcome">
           <div className="gigi-welcome__heading">
@@ -98,7 +107,12 @@ export default function Homepage() {
           </div>
         </div>
         <div className="gigi-location__image">
-          <img src={img('location-studio.jpg')} alt="Lagree studio" />
+          <img
+            src={img('location-studio.webp')}
+            alt="Lagree studio"
+            loading="lazy"
+            decoding="async"
+          />
           <h2>Where movement, wellness, and community come together.</h2>
         </div>
         <GigiFooter compact />
@@ -140,7 +154,12 @@ function GigiNav({
       </div>
       <a href="#home" onClick={onClose}>Home</a>
       <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started <small>Classes Packages Book Now</small></a>
+      <a href="/packages" onClick={onClose}>Get Started</a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>Classes</a>
+        <a href="/packages" onClick={onClose}>Packages</a>
+        <a href="/book" onClick={onClose}>Book Now</a>
+      </span>
       <a href="/shop" onClick={onClose}>Shop</a>
       <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
       <a href="#contact" onClick={onClose}>Stay in Touch</a>
@@ -198,8 +217,8 @@ function Tile({
   to?: string;
 }) {
   return (
-    <a className={`gigi-tile ${tone ? `gigi-tile--${tone}` : ''}`} href={to ?? (label === 'Book Now' ? '#book' : '#')}>
-      {image && <img src={img(image)} alt="" />}
+    <a className={`gigi-tile ${tone ? `gigi-tile--${tone}` : ''}`} href={to ?? '#'}>
+      {image && <img src={img(image)} alt="" loading="lazy" decoding="async" />}
       {label && <span>{label}</span>}
       {label && (
         <small>

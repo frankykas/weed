@@ -1,5 +1,5 @@
 import {Link, NavLink} from 'react-router';
-import {useId} from 'react';
+import {useEffect, useId, useState} from 'react';
 import type {
   CartApiQueryFragment,
   FooterQuery,
@@ -33,12 +33,23 @@ export function PageLayout({
   isLoggedIn,
   publicStoreDomain,
 }: PageLayoutProps) {
+  // The cart drawer + overlays are position:fixed and invisible until opened,
+  // so render them only after hydration. This keeps them out of the
+  // server-rendered first paint, avoiding an unstyled "Your Bag" flash before
+  // the stylesheet applies (most visible under the Vite dev server).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
     <Aside.Provider>
-      <CartDrawer />
-      <QuickViewModal />
-      <SearchAside />
-      <MobileMenuAside />
+      {mounted && (
+        <>
+          <CartDrawer />
+          <QuickViewModal />
+          <SearchAside />
+          <MobileMenuAside />
+        </>
+      )}
       {header && (
         <Header
           header={header}

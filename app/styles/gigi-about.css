@@ -44,6 +44,22 @@
   border-color: rgba(90, 31, 38, 0.5);
 }
 
+.gigi-about-page .gigi-footer input {
+  background: #5a1f26;
+  color: var(--gigi-cream);
+}
+
+.gigi-about-page .gigi-footer input::placeholder {
+  color: rgba(245, 237, 207, 0.7);
+}
+
+.gigi-about-page .gigi-footer button:hover,
+.gigi-about-page .gigi-footer button:focus-visible {
+  background: #5a1f26;
+  color: #f5edcf;
+  border-color: #5a1f26;
+}
+
 /* Swap the cream G for a deep-plum recolor of the same mark. */
 .gigi-about-page .gigi-footer-mark {
   content: url('/gigi/g-footer-plum.png');
@@ -760,6 +776,90 @@
 }
 
 @media (max-width: 760px) {
+  .gigi-site.gigi-about-page .gigi-about-hero {
+    height: auto;
+    min-height: 100svh;
+    display: block;
+    overflow: visible;
+    padding: clamp(1.15rem, 5vw, 1.6rem) clamp(1.15rem, 5vw, 1.45rem)
+      clamp(2.8rem, 9vw, 4rem);
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: clamp(2.4rem, 10vw, 3.8rem);
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-logo {
+    position: static;
+    width: clamp(7rem, 34vw, 8.25rem);
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-menu {
+    position: static;
+    min-width: 5.5rem;
+    padding: 0.48rem 1.1rem;
+    font-size: 0.68rem;
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-content {
+    position: relative;
+    inset: auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.45rem, 6vw, 2.2rem);
+    padding: 0;
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-image-wrap {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(100%, 22rem);
+    justify-self: center;
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-image {
+    aspect-ratio: 0.86;
+    object-position: center;
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-copy {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(100%, 34rem);
+    justify-self: center;
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-copy h1 {
+    margin-bottom: 0.85rem;
+    font-size: clamp(3.2rem, 15vw, 4.65rem);
+    line-height: 0.92;
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-copy p {
+    max-width: 100%;
+    font-size: clamp(0.86rem, 3.7vw, 0.98rem);
+    line-height: 1.22;
+  }
+
+  .gigi-site.gigi-about-page .gigi-about-wordmark {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    z-index: 1;
+    width: min(100%, 20rem);
+    justify-self: center;
+    margin-top: 0.4rem;
+  }
+
   .gigi-site.gigi-about-page .gigi-founder-section {
     grid-template-columns: 1fr;
   }

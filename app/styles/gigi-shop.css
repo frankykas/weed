@@ -166,7 +166,7 @@
   /* Placeholder background image (GIGI merch) tinted to a cohesive burgundy via
      a multiply blend, so the frame reads on-brand behind the wordmark. */
   background-color: #4d1727;
-  background-image: url('/gigi/mosaic-1.jpg');
+  background-image: url('/gigi/mosaic-1.webp');
   background-size: cover;
   background-position: center 38%;
   background-repeat: no-repeat;

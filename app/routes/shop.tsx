@@ -2,7 +2,12 @@ import {useState} from 'react';
 import {Link} from 'react-router';
 import type {Route} from './+types/shop';
 import shopStyles from '~/styles/gigi-shop.css?url';
-import {GIGI_PRODUCTS, type GigiProduct} from '~/lib/gigiProducts';
+import {
+  GIGI_PRODUCTS,
+  toGigiCartProduct,
+  type GigiProduct,
+} from '~/lib/gigiProducts';
+import {useCart} from '~/lib/mockCart';
 
 export function links() {
   return [{rel: 'stylesheet', href: shopStyles}];
@@ -29,7 +34,7 @@ const FILTERS = [
 export default function ShopPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]['id']>('all');
-  const cartCount = 1;
+  const {totalQuantity} = useCart();
 
   const showClothing = filter === 'all' || filter === 'clothing';
   const showAccessories = filter === 'all' || filter === 'accessories';
@@ -45,9 +50,9 @@ export default function ShopPage() {
           <img src={img('gigi-logo-burgundy.png')} alt="GIGI" />
         </a>
         <div className="gigi-shop-header__actions">
-          <a className="gigi-shop-bag" href="/cart" aria-label={`Cart, ${cartCount} items`}>
+          <a className="gigi-shop-bag" href="/cart" aria-label={`Cart, ${totalQuantity} items`}>
             <BagIcon />
-            {cartCount > 0 && <span className="gigi-shop-bag__count">{cartCount}</span>}
+            {totalQuantity > 0 && <span className="gigi-shop-bag__count">{totalQuantity}</span>}
           </a>
           <button
             className="gigi-shop-menu"
@@ -93,10 +98,20 @@ export default function ShopPage() {
       {showLifestyle && (
         <section className="gigi-shop-lifestyle" aria-label="The collection">
           <figure>
-            <img src={img('mosaic-2.jpg')} alt="GIGI tote — sorre is the new rich" />
+            <img
+              src={img('mosaic-2.webp')}
+              alt="GIGI tote — sorre is the new rich"
+              loading="lazy"
+              decoding="async"
+            />
           </figure>
           <figure>
-            <img src={img('mosaic-3.jpg')} alt="Wearing GIGI" />
+            <img
+              src={img('mosaic-3.webp')}
+              alt="Wearing GIGI"
+              loading="lazy"
+              decoding="async"
+            />
           </figure>
         </section>
       )}
@@ -120,6 +135,8 @@ function ProductSection({
   title: string;
   products: GigiProduct[];
 }) {
+  const {addLine} = useCart();
+
   return (
     <section className="gigi-shop-section">
       <h2 className="gigi-shop-section__title">{title}</h2>
@@ -132,7 +149,12 @@ function ProductSection({
               className="gigi-shop-card__img"
               aria-label={product.name}
             >
-              <img src={img(product.image)} alt={product.name} loading="lazy" />
+            <img
+              src={img(product.image)}
+              alt={product.name}
+              loading="lazy"
+              decoding="async"
+            />
             </Link>
             <div className="gigi-shop-card__meta">
               <Link to={`/products/${product.handle}`} className="gigi-shop-card__name">
@@ -140,13 +162,23 @@ function ProductSection({
               </Link>
               <span className="gigi-shop-card__price">{product.price}</span>
             </div>
-            <Link
-              to={`/products/${product.handle}`}
-              prefetch="intent"
+            <button
+              type="button"
               className="gigi-shop-card__cart"
+              onClick={() => {
+                const optionLabel = [
+                  product.sizes[0],
+                  product.colors[0]?.name,
+                ].filter(Boolean).join(' / ');
+                addLine(
+                  toGigiCartProduct(product, optionLabel),
+                  optionLabel,
+                  1,
+                );
+              }}
             >
               Add to cart
-            </Link>
+            </button>
           </article>
         ))}
       </div>
@@ -186,7 +218,12 @@ function GigiNav({
       </div>
       <a href="/" onClick={onClose}>Home</a>
       <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started <small>Classes Packages Book Now</small></a>
+      <a href="/packages" onClick={onClose}>Get Started</a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>Classes</a>
+        <a href="/packages" onClick={onClose}>Packages</a>
+        <a href="/book" onClick={onClose}>Book Now</a>
+      </span>
       <a href="/shop" onClick={onClose}>Shop</a>
       <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
       <a href="/#contact" onClick={onClose}>Stay in Touch</a>

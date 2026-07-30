@@ -6,8 +6,10 @@ import {
   GIGI_PRODUCTS,
   getGigiProduct,
   getRelatedGigiProducts,
+  toGigiCartProduct,
   type GigiProduct,
 } from '~/lib/gigiProducts';
+import {useCart} from '~/lib/mockCart';
 
 export function links() {
   return [{rel: 'stylesheet', href: productStyles}];
@@ -40,9 +42,9 @@ const ACCORDIONS = [
 
 export default function Product() {
   const {product, related} = useLoaderData<typeof loader>();
+  const {addLine, totalQuantity} = useCart();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(1);
   const [colorIndex, setColorIndex] = useState(0);
   const [size, setSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
@@ -58,7 +60,15 @@ export default function Product() {
     setRailIndex(0);
   }, [product.handle, product.sizes]);
 
-  const addToCart = (qty = 1) => setCartCount((count) => count + qty);
+  const addToCart = (item: GigiProduct, qty = 1) => {
+    const selectedSize = item.handle === product.handle ? size : item.sizes[0];
+    const selectedColor =
+      item.handle === product.handle
+        ? item.colors[colorIndex]?.name
+        : item.colors[0]?.name;
+    const optionLabel = [selectedSize, selectedColor].filter(Boolean).join(' / ');
+    addLine(toGigiCartProduct(item, optionLabel), optionLabel, qty);
+  };
 
   const visibleRelated = [0, 1, 2].map(
     (offset) => related[(railIndex + offset) % related.length],
@@ -73,9 +83,9 @@ export default function Product() {
           <img src={img('gigi-logo-burgundy.png')} alt="GIGI" />
         </a>
         <div className="gigi-pd-header__actions">
-          <a className="gigi-pd-bag" href="/cart" aria-label={`Cart, ${cartCount} items`}>
+          <a className="gigi-pd-bag" href="/cart" aria-label={`Cart, ${totalQuantity} items`}>
             <BagIcon />
-            {cartCount > 0 && <span className="gigi-pd-bag__count">{cartCount}</span>}
+            {totalQuantity > 0 && <span className="gigi-pd-bag__count">{totalQuantity}</span>}
           </a>
           <button
             className="gigi-pd-menu"
@@ -164,7 +174,7 @@ export default function Product() {
               <button
                 className="gigi-pd-add"
                 type="button"
-                onClick={() => addToCart(quantity)}
+                onClick={() => addToCart(product, quantity)}
               >
                 Add to Cart
               </button>
@@ -219,7 +229,7 @@ export default function Product() {
                 <RelatedCard
                   key={`${item.handle}-${railIndex}`}
                   product={item}
-                  onAdd={() => addToCart(1)}
+                  onAdd={() => addToCart(item, 1)}
                 />
               ))}
             </div>
@@ -304,7 +314,12 @@ function GigiNav({
       </div>
       <a href="/" onClick={onClose}>Home</a>
       <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started <small>Classes Packages Book Now</small></a>
+      <a href="/packages" onClick={onClose}>Get Started</a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>Classes</a>
+        <a href="/packages" onClick={onClose}>Packages</a>
+        <a href="/book" onClick={onClose}>Book Now</a>
+      </span>
       <a href="/shop" onClick={onClose}>Shop</a>
       <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
       <a href="/#contact" onClick={onClose}>Stay in Touch</a>

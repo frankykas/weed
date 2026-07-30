@@ -179,6 +179,20 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        {/* Critical anti-flash styles. These live in the server-rendered HTML,
+            so they apply on the very first paint — before the main stylesheet
+            loads (notably under the Vite dev server, which injects CSS via JS).
+            Keeps the default shop chrome hidden and the GIGI hero logos at a
+            sane size instead of flashing at their natural resolution. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              'body:has(.gigi-site) .header,body:has(.gigi-site) .footer{display:none}' +
+              '.overlay:not(.expanded){opacity:0;visibility:hidden;pointer-events:none}' +
+              '.gigi-logo,.gigi-cl-logo,.gigi-pk-logo,.gigi-about-logo,.gigi-book-logo,.gigi-pd-logo,.gigi-pf-logo,.gigi-shop-logo{display:block;width:clamp(7rem,11vw,12rem)}' +
+              '.gigi-logo img,.gigi-cl-logo img,.gigi-pk-logo img,.gigi-about-logo img,.gigi-book-logo img,.gigi-pd-logo img,.gigi-pf-logo img,.gigi-shop-logo img{width:100%;height:auto}',
+          }}
+        />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <Meta />

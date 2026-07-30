@@ -20,6 +20,18 @@ export type GigiProduct = {
   sizeFit: string;
 };
 
+export type GigiCartProduct = {
+  id: string;
+  handle: string;
+  title: string;
+  subtitle: string;
+  category: string;
+  strain: 'Hybrid';
+  price: string;
+  image: string;
+  weights: {label: string; price: string}[];
+};
+
 const BURGUNDY = {name: 'Burgundy', hex: '#4d1727'};
 const STONE = {name: 'Stone', hex: '#cfc7b3'};
 const BLACK = {name: 'Black', hex: '#221c1e'};
@@ -38,7 +50,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'Zipper hoodie in burgundy, with Gigi design stamped.',
     category: 'clothing',
-    image: 'mosaic-1.jpg',
+    image: 'mosaic-1.webp',
     colors: [BURGUNDY, STONE],
     sizes: APPAREL_SIZES,
     details:
@@ -53,7 +65,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'Quarter-zip pullover in black, with a tonal Gigi crest.',
     category: 'clothing',
-    image: 'mosaic-4.jpg',
+    image: 'mosaic-4.webp',
     colors: [BLACK, BURGUNDY],
     sizes: APPAREL_SIZES,
     details:
@@ -68,7 +80,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'Oversized hoodie in stone, cut for movement and rest.',
     category: 'clothing',
-    image: 'mosaic-1.jpg',
+    image: 'mosaic-1.webp',
     colors: [STONE, BURGUNDY],
     sizes: APPAREL_SIZES,
     details:
@@ -83,7 +95,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'Long sleeve tee in white with the Gigi monogram.',
     category: 'clothing',
-    image: 'mosaic-4.jpg',
+    image: 'mosaic-4.webp',
     colors: [WHITE, BURGUNDY],
     sizes: APPAREL_SIZES,
     details:
@@ -98,7 +110,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'The everyday tee in white with the Gigi wordmark.',
     category: 'clothing',
-    image: 'mosaic-3.jpg',
+    image: 'mosaic-3.webp',
     colors: [WHITE, BLACK],
     sizes: APPAREL_SIZES,
     details:
@@ -113,7 +125,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'Ribbed crew socks with a woven Gigi cuff.',
     category: 'accessories',
-    image: 'mosaic-3.jpg',
+    image: 'mosaic-3.webp',
     colors: [WHITE],
     sizes: ['S / M', 'L / XL'],
     details:
@@ -128,7 +140,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'Two-tone canvas tote with the Gigi monogram.',
     category: 'accessories',
-    image: 'mosaic-2.jpg',
+    image: 'mosaic-2.webp',
     colors: [BURGUNDY, CREAM],
     sizes: ['One Size'],
     details:
@@ -143,7 +155,7 @@ export const GIGI_PRODUCTS: GigiProduct[] = [
     price: '$60 USD',
     tagline: 'Natural canvas tote with a line-drawn Gigi motif.',
     category: 'accessories',
-    image: 'mosaic-2.jpg',
+    image: 'mosaic-2.webp',
     colors: [CREAM],
     sizes: ['One Size'],
     details:
@@ -160,4 +172,21 @@ export function getGigiProduct(handle: string): GigiProduct | undefined {
 
 export function getRelatedGigiProducts(handle: string, count = 6): GigiProduct[] {
   return GIGI_PRODUCTS.filter((p) => p.handle !== handle).slice(0, count);
+}
+
+export function toGigiCartProduct(
+  product: GigiProduct,
+  optionLabel = product.sizes[0] ?? 'One Size',
+): GigiCartProduct {
+  return {
+    id: `gigi-${product.handle}`,
+    handle: product.handle,
+    title: product.name,
+    subtitle: product.tagline,
+    category: product.category,
+    strain: 'Hybrid',
+    price: product.price,
+    image: `/gigi/${product.image}`,
+    weights: [{label: optionLabel, price: product.price}],
+  };
 }

@@ -176,7 +176,12 @@ export default function CollabPage() {
           </p>
         </div>
         <div className="gigi-cl-welcome__media">
-          <img src={img('mosaic-1.jpg')} alt="GIGI merch" />
+          <img
+            src={img('mosaic-1.webp')}
+            alt="GIGI merch"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </section>
 
@@ -378,7 +383,12 @@ function GigiNav({
       </div>
       <a href="/" onClick={onClose}>Home</a>
       <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started <small>Classes Packages Book Now</small></a>
+      <a href="/packages" onClick={onClose}>Get Started</a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>Classes</a>
+        <a href="/packages" onClick={onClose}>Packages</a>
+        <a href="/book" onClick={onClose}>Book Now</a>
+      </span>
       <a href="/shop" onClick={onClose}>Shop</a>
       <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
       <a href="/#contact" onClick={onClose}>Stay in Touch</a>

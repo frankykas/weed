@@ -3,7 +3,10 @@ import type {Route} from './+types/about';
 import aboutStyles from '~/styles/gigi-about.css?url';
 
 export function links() {
-  return [{rel: 'stylesheet', href: aboutStyles}];
+  return [
+    {rel: 'preload', href: img('about-image.webp'), as: 'image'},
+    {rel: 'stylesheet', href: aboutStyles},
+  ];
 }
 
 export const meta: Route.MetaFunction = () => {
@@ -52,15 +55,17 @@ export default function AboutPage() {
           <div className="gigi-about-image-wrap">
             <img
               className="gigi-about-image"
-              src={img('about-image.jpg')}
+              src={img('about-image.webp')}
               alt="GIGI Lagree studio detail"
+              fetchPriority="high"
+              decoding="async"
             />
           </div>
           <article className="gigi-about-copy">
             <h1>About Us</h1>
             <p>
               Gigi is a wellness and lifestyle brand redefining the way people
-              move, connect, and experience wellness. Dubai's first Emirati
+              move, connect, and experience wellness. Dubai&apos;s first Emirati
               founded Lagree club, Gigi was built on the belief that wellness
               extends beyond the studio, creating a community-driven space where
               movement, culture, and meaningful experiences come together. What
@@ -115,8 +120,10 @@ export default function AboutPage() {
         </article>
         <img
           className="gigi-founder-photo"
-          src={img('founder-ghaliya-converted.jpg')}
+          src={img('founder-ghaliya-converted.webp')}
           alt="Ghaliya Ahli"
+          loading="lazy"
+          decoding="async"
         />
       </section>
 
@@ -135,10 +142,13 @@ export default function AboutPage() {
           ref={trackRef}
           {...dragHandlers}
         >
-          {GIGI_VALUES.map((value, index) => (
+          {LOOPED_GIGI_VALUES.map((value) => (
             <article
-              className={`gigi-value-card ${index === activeValue ? 'is-active' : ''}`}
-              key={value.title}
+              className={`gigi-value-card ${
+                value.valueIndex === activeValue ? 'is-active' : ''
+              }`}
+              data-value-index={value.valueIndex}
+              key={value.loopKey}
             >
               <h3>{value.title}</h3>
               <p>{value.copy}</p>
@@ -169,6 +179,7 @@ function useValuesCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeValue, setActiveValue] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const cycleWidthRef = useRef(0);
   const drag = useRef({down: false, startX: 0, startScroll: 0, moved: false});
 
   const updateActive = () => {
@@ -180,27 +191,51 @@ function useValuesCarousel() {
     );
     let best = 0;
     let bestDist = Infinity;
-    cards.forEach((card, index) => {
+    cards.forEach((card) => {
       const cardCenter = card.offsetLeft + card.offsetWidth / 2;
       const distance = Math.abs(cardCenter - center);
       if (distance < bestDist) {
         bestDist = distance;
-        best = index;
+        best = Number(card.dataset.valueIndex ?? 0);
       }
     });
     setActiveValue(best);
   };
 
+  const normalizeScroll = () => {
+    const track = trackRef.current;
+    const cycleWidth = cycleWidthRef.current;
+    if (!track || !cycleWidth) return;
+
+    if (track.scrollLeft < cycleWidth * 0.25) {
+      track.scrollLeft += cycleWidth;
+    } else if (track.scrollLeft > cycleWidth * 1.75) {
+      track.scrollLeft -= cycleWidth;
+    }
+  };
+
   useEffect(() => {
-    updateActive();
     const track = trackRef.current;
     if (!track) return;
-    const onScroll = () => updateActive();
+    const positionAtMiddle = () => {
+      const cards = track.querySelectorAll<HTMLElement>('.gigi-value-card');
+      const firstMiddleCard = cards[GIGI_VALUES.length];
+      if (!firstMiddleCard) return;
+      cycleWidthRef.current = firstMiddleCard.offsetLeft - cards[0].offsetLeft;
+      track.scrollLeft = firstMiddleCard.offsetLeft;
+      updateActive();
+    };
+    const frame = window.requestAnimationFrame(positionAtMiddle);
+    const onScroll = () => {
+      normalizeScroll();
+      updateActive();
+    };
     track.addEventListener('scroll', onScroll, {passive: true});
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', positionAtMiddle);
     return () => {
+      window.cancelAnimationFrame(frame);
       track.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('resize', positionAtMiddle);
     };
   }, []);
 
@@ -271,6 +306,14 @@ const GIGI_VALUES = [
   },
 ];
 
+const LOOPED_GIGI_VALUES = Array.from({length: 3}, (_, cycle) =>
+  GIGI_VALUES.map((value, valueIndex) => ({
+    ...value,
+    valueIndex,
+    loopKey: `${cycle}-${value.title}`,
+  })),
+).flat();
+
 function GigiNav({
   isOpen,
   onClose,
@@ -303,7 +346,12 @@ function GigiNav({
       </div>
       <a href="/" onClick={onClose}>Home</a>
       <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started <small>Classes Packages Book Now</small></a>
+      <a href="/packages" onClick={onClose}>Get Started</a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>Classes</a>
+        <a href="/packages" onClick={onClose}>Packages</a>
+        <a href="/book" onClick={onClose}>Book Now</a>
+      </span>
       <a href="/shop" onClick={onClose}>Shop</a>
       <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
       <a href="/#contact" onClick={onClose}>Stay in Touch</a>

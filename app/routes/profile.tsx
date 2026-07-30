@@ -19,7 +19,7 @@ const img = (name: string) => `/gigi/${name}`;
 // account details once a store is connected.
 const PROFILE = {
   name: 'Ghaliya Ahli',
-  avatar: 'founder-ghaliya-converted.jpg',
+  avatar: 'founder-ghaliya-converted.webp',
   facts: [
     {value: 'Female', label: 'Gender'},
     {value: '30', label: 'Age'},
@@ -73,6 +73,7 @@ export default function ProfilePage() {
             className="gigi-pf-avatar"
             src={img(PROFILE.avatar)}
             alt={PROFILE.name}
+            decoding="async"
           />
           <h1 className="gigi-pf-name">{PROFILE.name}</h1>
           <dl className="gigi-pf-facts">
@@ -206,7 +207,12 @@ function GigiNav({
       </div>
       <a href="/" onClick={onClose}>Home</a>
       <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started <small>Classes Packages Book Now</small></a>
+      <a href="/packages" onClick={onClose}>Get Started</a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>Classes</a>
+        <a href="/packages" onClick={onClose}>Packages</a>
+        <a href="/book" onClick={onClose}>Book Now</a>
+      </span>
       <a href="/shop" onClick={onClose}>Shop</a>
       <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
       <a href="/#contact" onClick={onClose}>Stay in Touch</a>

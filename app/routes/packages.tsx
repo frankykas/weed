@@ -3,7 +3,10 @@ import type {Route} from './+types/packages';
 import packagesStyles from '~/styles/gigi-packages.css?url';
 
 export function links() {
-  return [{rel: 'stylesheet', href: packagesStyles}];
+  return [
+    {rel: 'preload', href: img('packages/packages-hero.webp'), as: 'image'},
+    {rel: 'stylesheet', href: packagesStyles},
+  ];
 }
 
 export const meta: Route.MetaFunction = () => {
@@ -24,12 +27,37 @@ export default function PackagesPage() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const reduceMotionRef = useRef(false);
 
   useEffect(() => {
-    reduceMotionRef.current = window.matchMedia(
+    const hero = heroRef.current;
+    const title = titleRef.current;
+    if (!hero || !title) return;
+
+    const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
-    ).matches;
+    );
+
+    const updateTitleParallax = () => {
+      if (reduceMotion.matches) {
+        title.style.transform = 'none';
+        title.style.opacity = '1';
+        return;
+      }
+
+      const rect = hero.getBoundingClientRect();
+      const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
+      title.style.transform = `translate3d(0, ${progress * 140}px, 0)`;
+      title.style.opacity = `${1 - progress * 0.18}`;
+    };
+
+    updateTitleParallax();
+    window.addEventListener('scroll', updateTitleParallax, {passive: true});
+    window.addEventListener('resize', updateTitleParallax);
+
+    return () => {
+      window.removeEventListener('scroll', updateTitleParallax);
+      window.removeEventListener('resize', updateTitleParallax);
+    };
   }, []);
 
   return (
@@ -39,21 +67,6 @@ export default function PackagesPage() {
       <section
         className="gigi-pk-hero"
         ref={heroRef}
-        onMouseMove={(e) => {
-          if (reduceMotionRef.current) return;
-          const hero = heroRef.current;
-          const title = titleRef.current;
-          if (!hero || !title) return;
-          const rect = hero.getBoundingClientRect();
-          const x = (e.clientX - rect.left) / rect.width - 0.5;
-          const y = (e.clientY - rect.top) / rect.height - 0.5;
-          title.style.transform = `translate3d(${x * 48}px, ${y * 30}px, 0)`;
-        }}
-        onMouseLeave={() => {
-          if (titleRef.current) {
-            titleRef.current.style.transform = 'translate3d(0, 0, 0)';
-          }
-        }}
       >
         <header className="gigi-pk-header">
           <a className="gigi-pk-logo" href="/" aria-label="GIGI home">
@@ -290,7 +303,12 @@ function GigiNav({
       </div>
       <a href="/" onClick={onClose}>Home</a>
       <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started <small>Classes Packages Book Now</small></a>
+      <a href="/packages" onClick={onClose}>Get Started</a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>Classes</a>
+        <a href="/packages" onClick={onClose}>Packages</a>
+        <a href="/book" onClick={onClose}>Book Now</a>
+      </span>
       <a href="/shop" onClick={onClose}>Shop</a>
       <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
       <a href="/#contact" onClick={onClose}>Stay in Touch</a>
