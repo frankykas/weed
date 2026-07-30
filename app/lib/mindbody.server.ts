@@ -101,7 +101,7 @@ export async function getBookingSchedule(
     locations: [],
     classes: [],
   };
-  if (!env.MINDBODY_API_KEY || !env.MINDBODY_SITE_ID) return empty;
+  if (!env?.MINDBODY_API_KEY || !env?.MINDBODY_SITE_ID) return empty;
 
   const sandbox = env.MINDBODY_SITE_ID === '-99';
   try {

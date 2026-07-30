@@ -20,9 +20,16 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function loader({context}: Route.LoaderArgs) {
-  const schedule = await getBookingSchedule(
-    context.env as unknown as MindbodyEnv,
-  );
+  // Dev (MiniOxygen) exposes vars on context.env; the Vercel Node runtime
+  // (mock-mode base handler) does not, so fall back to process.env there.
+  const ctxEnv = (context as unknown as {env?: MindbodyEnv}).env;
+  const procEnv =
+    typeof process !== 'undefined'
+      ? (process.env as unknown as MindbodyEnv)
+      : undefined;
+  const env: MindbodyEnv =
+    ctxEnv && ctxEnv.MINDBODY_API_KEY ? ctxEnv : procEnv ?? {};
+  const schedule = await getBookingSchedule(env);
   return {schedule};
 }
 
