@@ -79,6 +79,11 @@ app.all('*', async (c) => {
     PUBLIC_CUSTOMER_ACCOUNT_API_URL:
       process.env.PUBLIC_CUSTOMER_ACCOUNT_API_URL || '',
     SHOP_ID: process.env.SHOP_ID || '',
+    // MindBody Public API (booking schedule)
+    MINDBODY_API_KEY: process.env.MINDBODY_API_KEY || '',
+    MINDBODY_SITE_ID: process.env.MINDBODY_SITE_ID || '',
+    MINDBODY_USERNAME: process.env.MINDBODY_USERNAME || '',
+    MINDBODY_PASSWORD: process.env.MINDBODY_PASSWORD || '',
   } as unknown as Env;
 
   // No-op ExecutionContext — Node.js stays alive after the response

@@ -236,6 +236,68 @@
   opacity: 1;
 }
 
+/* ------------- CUSTOM API SCHEDULE (7 day columns) -------------- */
+.gigi-book-cal {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(6.4rem, 1fr));
+  border-top: 1px solid var(--book-line);
+  border-left: 1px solid var(--book-line);
+}
+
+.gigi-book-col {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--book-line);
+}
+
+.gigi-book-col .gigi-book-day {
+  border-bottom: 1px solid var(--book-line);
+}
+
+.gigi-book-col__slots {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.gigi-book-col__slots > * {
+  border-bottom: 1px solid var(--book-line);
+}
+
+.gigi-book-page .gigi-book-cal .gigi-book-slot {
+  min-height: clamp(4.8rem, 7vw, 6.2rem);
+  padding: 0.85rem 0.5rem;
+  text-decoration: none;
+}
+
+.gigi-book-page a.gigi-book-slot:hover {
+  background: rgba(95, 76, 31, 0.1);
+}
+
+.gigi-book-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(4.8rem, 7vw, 6.2rem);
+  color: rgba(95, 76, 31, 0.35);
+}
+
+.gigi-book-note {
+  margin: clamp(2rem, 5vw, 4rem) auto 0;
+  max-width: 42rem;
+  text-align: center;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--book-ink);
+}
+
+.gigi-book-note--sandbox {
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  opacity: 0.75;
+  font-size: 0.82rem;
+}
+
 /* --------------------- OLIVE FOOTER OVERRIDE -------------------- */
 .gigi-book-page .gigi-footer {
   background: var(--gigi-brown);
