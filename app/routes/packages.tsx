@@ -25,9 +25,8 @@ export const meta: Route.MetaFunction = () => {
 const img = (name: string) => `/gigi/${name}`;
 
 export async function loader({context}: Route.LoaderArgs) {
-  const isLoggedIn = await context.customerAccount
-    .isLoggedIn()
-    .catch(() => false);
+  const isLoggedIn =
+    (await context.customerAccount?.isLoggedIn?.().catch(() => false)) ?? false;
 
   return {isLoggedIn};
 }
