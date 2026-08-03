@@ -1,5 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
+import {useLoaderData} from 'react-router';
 import type {Route} from './+types/packages';
+import {GigiSignInBookingModal} from '~/components/GigiBookingModals';
 import packagesStyles from '~/styles/gigi-packages.css?url';
 
 export function links() {
@@ -22,7 +24,16 @@ export const meta: Route.MetaFunction = () => {
 
 const img = (name: string) => `/gigi/${name}`;
 
+export async function loader({context}: Route.LoaderArgs) {
+  const isLoggedIn = await context.customerAccount
+    .isLoggedIn()
+    .catch(() => false);
+
+  return {isLoggedIn};
+}
+
 export default function PackagesPage() {
+  const {isLoggedIn} = useLoaderData<typeof loader>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
@@ -33,9 +44,7 @@ export default function PackagesPage() {
     const title = titleRef.current;
     if (!hero || !title) return;
 
-    const reduceMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    );
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const updateTitleParallax = () => {
       if (reduceMotion.matches) {
@@ -60,14 +69,20 @@ export default function PackagesPage() {
     };
   }, []);
 
+  const handleBookNow = () => {
+    if (isLoggedIn) {
+      window.location.href = '/book#book-now';
+      return;
+    }
+
+    setIsBookingOpen(true);
+  };
+
   return (
     <div className="gigi-site gigi-packages-page">
       <GigiNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-      <section
-        className="gigi-pk-hero"
-        ref={heroRef}
-      >
+      <section className="gigi-pk-hero" ref={heroRef}>
         <header className="gigi-pk-header">
           <a className="gigi-pk-logo" href="/" aria-label="GIGI home">
             <img src={img('gigi-logo-primary.png')} alt="GIGI" />
@@ -118,7 +133,7 @@ export default function PackagesPage() {
                 <button
                   className="gigi-pk-card__cta"
                   type="button"
-                  onClick={() => setIsBookingOpen(true)}
+                  onClick={handleBookNow}
                 >
                   Book Now
                 </button>
@@ -131,7 +146,7 @@ export default function PackagesPage() {
       <GigiFooter compact />
 
       {isBookingOpen && (
-        <BookingModal onClose={() => setIsBookingOpen(false)} />
+        <GigiSignInBookingModal onClose={() => setIsBookingOpen(false)} />
       )}
     </div>
   );
@@ -151,17 +166,12 @@ function BookingModal({onClose}: {onClose: () => void}) {
   }, [onClose]);
 
   return (
-    <div
-      className="gigi-modal-overlay"
-      role="presentation"
-      onClick={onClose}
-    >
+    <div className="gigi-modal-overlay" role="presentation">
       <div
         className="gigi-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="gigi-modal-title"
-        onClick={(event) => event.stopPropagation()}
       >
         <button
           className="gigi-modal__close"
@@ -271,13 +281,7 @@ const GIGI_PACKAGES: {
   },
 ];
 
-function GigiNav({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+function GigiNav({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
   return (
     <nav
       className={`gigi-menu-popover ${isOpen ? 'is-open' : ''}`}
@@ -301,34 +305,61 @@ function GigiNav({
           </a>
         </div>
       </div>
-      <a href="/" onClick={onClose}>Home</a>
-      <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started</a>
+      <a href="/" onClick={onClose}>
+        Home
+      </a>
+      <a href="/about" onClick={onClose}>
+        <em>Our</em> Story
+      </a>
+      <a href="/packages" onClick={onClose}>
+        Get Started
+      </a>
       <span className="gigi-menu-sub">
-        <a href="/packages" onClick={onClose}>Classes</a>
-        <a href="/packages" onClick={onClose}>Packages</a>
-        <a href="/book" onClick={onClose}>Book Now</a>
+        <a href="/packages" onClick={onClose}>
+          Classes
+        </a>
+        <a href="/packages" onClick={onClose}>
+          Packages
+        </a>
+        <a href="/book" onClick={onClose}>
+          Book Now
+        </a>
       </span>
-      <a href="/shop" onClick={onClose}>Shop</a>
-      <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
-      <a href="/#contact" onClick={onClose}>Stay in Touch</a>
+      <a href="/shop" onClick={onClose}>
+        Shop
+      </a>
+      <a href="/collab" onClick={onClose}>
+        Collaborate with Gigi
+      </a>
+      <a href="/#contact" onClick={onClose}>
+        Stay in Touch
+      </a>
     </nav>
   );
 }
 
 function GigiFooter({compact, dark}: {compact?: boolean; dark?: boolean}) {
   return (
-    <footer className={`gigi-footer ${compact ? 'is-compact' : ''} ${dark ? 'is-dark' : ''}`}>
+    <footer
+      className={`gigi-footer ${compact ? 'is-compact' : ''} ${dark ? 'is-dark' : ''}`}
+    >
       <div>
         <p>Follow Us</p>
-        <div className="gigi-socials"><button>Instagram</button><button>Tik Tok</button></div>
+        <div className="gigi-socials">
+          <button>Instagram</button>
+          <button>Tik Tok</button>
+        </div>
         <p>Join our Newsletter</p>
         <div className="gigi-newsletter">
           <input aria-label="email" placeholder="email" />
           <button>Send</button>
         </div>
         <p>Contact Us</p>
-        <small>Studio 00, 01234 St, Dubai, UAE<br />+971 50 111 2222</small>
+        <small>
+          Studio 00, 01234 St, Dubai, UAE
+          <br />
+          +971 50 111 2222
+        </small>
       </div>
       <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />
     </footer>

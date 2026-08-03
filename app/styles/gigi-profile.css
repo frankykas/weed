@@ -253,6 +253,27 @@
   font-size: clamp(1.2rem, 1.8vw, 1.55rem);
 }
 
+.gigi-pf-package-list {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.9rem;
+}
+
+.gigi-pf-package {
+  display: grid;
+  grid-template-columns: 1.3fr 0.6fr 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(245, 237, 207, 0.16);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+}
+
+.gigi-pf-package span:nth-child(2),
+.gigi-pf-package span:nth-child(3) {
+  color: rgba(245, 237, 207, 0.7);
+}
+
 /* -------------------- RESERVATIONS ACCORDION -------------------- */
 .gigi-pf-table {
   display: grid;
@@ -284,6 +305,26 @@
   color: rgba(245, 237, 207, 0.66);
 }
 
+.gigi-pf-subscription {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.gigi-pf-subscription p {
+  margin: 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(245, 237, 207, 0.68);
+}
+
+.gigi-pf-subscription .gigi-pf-strong {
+  margin-bottom: 0.25rem;
+  color: var(--gigi-cream);
+}
+
 /* Close the last accordion off with a rule above the footer. */
 .gigi-pf-acc:last-of-type {
   border-bottom: 1px solid rgba(245, 237, 207, 0.24);
@@ -308,5 +349,15 @@
     grid-template-columns: 1.4fr 1fr 1fr 0.9fr;
     gap: 0.5rem;
     font-size: 0.72rem;
+  }
+
+  .gigi-pf-package {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .gigi-pf-subscription {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

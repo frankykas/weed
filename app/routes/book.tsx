@@ -1,5 +1,11 @@
-import {memo, useEffect, useRef, useState} from 'react';
+import {useState} from 'react';
+import {useLoaderData} from 'react-router';
 import type {Route} from './+types/book';
+import {
+  GigiBookingConfirmationModal,
+  type GigiBookingClass,
+} from '~/components/GigiBookingModals';
+import {getBookingSchedule, type MindbodyEnv} from '~/lib/mindbody.server';
 import bookStyles from '~/styles/gigi-book.css?url';
 
 export function links() {
@@ -11,21 +17,53 @@ export const meta: Route.MetaFunction = () => {
     {title: 'Book Now | GIGI'},
     {
       name: 'description',
-      content: 'Book your GIGI Lagree class — view the weekly schedule by studio.',
+      content:
+        'Book your GIGI Lagree class — view the weekly schedule by studio.',
     },
   ];
 };
 
 const img = (name: string) => `/gigi/${name}`;
 
+const DAYS = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+export async function loader({context}: Route.LoaderArgs) {
+  const ctxEnv = (context as unknown as {env?: MindbodyEnv}).env;
+  const procEnv =
+    typeof process !== 'undefined'
+      ? (process.env as unknown as MindbodyEnv)
+      : undefined;
+  const env: MindbodyEnv =
+    ctxEnv && ctxEnv.MINDBODY_API_KEY ? ctxEnv : (procEnv ?? {});
+  const schedule = await getBookingSchedule(env);
+  return {schedule};
+}
+
 export default function BookPage() {
+  const {schedule} = useLoaderData<typeof loader>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [locationId, setLocationId] = useState<number | null>(
+    schedule.locations[0]?.id ?? null,
+  );
+  const [selectedClass, setSelectedClass] = useState<GigiBookingClass | null>(
+    null,
+  );
+
+  const activeLoc = locationId ?? schedule.locations[0]?.id ?? null;
 
   return (
     <div className="gigi-site gigi-book-page">
       <GigiNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-      <section className="gigi-book">
+      <section className="gigi-book" id="book-now">
         <header className="gigi-book-header">
           <a className="gigi-book-logo" href="/" aria-label="GIGI home">
             <img src={img('gigi-logo-brown.png')} alt="GIGI" />
@@ -43,12 +81,101 @@ export default function BookPage() {
 
         <h1 className="gigi-book-title">Book Now</h1>
 
-        <div className="gigi-book-widget-wrap">
-          <MindbodyWidget />
+        {schedule.locations.length > 0 && (
+          <div className="gigi-book-locations" role="group" aria-label="Studio">
+            {schedule.locations.map((loc) => (
+              <button
+                key={loc.id}
+                type="button"
+                className={`gigi-book-location ${
+                  activeLoc === loc.id ? 'is-active' : ''
+                }`}
+                aria-pressed={activeLoc === loc.id}
+                onClick={() => setLocationId(loc.id)}
+              >
+                {loc.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="gigi-book-grid-wrap">
+          {!schedule.configured ? (
+            <p className="gigi-book-note">
+              Booking schedule isn&apos;t connected yet.
+            </p>
+          ) : schedule.classes.length === 0 ? (
+            <p className="gigi-book-note">No classes scheduled this week.</p>
+          ) : (
+            <div
+              className="gigi-book-cal"
+              role="grid"
+              aria-label="Weekly schedule"
+            >
+              {DAYS.map((label, dayIdx) => {
+                const dayClasses = schedule.classes.filter(
+                  (c) =>
+                    c.day === dayIdx &&
+                    (activeLoc == null || c.locationId === activeLoc),
+                );
+                return (
+                  <div className="gigi-book-col" role="gridcell" key={label}>
+                    <div className="gigi-book-day">{label}</div>
+                    <div className="gigi-book-col__slots">
+                      {dayClasses.length === 0 ? (
+                        <span className="gigi-book-empty" aria-hidden="true">
+                          -
+                        </span>
+                      ) : (
+                        dayClasses.map((c) =>
+                          c.isFull ? (
+                            <div className="gigi-book-slot is-full" key={c.id}>
+                              <img
+                                src={img('gigi-mark-rose.png')}
+                                alt=""
+                                aria-hidden="true"
+                              />
+                              <strong>{c.name}</strong>
+                              <em>Class Full</em>
+                              <span>{c.time}</span>
+                            </div>
+                          ) : (
+                            <button
+                              className="gigi-book-slot"
+                              type="button"
+                              key={c.id}
+                              onClick={() => setSelectedClass(c)}
+                            >
+                              <strong>{c.name}</strong>
+                              {c.staff && <em>{c.staff}</em>}
+                              <span>{c.time}</span>
+                            </button>
+                          ),
+                        )
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
+
+        {schedule.sandbox && (
+          <p className="gigi-book-note gigi-book-note--sandbox">
+            Preview using MindBody&apos;s free <strong>sandbox</strong> data.
+          </p>
+        )}
       </section>
 
       <GigiFooter compact />
+
+      {selectedClass && (
+        <GigiBookingConfirmationModal
+          bookingClass={selectedClass}
+          onClose={() => setSelectedClass(null)}
+        />
+      )}
     </div>
   );
 }
@@ -62,45 +189,7 @@ export default function BookPage() {
  *
  * Rendered once (memo, no props) so React never reconciles the injected nodes.
  */
-const MindbodyWidget = memo(function MindbodyWidget() {
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-
-    root.innerHTML =
-      '<div class="mindbody-widget" data-widget-type="Schedules" data-widget-id="b758084380b"></div>';
-
-    // Load the embed script fresh on each mount. A newly-created <script>
-    // element always re-executes, so the widget re-scans the DOM and mounts
-    // into our div even after a client navigation or strict-mode remount.
-    const SRC = 'https://brandedweb.mindbodyonline.com/embed/widget.js';
-    document
-      .querySelectorAll('script[data-gigi-mb]')
-      .forEach((el) => el.remove());
-    const script = document.createElement('script');
-    script.src = SRC;
-    script.async = true;
-    script.dataset.gigiMb = '1';
-    document.body.appendChild(script);
-
-    return () => {
-      script.remove();
-      root.textContent = '';
-    };
-  }, []);
-
-  return <div className="gigi-book-widget" ref={rootRef} />;
-});
-
-function GigiNav({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+function GigiNav({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
   return (
     <nav
       className={`gigi-menu-popover ${isOpen ? 'is-open' : ''}`}
@@ -124,34 +213,61 @@ function GigiNav({
           </a>
         </div>
       </div>
-      <a href="/" onClick={onClose}>Home</a>
-      <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started</a>
+      <a href="/" onClick={onClose}>
+        Home
+      </a>
+      <a href="/about" onClick={onClose}>
+        <em>Our</em> Story
+      </a>
+      <a href="/packages" onClick={onClose}>
+        Get Started
+      </a>
       <span className="gigi-menu-sub">
-        <a href="/packages" onClick={onClose}>Classes</a>
-        <a href="/packages" onClick={onClose}>Packages</a>
-        <a href="/book" onClick={onClose}>Book Now</a>
+        <a href="/packages" onClick={onClose}>
+          Classes
+        </a>
+        <a href="/packages" onClick={onClose}>
+          Packages
+        </a>
+        <a href="/book" onClick={onClose}>
+          Book Now
+        </a>
       </span>
-      <a href="/shop" onClick={onClose}>Shop</a>
-      <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
-      <a href="/#contact" onClick={onClose}>Stay in Touch</a>
+      <a href="/shop" onClick={onClose}>
+        Shop
+      </a>
+      <a href="/collab" onClick={onClose}>
+        Collaborate with Gigi
+      </a>
+      <a href="/#contact" onClick={onClose}>
+        Stay in Touch
+      </a>
     </nav>
   );
 }
 
 function GigiFooter({compact, dark}: {compact?: boolean; dark?: boolean}) {
   return (
-    <footer className={`gigi-footer ${compact ? 'is-compact' : ''} ${dark ? 'is-dark' : ''}`}>
+    <footer
+      className={`gigi-footer ${compact ? 'is-compact' : ''} ${dark ? 'is-dark' : ''}`}
+    >
       <div>
         <p>Follow Us</p>
-        <div className="gigi-socials"><button>Instagram</button><button>Tik Tok</button></div>
+        <div className="gigi-socials">
+          <button>Instagram</button>
+          <button>Tik Tok</button>
+        </div>
         <p>Join our Newsletter</p>
         <div className="gigi-newsletter">
           <input aria-label="email" placeholder="email" />
           <button>Send</button>
         </div>
         <p>Contact Us</p>
-        <small>Studio 00, 01234 St, Dubai, UAE<br />+971 50 111 2222</small>
+        <small>
+          Studio 00, 01234 St, Dubai, UAE
+          <br />
+          +971 50 111 2222
+        </small>
       </div>
       <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />
     </footer>

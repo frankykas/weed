@@ -9,7 +9,10 @@ export function links() {
 export const meta: Route.MetaFunction = () => {
   return [
     {title: 'Profile | GIGI'},
-    {name: 'description', content: 'Your GIGI profile, classes and reservations.'},
+    {
+      name: 'description',
+      content: 'Your GIGI profile, classes and reservations.',
+    },
   ];
 };
 
@@ -27,15 +30,38 @@ const PROFILE = {
   ],
   milestone: "You've taken 100 classes with us!",
   month: [
-    {label: 'Total', value: '8'},
+    {label: 'Bought', value: '8'},
     {label: 'Booked', value: '3'},
     {label: 'Remaining', value: '1'},
   ],
-  reservations: [
-    {cls: 'Lagree Mega Pro', studio: 'Midriff', date: '09/05/2026', time: '8:00 AM'},
-    {cls: 'Lagree Mega Pro', studio: 'Midriff', date: '10/05/2026', time: '8:00 AM'},
-    {cls: 'Lagree Mega Pro', studio: 'Nad al Sheba', date: '11/05/2026', time: '8:00 AM'},
+  purchases: [
+    {name: 'Ten Classes', status: 'Active', remaining: '1 class left'},
+    {name: 'Discovery Package', status: 'Used', remaining: '0 classes left'},
   ],
+  reservations: [
+    {
+      cls: 'Lagree Mega Pro',
+      studio: 'Midriff',
+      date: '09/05/2026',
+      time: '8:00 AM',
+    },
+    {
+      cls: 'Lagree Mega Pro',
+      studio: 'Midriff',
+      date: '10/05/2026',
+      time: '8:00 AM',
+    },
+    {
+      cls: 'Lagree Mega Pro',
+      studio: 'Nad al Sheba',
+      date: '11/05/2026',
+      time: '8:00 AM',
+    },
+  ],
+  subscription: {
+    plan: 'No active subscription',
+    note: 'Manage your plan, billing cycle and renewals from your Shopify account.',
+  },
 };
 
 export default function ProfilePage() {
@@ -109,6 +135,18 @@ export default function ProfilePage() {
               </div>
             ))}
           </div>
+          <p className="gigi-pf-strong gigi-pf-month-label">
+            Classes You&apos;ve Bought
+          </p>
+          <div className="gigi-pf-package-list">
+            {PROFILE.purchases.map((purchase) => (
+              <div className="gigi-pf-package" key={purchase.name}>
+                <span>{purchase.name}</span>
+                <span>{purchase.status}</span>
+                <span>{purchase.remaining}</span>
+              </div>
+            ))}
+          </div>
         </Accordion>
 
         <Accordion
@@ -124,7 +162,11 @@ export default function ProfilePage() {
               <span role="columnheader">Time</span>
             </div>
             {PROFILE.reservations.map((r) => (
-              <div className="gigi-pf-row" role="row" key={`${r.date}-${r.studio}`}>
+              <div
+                className="gigi-pf-row"
+                role="row"
+                key={`${r.date}-${r.studio}`}
+              >
                 <span role="cell">{r.cls}</span>
                 <span role="cell">{r.studio}</span>
                 <span role="cell">{r.date}</span>
@@ -139,7 +181,15 @@ export default function ProfilePage() {
           isOpen={open.subscription}
           onToggle={() => toggle('subscription')}
         >
-          <p className="gigi-pf-empty">No active subscription yet.</p>
+          <div className="gigi-pf-subscription">
+            <div>
+              <p className="gigi-pf-strong">{PROFILE.subscription.plan}</p>
+              <p>{PROFILE.subscription.note}</p>
+            </div>
+            <a className="gigi-pf-book" href="/account">
+              Manage
+            </a>
+          </div>
         </Accordion>
       </section>
 
@@ -168,20 +218,17 @@ function Accordion({
         onClick={onToggle}
       >
         <h2>{title}</h2>
-        <span className={`gigi-pf-toggle ${isOpen ? 'is-open' : ''}`} aria-hidden="true" />
+        <span
+          className={`gigi-pf-toggle ${isOpen ? 'is-open' : ''}`}
+          aria-hidden="true"
+        />
       </button>
       {isOpen && <div className="gigi-pf-acc__body">{children}</div>}
     </section>
   );
 }
 
-function GigiNav({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+function GigiNav({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
   return (
     <nav
       className={`gigi-menu-popover ${isOpen ? 'is-open' : ''}`}
@@ -205,34 +252,61 @@ function GigiNav({
           </a>
         </div>
       </div>
-      <a href="/" onClick={onClose}>Home</a>
-      <a href="/about" onClick={onClose}><em>Our</em> Story</a>
-      <a href="/packages" onClick={onClose}>Get Started</a>
+      <a href="/" onClick={onClose}>
+        Home
+      </a>
+      <a href="/about" onClick={onClose}>
+        <em>Our</em> Story
+      </a>
+      <a href="/packages" onClick={onClose}>
+        Get Started
+      </a>
       <span className="gigi-menu-sub">
-        <a href="/packages" onClick={onClose}>Classes</a>
-        <a href="/packages" onClick={onClose}>Packages</a>
-        <a href="/book" onClick={onClose}>Book Now</a>
+        <a href="/packages" onClick={onClose}>
+          Classes
+        </a>
+        <a href="/packages" onClick={onClose}>
+          Packages
+        </a>
+        <a href="/book" onClick={onClose}>
+          Book Now
+        </a>
       </span>
-      <a href="/shop" onClick={onClose}>Shop</a>
-      <a href="/collab" onClick={onClose}>Collaborate with Gigi</a>
-      <a href="/#contact" onClick={onClose}>Stay in Touch</a>
+      <a href="/shop" onClick={onClose}>
+        Shop
+      </a>
+      <a href="/collab" onClick={onClose}>
+        Collaborate with Gigi
+      </a>
+      <a href="/#contact" onClick={onClose}>
+        Stay in Touch
+      </a>
     </nav>
   );
 }
 
 function GigiFooter({compact, dark}: {compact?: boolean; dark?: boolean}) {
   return (
-    <footer className={`gigi-footer ${compact ? 'is-compact' : ''} ${dark ? 'is-dark' : ''}`}>
+    <footer
+      className={`gigi-footer ${compact ? 'is-compact' : ''} ${dark ? 'is-dark' : ''}`}
+    >
       <div>
         <p>Follow Us</p>
-        <div className="gigi-socials"><button>Instagram</button><button>Tik Tok</button></div>
+        <div className="gigi-socials">
+          <button>Instagram</button>
+          <button>Tik Tok</button>
+        </div>
         <p>Join our Newsletter</p>
         <div className="gigi-newsletter">
           <input aria-label="email" placeholder="email" />
           <button>Send</button>
         </div>
         <p>Contact Us</p>
-        <small>Studio 00, 01234 St, Dubai, UAE<br />+971 50 111 2222</small>
+        <small>
+          Studio 00, 01234 St, Dubai, UAE
+          <br />
+          +971 50 111 2222
+        </small>
       </div>
       <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />
     </footer>

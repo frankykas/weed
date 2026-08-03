@@ -49,14 +49,18 @@
   /* Shadows */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
-  --shadow-raised: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04);
-  --shadow-overlay: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-raised:
+    0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-overlay:
+    0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
 
   /* Typography */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'Inter', ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display:
+    'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.8125rem;
@@ -103,7 +107,12 @@
   }
 
   /* Keep heading resets minimal — let components control size */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-display leading-tight tracking-tight;
   }
 
@@ -121,8 +130,12 @@
   }
 
   /* Subtle scrollbar */
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
   ::-webkit-scrollbar-thumb {
     background: var(--color-border);
     border-radius: var(--radius-full);
@@ -310,18 +323,32 @@ button.reset {
    ============================================================ */
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-fade-in {
@@ -337,9 +364,16 @@ button.reset {
 }
 
 @keyframes cart-pop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.08); background-color: var(--color-accent-light); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.08);
+    background-color: var(--color-accent-light);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .animate-cart-pop {
@@ -347,8 +381,12 @@ button.reset {
 }
 
 @keyframes slide-in-right {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .animate-slide-in-right {
@@ -356,9 +394,18 @@ button.reset {
 }
 
 @keyframes check-pop {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .animate-check-pop {
@@ -366,8 +413,12 @@ button.reset {
 }
 
 @keyframes gigi-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes gigi-fade-rise {
@@ -641,7 +692,7 @@ body:has(.gigi-site) {
    indents to meet it. Uses padding (not transform) so it never clashes
    with the open-stagger animation above. */
 .gigi-menu-popover a::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   top: 50%;
@@ -693,12 +744,24 @@ body:has(.gigi-site) {
   animation: gigi-menu-in 500ms var(--ease-out) both;
 }
 
-.gigi-menu-popover.is-open > a:nth-of-type(1) { animation-delay: 130ms; }
-.gigi-menu-popover.is-open > a:nth-of-type(2) { animation-delay: 190ms; }
-.gigi-menu-popover.is-open > a:nth-of-type(3) { animation-delay: 250ms; }
-.gigi-menu-popover.is-open > a:nth-of-type(4) { animation-delay: 310ms; }
-.gigi-menu-popover.is-open > a:nth-of-type(5) { animation-delay: 370ms; }
-.gigi-menu-popover.is-open > a:nth-of-type(6) { animation-delay: 430ms; }
+.gigi-menu-popover.is-open > a:nth-of-type(1) {
+  animation-delay: 130ms;
+}
+.gigi-menu-popover.is-open > a:nth-of-type(2) {
+  animation-delay: 190ms;
+}
+.gigi-menu-popover.is-open > a:nth-of-type(3) {
+  animation-delay: 250ms;
+}
+.gigi-menu-popover.is-open > a:nth-of-type(4) {
+  animation-delay: 310ms;
+}
+.gigi-menu-popover.is-open > a:nth-of-type(5) {
+  animation-delay: 370ms;
+}
+.gigi-menu-popover.is-open > a:nth-of-type(6) {
+  animation-delay: 430ms;
+}
 
 @keyframes gigi-menu-in {
   from {
@@ -748,6 +811,235 @@ body:has(.gigi-site) {
   text-decoration: underline;
 }
 
+/* -------------------- BOOKING LIGHTBOX -------------------- */
+.gigi-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(24, 10, 15, 0.55);
+  backdrop-filter: blur(2px);
+  animation: gigi-modal-fade 200ms ease both;
+}
+
+.gigi-modal-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  cursor: default;
+}
+
+.gigi-modal {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: min(100%, 40rem);
+  min-height: min(25rem, calc(100svh - 3rem));
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  padding: clamp(3rem, 6vw, 4.2rem) clamp(1.8rem, 5vw, 4.4rem)
+    clamp(2.3rem, 4.5vw, 3.4rem);
+  background: var(--gigi-paper);
+  color: var(--gigi-burgundy);
+  border-radius: 0;
+  box-shadow: 0 30px 80px rgba(24, 10, 15, 0.35);
+  text-align: center;
+  animation: gigi-modal-rise 240ms ease both;
+}
+
+.gigi-modal--confirm {
+  width: min(100%, 34.6rem);
+  min-height: min(22.4rem, calc(100svh - 3rem));
+}
+
+.gigi-modal .gigi-modal__close {
+  position: absolute;
+  top: clamp(1rem, 2.4vw, 1.55rem);
+  right: clamp(1rem, 2.4vw, 1.55rem);
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(75, 15, 32, 0.68);
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.gigi-modal .gigi-modal__close:hover {
+  opacity: 0.6;
+}
+
+.gigi-modal__close svg {
+  width: 1.55rem;
+  height: 1.55rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+}
+
+.gigi-modal__title {
+  margin: 0;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(2.15rem, 5vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gigi-modal--confirm .gigi-modal__title {
+  font-size: clamp(1.95rem, 4.4vw, 2.45rem);
+}
+
+.gigi-modal__subtitle {
+  margin: 0.35rem 0 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: clamp(1.55rem, 3.6vw, 2rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.gigi-modal__form {
+  display: grid;
+  gap: 0.75rem;
+  width: min(100%, 19.8rem);
+  margin-top: 1.35rem;
+  justify-items: center;
+}
+
+.gigi-modal .gigi-modal__field {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--gigi-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  padding: 0.52rem 1.4rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.86rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.gigi-modal__field::placeholder {
+  color: var(--gigi-burgundy);
+  opacity: 0.85;
+}
+
+.gigi-modal__field:focus {
+  outline: none;
+  border-color: var(--gigi-burgundy);
+}
+
+.gigi-modal .gigi-modal__link {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.08rem 0;
+  color: var(--gigi-burgundy);
+  font-family: 'Bodoni 72 Book Italic', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 0.98rem;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: underline;
+  text-underline-offset: 0.08em;
+  cursor: pointer;
+}
+
+.gigi-modal .gigi-modal__link:hover {
+  opacity: 0.7;
+}
+
+.gigi-modal .gigi-modal__submit {
+  margin: 0.3rem 0;
+  min-width: 10.5rem;
+  display: inline-block;
+  border: 1px solid var(--gigi-burgundy);
+  border-radius: 999px;
+  background: var(--gigi-burgundy);
+  color: var(--gigi-cream);
+  padding: 0.55rem 2.2rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-modal .gigi-modal__submit:hover {
+  background: transparent;
+  color: var(--gigi-burgundy);
+}
+
+.gigi-modal__class {
+  display: grid;
+  gap: 0.1rem;
+  margin: clamp(1.8rem, 4vw, 2.1rem) 0 1.1rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  color: var(--gigi-burgundy);
+}
+
+.gigi-modal__class strong {
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 2.4vw, 1.12rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.gigi-modal__class em {
+  font-family: 'Bodoni 72 Book Italic', Georgia, 'Times New Roman', serif;
+  font-size: clamp(1rem, 2.4vw, 1.12rem);
+  font-style: italic;
+  line-height: 1.05;
+}
+
+.gigi-modal__class span {
+  margin-top: 0.45rem;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(1rem, 2.4vw, 1.12rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+@keyframes gigi-modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gigi-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gigi-menu-popover > a {
     opacity: 1;
@@ -757,6 +1049,11 @@ body:has(.gigi-site) {
 
   .gigi-menu-sub {
     opacity: 1;
+    animation: none;
+  }
+
+  .gigi-modal-overlay,
+  .gigi-modal {
     animation: none;
   }
 }
@@ -801,7 +1098,11 @@ body:has(.gigi-site) {
   overflow: hidden;
   padding: clamp(2rem, 4.8vw, 4.8rem);
   background:
-    radial-gradient(circle at 42% 2%, rgba(116, 24, 42, 0.25), transparent 30rem),
+    radial-gradient(
+      circle at 42% 2%,
+      rgba(116, 24, 42, 0.25),
+      transparent 30rem
+    ),
     #451424;
   animation: gigi-fade-in 700ms var(--ease-out) both;
 }
@@ -949,7 +1250,8 @@ body:has(.gigi-site) {
   align-items: start;
   gap: clamp(2rem, 6vw, 6rem);
   background: var(--gigi-burgundy);
-  padding: clamp(7rem, 10vw, 9rem) clamp(3rem, 10.5vw, 9rem) clamp(7rem, 9vw, 8rem);
+  padding: clamp(7rem, 10vw, 9rem) clamp(3rem, 10.5vw, 9rem)
+    clamp(7rem, 9vw, 8rem);
 }
 
 .gigi-welcome h1 {
@@ -1077,7 +1379,7 @@ body:has(.gigi-site) {
 }
 
 .gigi-location__image::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
