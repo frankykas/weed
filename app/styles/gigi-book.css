@@ -155,7 +155,7 @@
 /* Location CTA toggle (built in JS from the widget's locations). */
 .gigi-book-loc-cta {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   flex-wrap: wrap;
   gap: clamp(0.6rem, 1.4vw, 1rem);
   margin: 0 0 clamp(1.4rem, 3vw, 2.4rem);
@@ -225,6 +225,16 @@
   padding: 0.6rem 0.8rem;
 }
 
+/* The class-name heading sits on the brown header bar; force its text light so
+   "LAGREE MEGA PRO - MIRDIF" reads against the brown (the h1 otherwise keeps
+   Healcode's own dark color). */
+.gigi-book-widget .hc_header,
+.gigi-book-widget .hc_header h1,
+.gigi-book-widget .hc_header .class_name,
+.gigi-book-widget .hc_header a {
+  color: var(--book-bg) !important;
+}
+
 .gigi-book-widget tr.hc_class {
   border-bottom: 1px solid var(--book-line);
 }
@@ -243,15 +253,22 @@
 
 /* "Sign Up" / cart buttons -> brown pill CTAs. */
 .gigi-book-widget .hc-button,
+.gigi-book-widget .hc-button.signup_now,
+.gigi-book-widget .signup_now,
 .gigi-book-widget .hc_cart_button,
 .gigi-book-widget .hc_cart_button a,
 .gigi-book-widget .signup_button,
 .gigi-book-widget a.hc-button {
   display: inline-block;
-  border: 1px solid var(--book-ink);
+  border: 1px solid var(--book-ink) !important;
   border-radius: 999px;
-  background: var(--book-ink);
+  /* !important: Healcode ships its own dark button background/sprite that
+     otherwise wins over ours, leaving an unreadable dark pill. */
+  background: var(--book-ink) !important;
+  background-image: none !important;
   color: var(--book-bg) !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
   padding: 0.42rem 1.2rem;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -264,8 +281,9 @@
 }
 
 .gigi-book-widget .hc-button:hover,
+.gigi-book-widget .hc-button.signup_now:hover,
 .gigi-book-widget .hc_cart_button a:hover {
-  background: transparent;
+  background: transparent !important;
   color: var(--book-ink) !important;
 }
 
