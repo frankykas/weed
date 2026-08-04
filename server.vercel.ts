@@ -69,8 +69,7 @@ app.all('*', async (c) => {
   // Build the env from process.env (same shape Hydrogen expects from Oxygen)
   const env = {
     SESSION_SECRET: process.env.SESSION_SECRET || 'foobar',
-    PUBLIC_STOREFRONT_API_TOKEN:
-      process.env.PUBLIC_STOREFRONT_API_TOKEN || '',
+    PUBLIC_STOREFRONT_API_TOKEN: process.env.PUBLIC_STOREFRONT_API_TOKEN || '',
     PUBLIC_STORE_DOMAIN: process.env.PUBLIC_STORE_DOMAIN || '',
     PUBLIC_STOREFRONT_ID: process.env.PUBLIC_STOREFRONT_ID || '',
     PUBLIC_CHECKOUT_DOMAIN: process.env.PUBLIC_CHECKOUT_DOMAIN || '',
@@ -84,6 +83,11 @@ app.all('*', async (c) => {
     MINDBODY_SITE_ID: process.env.MINDBODY_SITE_ID || '',
     MINDBODY_USERNAME: process.env.MINDBODY_USERNAME || '',
     MINDBODY_PASSWORD: process.env.MINDBODY_PASSWORD || '',
+    MINDBODY_OAUTH_CLIENT_ID: process.env.MINDBODY_OAUTH_CLIENT_ID || '',
+    MINDBODY_OAUTH_CLIENT_SECRET:
+      process.env.MINDBODY_OAUTH_CLIENT_SECRET || '',
+    MINDBODY_OAUTH_REDIRECT_URI: process.env.MINDBODY_OAUTH_REDIRECT_URI || '',
+    MINDBODY_OAUTH_SCOPE: process.env.MINDBODY_OAUTH_SCOPE || '',
   } as unknown as Env;
 
   // No-op ExecutionContext — Node.js stays alive after the response

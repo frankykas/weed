@@ -24,17 +24,21 @@ export const meta: Route.MetaFunction = () => {
 
 const img = (name: string) => `/gigi/${name}`;
 
-export async function loader({context}: Route.LoaderArgs) {
-  const isLoggedIn =
-    (await context.customerAccount?.isLoggedIn?.().catch(() => false)) ?? false;
+export async function loader({context, request}: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const session = (context as any).session;
+  const mindbodyConnected =
+    url.searchParams.get('mindbody') === 'connected' ||
+    Boolean(session?.get?.('mindbody_access_token'));
 
-  return {isLoggedIn};
+  return {mindbodyConnected};
 }
 
 export default function PackagesPage() {
-  const {isLoggedIn} = useLoaderData<typeof loader>();
+  const {mindbodyConnected} = useLoaderData<typeof loader>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(mindbodyConnected);
+  const [selectedPackage, setSelectedPackage] = useState('');
   const heroRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -68,12 +72,8 @@ export default function PackagesPage() {
     };
   }, []);
 
-  const handleBookNow = () => {
-    if (isLoggedIn) {
-      window.location.href = '/book#book-now';
-      return;
-    }
-
+  const handleBookNow = (packageName: string) => {
+    setSelectedPackage(packageName);
     setIsBookingOpen(true);
   };
 
@@ -132,7 +132,7 @@ export default function PackagesPage() {
                 <button
                   className="gigi-pk-card__cta"
                   type="button"
-                  onClick={handleBookNow}
+                  onClick={() => handleBookNow(pkg.title.join(' '))}
                 >
                   Book Now
                 </button>
@@ -145,7 +145,11 @@ export default function PackagesPage() {
       <GigiFooter compact />
 
       {isBookingOpen && (
-        <GigiSignInBookingModal onClose={() => setIsBookingOpen(false)} />
+        <GigiSignInBookingModal
+          initialConnected={mindbodyConnected}
+          packageName={selectedPackage}
+          onClose={() => setIsBookingOpen(false)}
+        />
       )}
     </div>
   );

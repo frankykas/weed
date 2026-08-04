@@ -916,6 +916,20 @@ body:has(.gigi-site) {
   justify-items: center;
 }
 
+.gigi-modal__note,
+.gigi-modal__error {
+  margin: 0 0 0.25rem;
+  max-width: 18rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--gigi-burgundy);
+}
+
+.gigi-modal__error {
+  color: #8d2638;
+}
+
 .gigi-modal .gigi-modal__field {
   width: 100%;
   box-sizing: border-box;
@@ -1018,6 +1032,39 @@ body:has(.gigi-site) {
   font-size: clamp(1rem, 2.4vw, 1.12rem);
   font-weight: 700;
   line-height: 1.05;
+}
+
+.mindbody-callback {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  gap: 0.8rem;
+  padding: 2rem;
+  background: var(--gigi-paper, #f1ebdc);
+  color: var(--gigi-burgundy, #451424);
+  text-align: center;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+}
+
+.mindbody-callback h1 {
+  margin: 0;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.mindbody-callback p {
+  margin: 0;
+}
+
+.mindbody-callback a {
+  justify-self: center;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.6rem 1.5rem;
+  color: currentColor;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
 }
 
 @keyframes gigi-modal-fade {
