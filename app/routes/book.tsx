@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {memo, useEffect, useRef, useState} from 'react';
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/book';
 import {
@@ -58,6 +58,8 @@ export default function BookPage() {
   );
 
   const activeLoc = locationId ?? schedule.locations[0]?.id ?? null;
+  const useMindbodyWidget =
+    schedule.sandbox || !schedule.configured || schedule.classes.length === 0;
 
   return (
     <div className="gigi-site gigi-book-page">
@@ -81,90 +83,91 @@ export default function BookPage() {
 
         <h1 className="gigi-book-title">Book Now</h1>
 
-        {schedule.locations.length > 0 && (
-          <div className="gigi-book-locations" role="group" aria-label="Studio">
-            {schedule.locations.map((loc) => (
-              <button
-                key={loc.id}
-                type="button"
-                className={`gigi-book-location ${
-                  activeLoc === loc.id ? 'is-active' : ''
-                }`}
-                aria-pressed={activeLoc === loc.id}
-                onClick={() => setLocationId(loc.id)}
-              >
-                {loc.name}
-              </button>
-            ))}
+        {useMindbodyWidget ? (
+          <div className="gigi-book-widget-wrap">
+            <MindbodyWidget />
           </div>
-        )}
+        ) : (
+          <>
+            {schedule.locations.length > 0 && (
+              <div
+                className="gigi-book-locations"
+                role="group"
+                aria-label="Studio"
+              >
+                {schedule.locations.map((loc) => (
+                  <button
+                    key={loc.id}
+                    type="button"
+                    className={`gigi-book-location ${
+                      activeLoc === loc.id ? 'is-active' : ''
+                    }`}
+                    aria-pressed={activeLoc === loc.id}
+                    onClick={() => setLocationId(loc.id)}
+                  >
+                    {loc.name}
+                  </button>
+                ))}
+              </div>
+            )}
 
-        <div className="gigi-book-grid-wrap">
-          {!schedule.configured ? (
-            <p className="gigi-book-note">
-              Booking schedule isn&apos;t connected yet.
-            </p>
-          ) : schedule.classes.length === 0 ? (
-            <p className="gigi-book-note">No classes scheduled this week.</p>
-          ) : (
-            <div
-              className="gigi-book-cal"
-              role="grid"
-              aria-label="Weekly schedule"
-            >
-              {DAYS.map((label, dayIdx) => {
-                const dayClasses = schedule.classes.filter(
-                  (c) =>
-                    c.day === dayIdx &&
-                    (activeLoc == null || c.locationId === activeLoc),
-                );
-                return (
-                  <div className="gigi-book-col" role="gridcell" key={label}>
-                    <div className="gigi-book-day">{label}</div>
-                    <div className="gigi-book-col__slots">
-                      {dayClasses.length === 0 ? (
-                        <span className="gigi-book-empty" aria-hidden="true">
-                          -
-                        </span>
-                      ) : (
-                        dayClasses.map((c) =>
-                          c.isFull ? (
-                            <div className="gigi-book-slot is-full" key={c.id}>
-                              <img
-                                src={img('gigi-mark-rose.png')}
-                                alt=""
-                                aria-hidden="true"
-                              />
-                              <strong>{c.name}</strong>
-                              <em>Class Full</em>
-                              <span>{c.time}</span>
-                            </div>
-                          ) : (
-                            <button
-                              className="gigi-book-slot"
-                              type="button"
-                              key={c.id}
-                              onClick={() => setSelectedClass(c)}
-                            >
-                              <strong>{c.name}</strong>
-                              {c.staff && <em>{c.staff}</em>}
-                              <span>{c.time}</span>
-                            </button>
-                          ),
-                        )
-                      )}
+            <div className="gigi-book-grid-wrap">
+              <div
+                className="gigi-book-cal"
+                role="grid"
+                aria-label="Weekly schedule"
+              >
+                {DAYS.map((label, dayIdx) => {
+                  const dayClasses = schedule.classes.filter(
+                    (c) =>
+                      c.day === dayIdx &&
+                      (activeLoc == null || c.locationId === activeLoc),
+                  );
+                  return (
+                    <div className="gigi-book-col" role="gridcell" key={label}>
+                      <div className="gigi-book-day">{label}</div>
+                      <div className="gigi-book-col__slots">
+                        {dayClasses.length === 0 ? (
+                          <span className="gigi-book-empty" aria-hidden="true">
+                            -
+                          </span>
+                        ) : (
+                          dayClasses.map((c) =>
+                            c.isFull ? (
+                              <div
+                                className="gigi-book-slot is-full"
+                                key={c.id}
+                              >
+                                <img
+                                  src={img('gigi-mark-rose.png')}
+                                  alt=""
+                                  aria-hidden="true"
+                                />
+                                <strong>{c.name}</strong>
+                                <em>Class Full</em>
+                                <span>{c.time}</span>
+                              </div>
+                            ) : (
+                              <button
+                                className="gigi-book-slot"
+                                type="button"
+                                key={c.id}
+                                onClick={() => setSelectedClass(c)}
+                              >
+                                <strong>{c.name}</strong>
+                                {c.staff && <em>{c.staff}</em>}
+                                <span>{c.time}</span>
+                              </button>
+                            ),
+                          )
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          )}
-        </div>
-
-        {schedule.sandbox && (
-          <p className="gigi-book-note gigi-book-note--sandbox">
-            Preview using MindBody&apos;s free <strong>sandbox</strong> data.
-          </p>
+          </>
         )}
       </section>
 
@@ -189,6 +192,35 @@ export default function BookPage() {
  *
  * Rendered once (memo, no props) so React never reconciles the injected nodes.
  */
+const MindbodyWidget = memo(function MindbodyWidget() {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    root.innerHTML =
+      '<div class="mindbody-widget" data-widget-type="Schedules" data-widget-id="b758084380b"></div>';
+
+    const src = 'https://brandedweb.mindbodyonline.com/embed/widget.js';
+    document
+      .querySelectorAll('script[data-gigi-mb]')
+      .forEach((el) => el.remove());
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.dataset.gigiMb = '1';
+    document.body.appendChild(script);
+
+    return () => {
+      script.remove();
+      root.textContent = '';
+    };
+  }, []);
+
+  return <div className="gigi-book-widget" ref={rootRef} />;
+});
+
 function GigiNav({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
   return (
     <nav
