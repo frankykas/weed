@@ -189,8 +189,8 @@ export function Layout({children}: {children?: React.ReactNode}) {
             __html:
               'body:has(.gigi-site) .header,body:has(.gigi-site) .footer{display:none}' +
               '.overlay:not(.expanded){opacity:0;visibility:hidden;pointer-events:none}' +
-              '.gigi-logo,.gigi-cl-logo,.gigi-pk-logo,.gigi-about-logo,.gigi-book-logo,.gigi-pd-logo,.gigi-pf-logo,.gigi-shop-logo{display:block;width:clamp(7rem,11vw,12rem)}' +
-              '.gigi-logo img,.gigi-cl-logo img,.gigi-pk-logo img,.gigi-about-logo img,.gigi-book-logo img,.gigi-pd-logo img,.gigi-pf-logo img,.gigi-shop-logo img{width:100%;height:auto}',
+              '.gigi-logo,.gigi-cl-logo,.gigi-pk-logo,.gigi-about-logo,.gigi-book-logo,.gigi-pd-logo,.gigi-pf-logo,.gigi-shop-logo,.gigi-checkout-logo{display:block;width:clamp(7rem,11vw,12rem)}' +
+              '.gigi-logo img,.gigi-cl-logo img,.gigi-pk-logo img,.gigi-about-logo img,.gigi-book-logo img,.gigi-pd-logo img,.gigi-pf-logo img,.gigi-shop-logo img,.gigi-checkout-logo img{width:100%;height:auto}',
           }}
         />
         <link rel="stylesheet" href={resetStyles}></link>

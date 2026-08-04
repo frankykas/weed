@@ -1,134 +1,107 @@
 import {useState, type FormEvent} from 'react';
-import {Link, useNavigate} from 'react-router';
+import {useNavigate} from 'react-router';
 import type {Route} from './+types/checkout';
 import {useCart, saveLastOrder, type LastOrder} from '~/lib/mockCart';
+import checkoutStyles from '~/styles/gigi-checkout.css?url';
+
+export function links() {
+  return [{rel: 'stylesheet', href: checkoutStyles}];
+}
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Greenly — Checkout'}];
+  return [{title: 'Checkout | GIGI'}];
 };
 
-const DELIVERY_SLOTS = [
-  {id: 'asap', label: 'ASAP', detail: '30–60 min', fee: 6},
-  {id: 'today-evening', label: 'Today evening', detail: '5pm – 9pm', fee: 4},
-  {id: 'tomorrow-am', label: 'Tomorrow AM', detail: '9am – 12pm', fee: 3},
-  {id: 'tomorrow-pm', label: 'Tomorrow PM', detail: '1pm – 5pm', fee: 3},
-];
-
-const FREE_SHIPPING_THRESHOLD = 50;
-const TAX_RATE = 0.0875;
+const img = (name: string) => `/gigi/${name}`;
+const SHIPPING = 5;
+const TAXES = 15;
 
 interface FormState {
+  firstName: string;
+  lastName: string;
   email: string;
-  fullName: string;
-  phone: string;
-  address: string;
-  apt: string;
-  city: string;
+  street: string;
+  number: string;
+  interiorNumber: string;
+  state: string;
+  country: string;
   zip: string;
-  slotId: string;
-  cardNumber: string;
-  cardExp: string;
-  cardCvc: string;
-  cardName: string;
-  saveInfo: boolean;
-  idConfirmed: boolean;
+  references: string;
 }
 
 const EMPTY_FORM: FormState = {
+  firstName: '',
+  lastName: '',
   email: '',
-  fullName: '',
-  phone: '',
-  address: '',
-  apt: '',
-  city: '',
+  street: '',
+  number: '',
+  interiorNumber: '',
+  state: '',
+  country: '',
   zip: '',
-  slotId: 'asap',
-  cardNumber: '',
-  cardExp: '',
-  cardCvc: '',
-  cardName: '',
-  saveInfo: true,
-  idConfirmed: false,
+  references: '',
 };
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const {lines, subtotal, totalQuantity, clearCart, hydrated} = useCart();
+  const {lines, subtotal, totalQuantity, clearCart} = useCart();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
-  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
-  const slot =
-    DELIVERY_SLOTS.find((s) => s.id === form.slotId) ?? DELIVERY_SLOTS[0];
-  const deliveryFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : slot.fee;
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + deliveryFee + tax;
+  const shipping = lines.length > 0 ? SHIPPING : 0;
+  const taxes = lines.length > 0 ? TAXES : 0;
+  const total = subtotal + shipping + taxes;
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm((f) => ({...f, [key]: value}));
-    if (errors[key as string]) {
-      setErrors((e) => {
-        const next = {...e};
-        delete next[key as string];
+    setForm((current) => ({...current, [key]: value}));
+    if (errors[key]) {
+      setErrors((current) => {
+        const next = {...current};
+        delete next[key];
         return next;
       });
     }
   }
 
-  function validate(): boolean {
-    const e: Record<string, string> = {};
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Valid email required';
-    if (form.fullName.trim().length < 2) e.fullName = 'Name required';
-    if (form.phone.replace(/\D/g, '').length < 7) e.phone = 'Phone required';
-    if (form.address.trim().length < 3) e.address = 'Address required';
-    if (form.city.trim().length < 2) e.city = 'City required';
-    if (!/^\d{5}$/.test(form.zip)) e.zip = '5-digit ZIP';
-    if (form.cardNumber.replace(/\D/g, '').length < 13)
-      e.cardNumber = 'Card number invalid';
-    if (!/^\d{2}\/\d{2}$/.test(form.cardExp)) e.cardExp = 'MM/YY';
-    if (!/^\d{3,4}$/.test(form.cardCvc)) e.cardCvc = 'CVC';
-    if (form.cardName.trim().length < 2) e.cardName = 'Name on card required';
-    if (!form.idConfirmed) e.idConfirmed = 'You must confirm 21+';
-    setErrors(e);
-    return Object.keys(e).length === 0;
+  function validate() {
+    const next: Record<string, string> = {};
+    if (!form.firstName.trim()) next.firstName = 'Required';
+    if (!form.lastName.trim()) next.lastName = 'Required';
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) next.email = 'Valid email required';
+    if (!form.street.trim()) next.street = 'Required';
+    if (!form.state.trim()) next.state = 'Required';
+    if (!form.country.trim()) next.country = 'Required';
+    if (!form.zip.trim()) next.zip = 'Required';
+    setErrors(next);
+    return Object.keys(next).length === 0;
   }
 
-  async function onSubmit(ev: FormEvent) {
-    ev.preventDefault();
-    if (!validate()) {
-      // scroll to first error
-      const firstKey = Object.keys(errors)[0];
-      if (firstKey) {
-        document.getElementById(`field-${firstKey}`)?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-      }
-      return;
-    }
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!validate()) return;
+
     setSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 650));
 
-    // Simulate processing
-    await new Promise((r) => setTimeout(r, 900));
-
-    const lastFour = form.cardNumber.replace(/\D/g, '').slice(-4);
-    const orderNumber = `GL-${Math.floor(100000 + Math.random() * 900000)}`;
+    const fullName = `${form.firstName} ${form.lastName}`.trim();
     const order: LastOrder = {
-      orderNumber,
+      orderNumber: `GG-${Math.floor(100000 + Math.random() * 900000)}`,
       lines,
       subtotal,
-      delivery: deliveryFee,
-      tax,
+      delivery: shipping,
+      tax: taxes,
       total,
       placedAt: new Date().toISOString(),
-      deliveryEstimate: `${slot.label} — ${slot.detail}`,
+      deliveryEstimate: 'Standard shipping',
       email: form.email,
-      fullName: form.fullName,
-      address: form.apt ? `${form.address}, ${form.apt}` : form.address,
-      city: form.city,
+      fullName,
+      address: form.number ? `${form.street} ${form.number}` : form.street,
+      city: form.state,
       zip: form.zip,
-      deliverySlot: slot.label,
-      lastFour,
+      deliverySlot: 'Standard',
+      lastFour: '0000',
     };
 
     saveLastOrder(order);
@@ -136,731 +109,351 @@ export default function Checkout() {
     void navigate('/checkout/confirmed');
   }
 
-  // Empty cart state
-  if (hydrated && lines.length === 0) {
-    return (
-      <div className="max-w-content mx-auto px-gutter py-section">
-        <div className="max-w-md mx-auto text-center py-16">
-          <div className="inline-flex size-20 rounded-2xl bg-surface-sunken items-center justify-center mb-5">
-            <BagOutlineIcon />
-          </div>
-          <h1 className="text-2xl font-bold text-primary mb-2">
-            Your bag is empty
-          </h1>
-          <p className="text-sm text-tertiary mb-6 leading-relaxed">
-            Add something to your bag before heading to checkout.
-          </p>
-          <Link
-            to="/collections/all"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-accent text-white text-sm font-semibold rounded-full hover:bg-accent-hover transition-colors"
-          >
-            Browse products
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-content mx-auto px-gutter pt-6 sm:pt-10 pb-section">
-      {/* Header */}
-      <div className="mb-6 sm:mb-8">
-        <div className="flex items-center gap-2 text-xs text-tertiary mb-2">
-          <Link to="/" className="hover:text-primary transition-colors">
-            Home
-          </Link>
-          <ChevronRightMini />
-          <span className="text-primary font-medium">Checkout</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
-          Checkout
-        </h1>
-        <p className="text-sm text-secondary mt-1">
-          Secure, discreet delivery — 21+ with valid ID on arrival.
-        </p>
-      </div>
+    <div className="gigi-site gigi-checkout-page">
+      <GigiNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-      <form
-        onSubmit={(e) => void onSubmit(e)}
-        className="grid gap-8 lg:grid-cols-[1fr_380px] lg:gap-10 items-start"
-      >
-        {/* ============ LEFT: form sections ============ */}
-        <div className="space-y-6">
-          {/* Contact */}
-          <Section
-            step={1}
-            title="Contact"
-            description="We'll text you delivery updates."
+      <header className="gigi-checkout-header">
+        <a className="gigi-checkout-logo" href="/" aria-label="GIGI home">
+          <img src={img('gigi-logo-cream.png')} alt="GIGI" />
+        </a>
+        <div className="gigi-checkout-header__actions">
+          <a
+            className="gigi-checkout-bag"
+            href="/cart"
+            aria-label={`Cart, ${totalQuantity} items`}
           >
-            <Field
-              id="field-email"
-              label="Email"
-              error={errors.email}
-              input={
-                <input
-                  type="email"
-                  autoComplete="email"
-                  value={form.email}
-                  onChange={(e) => update('email', e.target.value)}
-                  placeholder="you@example.com"
-                  className={inputClass(errors.email)}
-                />
-              }
-            />
-            <Field
-              id="field-phone"
-              label="Phone"
-              error={errors.phone}
-              input={
-                <input
-                  type="tel"
-                  autoComplete="tel"
-                  value={form.phone}
-                  onChange={(e) => update('phone', e.target.value)}
-                  placeholder="(555) 123-4567"
-                  className={inputClass(errors.phone)}
-                />
-              }
-            />
-          </Section>
-
-          {/* Delivery */}
-          <Section
-            step={2}
-            title="Delivery address"
-            description="Driver will verify ID at the door."
-          >
-            <Field
-              id="field-fullName"
-              label="Full name"
-              error={errors.fullName}
-              input={
-                <input
-                  type="text"
-                  autoComplete="name"
-                  value={form.fullName}
-                  onChange={(e) => update('fullName', e.target.value)}
-                  placeholder="Jane Appleseed"
-                  className={inputClass(errors.fullName)}
-                />
-              }
-            />
-            <Field
-              id="field-address"
-              label="Street address"
-              error={errors.address}
-              input={
-                <input
-                  type="text"
-                  autoComplete="address-line1"
-                  value={form.address}
-                  onChange={(e) => update('address', e.target.value)}
-                  placeholder="123 Main St"
-                  className={inputClass(errors.address)}
-                />
-              }
-            />
-            <Field
-              id="field-apt"
-              label="Apartment, suite, etc. (optional)"
-              input={
-                <input
-                  type="text"
-                  autoComplete="address-line2"
-                  value={form.apt}
-                  onChange={(e) => update('apt', e.target.value)}
-                  placeholder="Apt 4B"
-                  className={inputClass()}
-                />
-              }
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <Field
-                id="field-city"
-                label="City"
-                error={errors.city}
-                input={
-                  <input
-                    type="text"
-                    autoComplete="address-level2"
-                    value={form.city}
-                    onChange={(e) => update('city', e.target.value)}
-                    placeholder="Brooklyn"
-                    className={inputClass(errors.city)}
-                  />
-                }
-              />
-              <Field
-                id="field-zip"
-                label="ZIP"
-                error={errors.zip}
-                input={
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="postal-code"
-                    value={form.zip}
-                    onChange={(e) =>
-                      update('zip', e.target.value.replace(/\D/g, '').slice(0, 5))
-                    }
-                    placeholder="11201"
-                    className={inputClass(errors.zip)}
-                  />
-                }
-              />
-            </div>
-          </Section>
-
-          {/* Delivery slot */}
-          <Section
-            step={3}
-            title="Delivery window"
-            description="Pick the slot that works for you."
-          >
-            <div className="grid grid-cols-2 gap-2.5">
-              {DELIVERY_SLOTS.map((s) => {
-                const active = form.slotId === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => update('slotId', s.id)}
-                    className={`
-                      relative text-left rounded-2xl border p-3.5
-                      transition-all duration-200 ease-[var(--ease-out)]
-                      ${
-                        active
-                          ? 'border-accent bg-accent-light shadow-card'
-                          : 'border-border-light bg-surface hover:border-border'
-                      }
-                    `}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-bold text-primary">
-                        {s.label}
-                      </span>
-                      {active && (
-                        <span className="size-4 rounded-full bg-accent flex items-center justify-center">
-                          <CheckMini />
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-tertiary">{s.detail}</p>
-                    <p className="text-[0.7rem] font-semibold text-accent mt-1">
-                      {subtotal >= FREE_SHIPPING_THRESHOLD
-                        ? 'Free'
-                        : `$${s.fee.toFixed(2)}`}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-          </Section>
-
-          {/* Payment */}
-          <Section
-            step={4}
-            title="Payment"
-            description="Encrypted. We never store full card details."
-          >
-            <Field
-              id="field-cardNumber"
-              label="Card number"
-              error={errors.cardNumber}
-              input={
-                <div className="relative">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="cc-number"
-                    value={form.cardNumber}
-                    onChange={(e) =>
-                      update(
-                        'cardNumber',
-                        formatCardNumber(e.target.value),
-                      )
-                    }
-                    placeholder="1234 1234 1234 1234"
-                    className={inputClass(errors.cardNumber) + ' pr-12'}
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-tertiary">
-                    <CardIcon />
-                  </span>
-                </div>
-              }
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <Field
-                id="field-cardExp"
-                label="Expiry"
-                error={errors.cardExp}
-                input={
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="cc-exp"
-                    value={form.cardExp}
-                    onChange={(e) =>
-                      update('cardExp', formatExpiry(e.target.value))
-                    }
-                    placeholder="MM/YY"
-                    className={inputClass(errors.cardExp)}
-                  />
-                }
-              />
-              <Field
-                id="field-cardCvc"
-                label="CVC"
-                error={errors.cardCvc}
-                input={
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="cc-csc"
-                    value={form.cardCvc}
-                    onChange={(e) =>
-                      update(
-                        'cardCvc',
-                        e.target.value.replace(/\D/g, '').slice(0, 4),
-                      )
-                    }
-                    placeholder="123"
-                    className={inputClass(errors.cardCvc)}
-                  />
-                }
-              />
-            </div>
-            <Field
-              id="field-cardName"
-              label="Name on card"
-              error={errors.cardName}
-              input={
-                <input
-                  type="text"
-                  autoComplete="cc-name"
-                  value={form.cardName}
-                  onChange={(e) => update('cardName', e.target.value)}
-                  placeholder="Jane Appleseed"
-                  className={inputClass(errors.cardName)}
-                />
-              }
-            />
-          </Section>
-
-          {/* Compliance */}
-          <div className="rounded-2xl border border-border-light bg-surface-sunken p-4">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                id="field-idConfirmed"
-                type="checkbox"
-                checked={form.idConfirmed}
-                onChange={(e) => update('idConfirmed', e.target.checked)}
-                className="mt-0.5 size-4 rounded border-border text-accent focus:ring-accent/30"
-              />
-              <span className="text-xs text-secondary leading-relaxed">
-                I confirm I am <strong className="text-primary">21+</strong>{' '}
-                and will present a valid government-issued ID to the driver.
-                Orders delivered to unverified recipients will be returned.
-              </span>
-            </label>
-            {errors.idConfirmed && (
-              <p className="text-xs text-error mt-2">{errors.idConfirmed}</p>
+            <BagIcon />
+            {totalQuantity > 0 && (
+              <span className="gigi-checkout-bag__count">{totalQuantity}</span>
             )}
-          </div>
+          </a>
+          <button
+            className="gigi-checkout-menu"
+            type="button"
+            onClick={() => setIsMenuOpen(true)}
+            aria-expanded={isMenuOpen}
+            aria-controls="gigi-menu"
+          >
+            Menu
+          </button>
         </div>
+      </header>
 
-        {/* ============ RIGHT: order summary ============ */}
-        <aside className="lg:sticky lg:top-24">
-          <div className="rounded-2xl border border-border-light bg-surface overflow-hidden shadow-card">
-            <div className="px-5 py-4 border-b border-border-light flex items-center justify-between">
-              <h2 className="text-sm font-bold text-primary">Order summary</h2>
-              <span className="text-[0.7rem] font-medium text-tertiary">
-                {totalQuantity} {totalQuantity === 1 ? 'item' : 'items'}
-              </span>
-            </div>
+      <main className="gigi-checkout-shell" aria-labelledby="checkout-title">
+        <form
+          className="gigi-checkout-card"
+          onSubmit={(event) => void onSubmit(event)}
+        >
+          <h1 id="checkout-title">checkout</h1>
 
-            {/* Line items */}
-            <ul className="divide-y divide-border-light max-h-[20rem] overflow-y-auto">
-              {lines.map((line) => (
-                <li key={line.id} className="flex gap-3 px-5 py-3">
-                  <div className="relative shrink-0 size-14 rounded-xl bg-surface-sunken overflow-hidden flex items-center justify-center">
-                    <img
-                      src={line.image}
-                      alt={line.title}
-                      className="w-[75%] h-[75%] object-contain drop-shadow"
+          <div className="gigi-checkout-layout">
+            <section
+              className="gigi-checkout-form"
+              aria-label="Checkout details"
+            >
+              <div className="gigi-checkout-section is-open">
+                <div className="gigi-checkout-section__title">Ship to</div>
+                <div className="gigi-checkout-fields">
+                  <TextInput
+                    value={form.firstName}
+                    onChange={(value) => update('firstName', value)}
+                    placeholder="First Name"
+                    error={errors.firstName}
+                  />
+                  <TextInput
+                    value={form.lastName}
+                    onChange={(value) => update('lastName', value)}
+                    placeholder="Last Name"
+                    error={errors.lastName}
+                  />
+                  <TextInput
+                    value={form.email}
+                    onChange={(value) => update('email', value)}
+                    placeholder="Email"
+                    error={errors.email}
+                    type="email"
+                  />
+                  <TextInput
+                    value={form.street}
+                    onChange={(value) => update('street', value)}
+                    placeholder="Street"
+                    error={errors.street}
+                  />
+                  <div className="gigi-checkout-field-row">
+                    <TextInput
+                      value={form.number}
+                      onChange={(value) => update('number', value)}
+                      placeholder="Number"
                     />
-                    <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 flex items-center justify-center bg-primary text-white text-[0.6rem] font-bold rounded-full">
-                      {line.quantity}
-                    </span>
+                    <TextInput
+                      value={form.interiorNumber}
+                      onChange={(value) => update('interiorNumber', value)}
+                      placeholder="Interior Number"
+                    />
+                    <TextInput
+                      value={form.state}
+                      onChange={(value) => update('state', value)}
+                      placeholder="State"
+                      error={errors.state}
+                    />
+                    <TextInput
+                      value={form.country}
+                      onChange={(value) => update('country', value)}
+                      placeholder="Country"
+                      error={errors.country}
+                    />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-primary truncate">
-                      {line.title}
-                    </p>
-                    <p className="text-[0.7rem] text-tertiary truncate">
-                      {line.weight} · {line.strain}
-                    </p>
-                  </div>
-                  <p className="text-sm font-semibold text-primary tabular-nums shrink-0">
-                    ${(line.unitPriceValue * line.quantity).toFixed(2)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-
-            {/* Promo input */}
-            <div className="px-5 py-3 border-t border-border-light">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Promo code"
-                  className="flex-1 px-3 py-2 text-xs bg-surface-sunken border border-transparent rounded-lg focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none"
-                />
-                <button
-                  type="button"
-                  className="px-3 py-2 text-xs font-semibold text-secondary hover:text-primary transition-colors"
-                >
-                  Apply
-                </button>
+                  <TextInput
+                    value={form.zip}
+                    onChange={(value) => update('zip', value)}
+                    placeholder="Zip Code"
+                    error={errors.zip}
+                  />
+                  <TextInput
+                    value={form.references}
+                    onChange={(value) => update('references', value)}
+                    placeholder="References"
+                    className="gigi-checkout-reference-visual"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Totals */}
-            <div className="px-5 py-4 border-t border-border-light space-y-1.5 bg-surface-sunken/50">
-              <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
-              <Row
-                label="Delivery"
-                value={
-                  deliveryFee === 0 ? 'Free' : `$${deliveryFee.toFixed(2)}`
-                }
-                highlight={deliveryFee === 0}
+              <CheckoutFold title="Billing Address" detail="Same as Shipping" />
+              <CheckoutFold
+                title="Payment Method"
+                detail="Credit card - 1234"
               />
-              <Row label="Tax" value={`$${tax.toFixed(2)}`} />
-              <div className="h-px bg-border-light my-2" />
-              <Row
-                label="Total"
-                value={`$${total.toFixed(2)}`}
-                bold
+              <CheckoutFold
+                title="Shipping Method"
+                detail="Shipments with discount"
               />
-            </div>
+            </section>
 
-            {/* Place order button */}
-            <div className="p-5 border-t border-border-light">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="
-                  w-full flex items-center justify-center gap-2
-                  h-12
-                  bg-accent text-white
-                  text-sm font-semibold
-                  rounded-full
-                  transition-all duration-200 ease-[var(--ease-out)]
-                  hover:bg-accent-hover
-                  active:scale-[0.98]
-                  disabled:opacity-60 disabled:cursor-not-allowed
-                "
-              >
-                {submitting ? (
-                  <>
-                    <SpinnerIcon />
-                    Processing…
-                  </>
-                ) : (
-                  <>
-                    <LockIcon />
-                    Place order — ${total.toFixed(2)}
-                  </>
-                )}
-              </button>
-              <p className="text-[0.65rem] text-tertiary text-center mt-3 leading-relaxed">
-                By placing your order you agree to our Terms and confirm
-                you&apos;re 21+.
-              </p>
-            </div>
+            <OrderSummary
+              subtotal={subtotal}
+              totalQuantity={totalQuantity}
+              shipping={shipping}
+              taxes={taxes}
+              total={total}
+              submitting={submitting}
+            />
           </div>
+        </form>
+      </main>
 
-          {/* Trust row */}
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <TrustBadge icon={<ShieldIcon />} label="Lab tested" />
-            <TrustBadge icon={<LockIcon />} label="Encrypted" />
-            <TrustBadge icon={<TruckIcon />} label="Discreet" />
-          </div>
-        </aside>
-      </form>
+      <GigiFooter />
     </div>
   );
 }
 
-// ============================================================
-//  SUBCOMPONENTS
-// ============================================================
-
-function Section({
-  step,
-  title,
-  description,
-  children,
-}: {
-  step: number;
-  title: string;
-  description?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-2xl border border-border-light bg-surface p-5 sm:p-6">
-      <div className="flex items-start gap-3 mb-4">
-        <span className="shrink-0 size-7 rounded-full bg-accent-light text-accent text-xs font-bold flex items-center justify-center">
-          {step}
-        </span>
-        <div className="flex-1 min-w-0">
-          <h2 className="text-base font-bold text-primary leading-tight">
-            {title}
-          </h2>
-          {description && (
-            <p className="text-xs text-tertiary mt-0.5">{description}</p>
-          )}
-        </div>
-      </div>
-      <div className="space-y-3">{children}</div>
-    </section>
-  );
-}
-
-function Field({
-  id,
-  label,
-  input,
+function TextInput({
+  value,
+  onChange,
+  placeholder,
   error,
+  type = 'text',
+  className = '',
 }: {
-  id: string;
-  label: string;
-  input: React.ReactNode;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
   error?: string;
+  type?: string;
+  className?: string;
 }) {
   return (
-    <label htmlFor={id} className="block" id={id}>
-      <span className="block text-[0.7rem] font-semibold text-secondary uppercase tracking-wide mb-1.5">
-        {label}
-      </span>
-      {input}
-      {error && <p className="text-xs text-error mt-1">{error}</p>}
+    <label
+      className={`gigi-checkout-input ${error ? 'has-error' : ''} ${className}`}
+    >
+      <span>{placeholder}</span>
+      <input
+        type={type}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        aria-label={placeholder}
+        placeholder={placeholder}
+      />
     </label>
   );
 }
 
-function Row({
-  label,
-  value,
-  bold,
-  highlight,
+function CheckoutFold({title, detail}: {title: string; detail: string}) {
+  return (
+    <button className="gigi-checkout-fold" type="button">
+      <span>
+        <strong>{title}</strong>
+        <small>{detail}</small>
+      </span>
+      <span aria-hidden="true">+</span>
+    </button>
+  );
+}
+
+function OrderSummary({
+  subtotal,
+  totalQuantity,
+  shipping,
+  taxes,
+  total,
+  submitting,
 }: {
-  label: string;
-  value: string;
-  bold?: boolean;
-  highlight?: boolean;
+  subtotal: number;
+  totalQuantity: number;
+  shipping: number;
+  taxes: number;
+  total: number;
+  submitting: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between">
-      <span
-        className={`text-xs ${bold ? 'font-bold text-primary text-sm' : 'text-secondary'}`}
-      >
-        {label}
+    <aside className="gigi-checkout-summary" aria-label="Order summary">
+      <h2>Order Summary</h2>
+      <div className="gigi-checkout-summary__body">
+        <div className="gigi-checkout-summary__topline">
+          <span>{productsLabel(totalQuantity)}</span>
+          <strong>${subtotal.toFixed(0)} USD</strong>
+        </div>
+
+        <dl>
+          <div>
+            <dt>Shipping</dt>
+            <dd>${shipping.toFixed(0)} USD</dd>
+          </div>
+          <div>
+            <dt>Taxes</dt>
+            <dd>${taxes.toFixed(0)} USD</dd>
+          </div>
+        </dl>
+
+        <div className="gigi-checkout-summary__total">
+          <span>Total</span>
+          <strong>${total.toFixed(0)} USD</strong>
+        </div>
+
+        <button
+          className="gigi-checkout-pay"
+          type="submit"
+          disabled={submitting}
+        >
+          {submitting ? 'Processing' : 'Pay Now'}
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+function GigiNav({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
+  return (
+    <nav
+      className={`gigi-menu-popover ${isOpen ? 'is-open' : ''}`}
+      id="gigi-menu"
+      aria-hidden={!isOpen}
+    >
+      <div className="gigi-menu-actions">
+        <button type="button" onClick={onClose} aria-label="Close menu">
+          <span />
+          <span />
+        </button>
+        <div>
+          <a href="/cart" aria-label="Cart" onClick={onClose}>
+            <BagIcon />
+          </a>
+          <a href="/profile" aria-label="Account" onClick={onClose}>
+            <UserIcon />
+          </a>
+          <a href="/search" aria-label="Search" onClick={onClose}>
+            <SearchIcon />
+          </a>
+        </div>
+      </div>
+      <a href="/" onClick={onClose}>
+        Home
+      </a>
+      <a href="/about" onClick={onClose}>
+        <em>Our</em> Story
+      </a>
+      <a href="/packages" onClick={onClose}>
+        Get Started
+      </a>
+      <span className="gigi-menu-sub">
+        <a href="/packages" onClick={onClose}>
+          Classes
+        </a>
+        <a href="/packages" onClick={onClose}>
+          Packages
+        </a>
+        <a href="/book" onClick={onClose}>
+          Book Now
+        </a>
       </span>
-      <span
-        className={`tabular-nums ${
-          bold
-            ? 'font-bold text-primary text-base'
-            : highlight
-              ? 'font-semibold text-accent text-xs'
-              : 'font-medium text-primary text-xs'
-        }`}
-      >
-        {value}
-      </span>
-    </div>
+      <a href="/shop" onClick={onClose}>
+        Shop
+      </a>
+      <a href="/collab" onClick={onClose}>
+        Collaborate with Gigi
+      </a>
+      <a href="/#contact" onClick={onClose}>
+        Stay in Touch
+      </a>
+    </nav>
   );
 }
 
-function TrustBadge({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
+function GigiFooter() {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-xl bg-surface-sunken py-2.5 text-tertiary">
-      <span className="text-secondary">{icon}</span>
-      <span className="text-[0.6rem] font-semibold text-secondary">
-        {label}
-      </span>
-    </div>
+    <footer className="gigi-footer is-compact is-dark">
+      <div>
+        <p>Follow Us</p>
+        <div className="gigi-socials">
+          <button>Instagram</button>
+          <button>Tik Tok</button>
+        </div>
+        <p>Join our Newsletter</p>
+        <div className="gigi-newsletter">
+          <input aria-label="email" placeholder="email" />
+          <button>Send</button>
+        </div>
+        <p>Contact Us</p>
+        <small>
+          Studio 00, 01234 St, Dubai, UAE
+          <br />
+          +971 50 111 2222
+        </small>
+      </div>
+      <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />
+    </footer>
   );
 }
 
-function inputClass(error?: string) {
-  return `w-full px-3.5 py-2.5 text-sm bg-surface border rounded-xl outline-none transition-colors ${
-    error
-      ? 'border-error focus:ring-2 focus:ring-error/20'
-      : 'border-border-light focus:border-accent focus:ring-2 focus:ring-accent/20'
-  }`;
+function productsLabel(totalQuantity: number) {
+  if (totalQuantity === 0) return 'No Products';
+  if (totalQuantity === 1) return 'One Product';
+  if (totalQuantity === 2) return 'Two Products';
+  return `${totalQuantity} Products`;
 }
 
-function formatCardNumber(v: string) {
-  const digits = v.replace(/\D/g, '').slice(0, 19);
-  return digits.replace(/(.{4})/g, '$1 ').trim();
-}
-
-function formatExpiry(v: string) {
-  const d = v.replace(/\D/g, '').slice(0, 4);
-  if (d.length < 3) return d;
-  return `${d.slice(0, 2)}/${d.slice(2)}`;
-}
-
-// ============================================================
-//  ICONS
-// ============================================================
-
-function ChevronRightMini() {
+function BagIcon() {
   return (
-    <svg
-      className="size-3 text-border"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={2.5}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m8.25 4.5 7.5 7.5-7.5 7.5"
-      />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 9V7a4 4 0 0 1 8 0v2" />
+      <path d="M5.5 8.5h13l1 12h-15l1-12Z" />
     </svg>
   );
 }
 
-function CheckMini() {
+function UserIcon() {
   return (
-    <svg
-      className="size-3 text-white"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={3}
-      stroke="currentColor"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+      <path d="M5 21a7 7 0 0 1 14 0" />
     </svg>
   );
 }
 
-function LockIcon() {
+function SearchIcon() {
   return (
-    <svg
-      className="size-4"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.8}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
-      />
-    </svg>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg
-      className="size-4"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.8}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
-      />
-    </svg>
-  );
-}
-
-function TruckIcon() {
-  return (
-    <svg
-      className="size-4"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.8}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-4.875a1.125 1.125 0 0 0-1.125 1.125v2.25c0 .621.504 1.125 1.125 1.125h4.875"
-      />
-    </svg>
-  );
-}
-
-function CardIcon() {
-  return (
-    <svg
-      className="size-5"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
-      />
-    </svg>
-  );
-}
-
-function SpinnerIcon() {
-  return (
-    <svg
-      className="size-4 animate-spin"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.5}
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="9"
-        strokeOpacity="0.25"
-        strokeLinecap="round"
-      />
-      <path d="M21 12a9 9 0 0 0-9-9" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function BagOutlineIcon() {
-  return (
-    <svg
-      className="size-8 text-tertiary"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-      />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M10.5 18a7.5 7.5 0 1 1 5.3-2.2L21 21" />
     </svg>
   );
 }
