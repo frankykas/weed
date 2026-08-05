@@ -21,7 +21,10 @@ export interface CartLine {
   subtitle: string;
   strain: string;
   image: string;
+  /** Weight for the cannabis catalogue, size for GIGI apparel. */
   weight: string;
+  /** Apparel colourway, when the product has one. */
+  color?: string;
   unitPrice: string;
   unitPriceValue: number;
   quantity: number;
@@ -30,7 +33,7 @@ export interface CartLine {
 type CartProductInput = Pick<
   MockProduct,
   'handle' | 'title' | 'subtitle' | 'strain' | 'image' | 'price' | 'weights'
->;
+> & {color?: string};
 
 interface CartContextValue {
   lines: CartLine[];
@@ -113,7 +116,11 @@ export function CartProvider({children}: {children: ReactNode}) {
       const weightOption = product.weights.find((w) => w.label === weight);
       const unitPrice = weightOption?.price ?? product.price;
       const unitPriceValue = parsePrice(unitPrice);
-      const id = `${product.handle}:${weight}`;
+      // Colour is part of the identity: the same size in two colourways is two
+      // lines, not one line with a quantity of two.
+      const id = product.color
+        ? `${product.handle}:${weight}:${product.color}`
+        : `${product.handle}:${weight}`;
 
       setLines((prev) => {
         const existing = prev.find((line) => line.id === id);
@@ -134,6 +141,7 @@ export function CartProvider({children}: {children: ReactNode}) {
             strain: product.strain,
             image: product.image,
             weight,
+            color: product.color,
             unitPrice,
             unitPriceValue,
             quantity: qty,

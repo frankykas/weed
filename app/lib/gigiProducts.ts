@@ -29,6 +29,7 @@ export type GigiCartProduct = {
   strain: 'Hybrid';
   price: string;
   image: string;
+  color?: string;
   weights: {label: string; price: string}[];
 };
 
@@ -174,9 +175,15 @@ export function getRelatedGigiProducts(handle: string, count = 6): GigiProduct[]
   return GIGI_PRODUCTS.filter((p) => p.handle !== handle).slice(0, count);
 }
 
+/**
+ * Adapt a GIGI product into the shape the cart expects. Size and colour stay
+ * separate — sizes like `"S / M"` contain the same slash we'd otherwise use to
+ * join them, so a combined label can't be split back apart reliably.
+ */
 export function toGigiCartProduct(
   product: GigiProduct,
-  optionLabel = product.sizes[0] ?? 'One Size',
+  sizeLabel = product.sizes[0] ?? 'One Size',
+  colorName = product.colors[0]?.name,
 ): GigiCartProduct {
   return {
     id: `gigi-${product.handle}`,
@@ -187,6 +194,7 @@ export function toGigiCartProduct(
     strain: 'Hybrid',
     price: product.price,
     image: `/gigi/${product.image}`,
-    weights: [{label: optionLabel, price: product.price}],
+    color: colorName,
+    weights: [{label: sizeLabel, price: product.price}],
   };
 }

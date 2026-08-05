@@ -1,7 +1,14 @@
 import {useState, type FormEvent} from 'react';
 import {useNavigate} from 'react-router';
 import type {Route} from './+types/checkout';
-import {useCart, saveLastOrder, type LastOrder} from '~/lib/mockCart';
+import {
+  useCart,
+  saveLastOrder,
+  type CartLine,
+  type LastOrder,
+} from '~/lib/mockCart';
+import {GigiHeader} from '~/components/GigiHeader';
+import {GigiFooter} from '~/components/GigiFooter';
 import checkoutStyles from '~/styles/gigi-checkout.css?url';
 
 export function links() {
@@ -12,7 +19,6 @@ export const meta: Route.MetaFunction = () => {
   return [{title: 'Checkout | GIGI'}];
 };
 
-const img = (name: string) => `/gigi/${name}`;
 const SHIPPING = 5;
 const TAXES = 15;
 
@@ -44,8 +50,7 @@ const EMPTY_FORM: FormState = {
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const {lines, subtotal, totalQuantity, clearCart} = useCart();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {lines, subtotal, totalQuantity, clearCart, hydrated} = useCart();
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -111,34 +116,7 @@ export default function Checkout() {
 
   return (
     <div className="gigi-site gigi-checkout-page">
-      <GigiNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-
-      <header className="gigi-checkout-header">
-        <a className="gigi-checkout-logo" href="/" aria-label="GIGI home">
-          <img src={img('gigi-logo-cream.png')} alt="GIGI" />
-        </a>
-        <div className="gigi-checkout-header__actions">
-          <a
-            className="gigi-checkout-bag"
-            href="/cart"
-            aria-label={`Cart, ${totalQuantity} items`}
-          >
-            <BagIcon />
-            {totalQuantity > 0 && (
-              <span className="gigi-checkout-bag__count">{totalQuantity}</span>
-            )}
-          </a>
-          <button
-            className="gigi-checkout-menu"
-            type="button"
-            onClick={() => setIsMenuOpen(true)}
-            aria-expanded={isMenuOpen}
-            aria-controls="gigi-menu"
-          >
-            Menu
-          </button>
-        </div>
-      </header>
+      <GigiHeader tone="light" />
 
       <main className="gigi-checkout-shell" aria-labelledby="checkout-title">
         <form
@@ -152,21 +130,23 @@ export default function Checkout() {
               className="gigi-checkout-form"
               aria-label="Checkout details"
             >
-              <div className="gigi-checkout-section is-open">
+              <div className="gigi-checkout-section">
                 <div className="gigi-checkout-section__title">Ship to</div>
                 <div className="gigi-checkout-fields">
-                  <TextInput
-                    value={form.firstName}
-                    onChange={(value) => update('firstName', value)}
-                    placeholder="First Name"
-                    error={errors.firstName}
-                  />
-                  <TextInput
-                    value={form.lastName}
-                    onChange={(value) => update('lastName', value)}
-                    placeholder="Last Name"
-                    error={errors.lastName}
-                  />
+                  <div className="gigi-checkout-field-row">
+                    <TextInput
+                      value={form.firstName}
+                      onChange={(value) => update('firstName', value)}
+                      placeholder="First Name"
+                      error={errors.firstName}
+                    />
+                    <TextInput
+                      value={form.lastName}
+                      onChange={(value) => update('lastName', value)}
+                      placeholder="Last Name"
+                      error={errors.lastName}
+                    />
+                  </div>
                   <TextInput
                     value={form.email}
                     onChange={(value) => update('email', value)}
@@ -191,6 +171,8 @@ export default function Checkout() {
                       onChange={(value) => update('interiorNumber', value)}
                       placeholder="Interior Number"
                     />
+                  </div>
+                  <div className="gigi-checkout-field-row">
                     <TextInput
                       value={form.state}
                       onChange={(value) => update('state', value)}
@@ -214,7 +196,6 @@ export default function Checkout() {
                     value={form.references}
                     onChange={(value) => update('references', value)}
                     placeholder="References"
-                    className="gigi-checkout-reference-visual"
                   />
                 </div>
               </div>
@@ -231,6 +212,8 @@ export default function Checkout() {
             </section>
 
             <OrderSummary
+              lines={lines}
+              hydrated={hydrated}
               subtotal={subtotal}
               totalQuantity={totalQuantity}
               shipping={shipping}
@@ -242,7 +225,7 @@ export default function Checkout() {
         </form>
       </main>
 
-      <GigiFooter />
+      <GigiFooter compact dark />
     </div>
   );
 }
@@ -253,27 +236,24 @@ function TextInput({
   placeholder,
   error,
   type = 'text',
-  className = '',
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
   error?: string;
   type?: string;
-  className?: string;
 }) {
   return (
-    <label
-      className={`gigi-checkout-input ${error ? 'has-error' : ''} ${className}`}
-    >
-      <span>{placeholder}</span>
+    <label className={`gigi-checkout-input ${error ? 'has-error' : ''}`}>
+      <span className="gigi-checkout-input__label">{placeholder}</span>
       <input
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        aria-label={placeholder}
         placeholder={placeholder}
+        aria-invalid={error ? true : undefined}
       />
+      {error && <small className="gigi-checkout-input__error">{error}</small>}
     </label>
   );
 }
@@ -291,6 +271,8 @@ function CheckoutFold({title, detail}: {title: string; detail: string}) {
 }
 
 function OrderSummary({
+  lines,
+  hydrated,
   subtotal,
   totalQuantity,
   shipping,
@@ -298,6 +280,8 @@ function OrderSummary({
   total,
   submitting,
 }: {
+  lines: CartLine[];
+  hydrated: boolean;
   subtotal: number;
   totalQuantity: number;
   shipping: number;
@@ -313,6 +297,37 @@ function OrderSummary({
           <span>{productsLabel(totalQuantity)}</span>
           <strong>${subtotal.toFixed(0)} USD</strong>
         </div>
+
+        {hydrated && lines.length > 0 && (
+          <ul className="gigi-checkout-lines">
+            {lines.map((line) => (
+              <li key={line.id} className="gigi-checkout-line">
+                <span className="gigi-checkout-line__image">
+                  <img src={line.image} alt="" loading="lazy" />
+                  <span className="gigi-checkout-line__qty">
+                    {line.quantity}
+                  </span>
+                </span>
+                <span className="gigi-checkout-line__copy">
+                  <strong>{line.title}</strong>
+                  <small>
+                    {line.weight}
+                    {line.color ? ` · ${line.color}` : ''}
+                  </small>
+                </span>
+                <span className="gigi-checkout-line__price">
+                  ${(line.unitPriceValue * line.quantity).toFixed(0)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {hydrated && lines.length === 0 && (
+          <p className="gigi-checkout-lines__empty">
+            Your bag is empty. <a href="/shop">Shop GIGI</a>
+          </p>
+        )}
 
         <dl>
           <div>
@@ -342,89 +357,6 @@ function OrderSummary({
   );
 }
 
-function GigiNav({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
-  return (
-    <nav
-      className={`gigi-menu-popover ${isOpen ? 'is-open' : ''}`}
-      id="gigi-menu"
-      aria-hidden={!isOpen}
-    >
-      <div className="gigi-menu-actions">
-        <button type="button" onClick={onClose} aria-label="Close menu">
-          <span />
-          <span />
-        </button>
-        <div>
-          <a href="/cart" aria-label="Cart" onClick={onClose}>
-            <BagIcon />
-          </a>
-          <a href="/profile" aria-label="Account" onClick={onClose}>
-            <UserIcon />
-          </a>
-          <a href="/search" aria-label="Search" onClick={onClose}>
-            <SearchIcon />
-          </a>
-        </div>
-      </div>
-      <a href="/" onClick={onClose}>
-        Home
-      </a>
-      <a href="/about" onClick={onClose}>
-        <em>Our</em> Story
-      </a>
-      <a href="/packages" onClick={onClose}>
-        Get Started
-      </a>
-      <span className="gigi-menu-sub">
-        <a href="/packages" onClick={onClose}>
-          Classes
-        </a>
-        <a href="/packages" onClick={onClose}>
-          Packages
-        </a>
-        <a href="/book" onClick={onClose}>
-          Book Now
-        </a>
-      </span>
-      <a href="/shop" onClick={onClose}>
-        Shop
-      </a>
-      <a href="/collab" onClick={onClose}>
-        Collaborate with Gigi
-      </a>
-      <a href="/#contact" onClick={onClose}>
-        Stay in Touch
-      </a>
-    </nav>
-  );
-}
-
-function GigiFooter() {
-  return (
-    <footer className="gigi-footer is-compact is-dark">
-      <div>
-        <p>Follow Us</p>
-        <div className="gigi-socials">
-          <button>Instagram</button>
-          <button>Tik Tok</button>
-        </div>
-        <p>Join our Newsletter</p>
-        <div className="gigi-newsletter">
-          <input aria-label="email" placeholder="email" />
-          <button>Send</button>
-        </div>
-        <p>Contact Us</p>
-        <small>
-          Studio 00, 01234 St, Dubai, UAE
-          <br />
-          +971 50 111 2222
-        </small>
-      </div>
-      <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />
-    </footer>
-  );
-}
-
 function productsLabel(totalQuantity: number) {
   if (totalQuantity === 0) return 'No Products';
   if (totalQuantity === 1) return 'One Product';
@@ -432,28 +364,5 @@ function productsLabel(totalQuantity: number) {
   return `${totalQuantity} Products`;
 }
 
-function BagIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 9V7a4 4 0 0 1 8 0v2" />
-      <path d="M5.5 8.5h13l1 12h-15l1-12Z" />
-    </svg>
-  );
-}
 
-function UserIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
-      <path d="M5 21a7 7 0 0 1 14 0" />
-    </svg>
-  );
-}
 
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M10.5 18a7.5 7.5 0 1 1 5.3-2.2L21 21" />
-    </svg>
-  );
-}

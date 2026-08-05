@@ -2,12 +2,34 @@ import {useEffect, useState} from 'react';
 import {Link} from 'react-router';
 import type {Route} from './+types/checkout_.confirmed';
 import {loadLastOrder, type LastOrder} from '~/lib/mockCart';
+import {GigiHeader} from '~/components/GigiHeader';
+import {GigiFooter} from '~/components/GigiFooter';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Greenly — Order Confirmed'}];
+  return [{title: 'Order Confirmed | GIGI'}];
 };
 
 export default function CheckoutConfirmed() {
+  return (
+    <>
+      {/* This page still uses the older card design rather than the GIGI
+          layout, so the chrome is wrapped separately: a `.gigi-site` ancestor
+          around the body would apply rules like `.gigi-site p {margin: 0}` and
+          flatten the spacing below. */}
+      <div className="gigi-site is-chrome-only gigi-confirmed-page">
+        <GigiHeader />
+      </div>
+
+      <ConfirmedBody />
+
+      <div className="gigi-site is-chrome-only gigi-confirmed-page">
+        <GigiFooter compact />
+      </div>
+    </>
+  );
+}
+
+function ConfirmedBody() {
   const [order, setOrder] = useState<LastOrder | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -133,7 +155,8 @@ export default function CheckoutConfirmed() {
                     {line.title}
                   </p>
                   <p className="text-xs text-tertiary">
-                    {line.weight} · {line.strain}
+                    {line.weight}
+                    {line.color ? ` · ${line.color}` : ''}
                   </p>
                   <p className="text-[0.7rem] text-tertiary mt-0.5">
                     Qty {line.quantity}

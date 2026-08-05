@@ -19,11 +19,15 @@
     clamp(3.2rem, 7vw, 5rem);
 }
 
-.gigi-cart-title {
+/* Scoped to the page so it outranks the global `.gigi-site h1 { margin: 0 }`.
+   The padding covers the descenders that `line-height: 0.9` lets spill out of
+   the line box, so they never crowd the panel below. */
+.gigi-cart-page .gigi-cart-title {
   display: flex;
   align-items: baseline;
   gap: 0.1em;
-  margin: 0 0 clamp(2.7rem, 6vw, 5rem);
+  margin: 0 0 clamp(2.6rem, 5.5vw, 4.4rem);
+  padding-bottom: 0.18em;
   color: var(--gigi-burgundy);
   font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
   font-size: clamp(3rem, 7vw, 5.7rem);
@@ -307,8 +311,8 @@
     padding-inline: 1rem;
   }
 
-  .gigi-cart-title {
-    margin-bottom: 2rem;
+  .gigi-cart-page .gigi-cart-title {
+    margin-bottom: 2.2rem;
   }
 
   .gigi-cart-row {

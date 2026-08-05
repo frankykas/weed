@@ -66,8 +66,12 @@ export default function Product() {
       item.handle === product.handle
         ? item.colors[colorIndex]?.name
         : item.colors[0]?.name;
-    const optionLabel = [selectedSize, selectedColor].filter(Boolean).join(' / ');
-    addLine(toGigiCartProduct(item, optionLabel), optionLabel, qty);
+    const sizeLabel = selectedSize ?? 'One Size';
+    addLine(
+      toGigiCartProduct(item, sizeLabel, selectedColor),
+      sizeLabel,
+      qty,
+    );
   };
 
   const visibleRelated = [0, 1, 2].map(

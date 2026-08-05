@@ -166,13 +166,10 @@ function ProductSection({
               type="button"
               className="gigi-shop-card__cart"
               onClick={() => {
-                const optionLabel = [
-                  product.sizes[0],
-                  product.colors[0]?.name,
-                ].filter(Boolean).join(' / ');
+                const size = product.sizes[0] ?? 'One Size';
                 addLine(
-                  toGigiCartProduct(product, optionLabel),
-                  optionLabel,
+                  toGigiCartProduct(product, size, product.colors[0]?.name),
+                  size,
                   1,
                 );
               }}

@@ -3,6 +3,8 @@ import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm} from '@shopify/hydrogen';
 import type {Route} from './+types/cart';
 import {useCart, type CartLine} from '~/lib/mockCart';
+import {GigiHeader} from '~/components/GigiHeader';
+import {GigiFooter} from '~/components/GigiFooter';
 import cartStyles from '~/styles/gigi-cart.css?url';
 
 export function links() {
@@ -115,6 +117,8 @@ export default function Cart() {
 
   return (
     <div className="gigi-site gigi-cart-page">
+      <GigiHeader />
+
       <main className="gigi-cart-shell" aria-labelledby="cart-title">
         <h1 className="gigi-cart-title" id="cart-title">
           <em>your</em>
@@ -162,6 +166,8 @@ export default function Cart() {
           />
         </div>
       </main>
+
+      <GigiFooter compact />
     </div>
   );
 }
@@ -196,7 +202,11 @@ function CartRow({
             {line.title}
           </Link>
           <p>{line.subtitle}</p>
-          <p>Size: {displaySize(line.weight)}</p>
+          <p>
+            Size: {line.weight}
+            {line.color ? ` · Color: ${line.color}` : ''}
+          </p>
+          <p>{line.unitPrice} each</p>
         </div>
 
         <div className="gigi-cart-row__controls">
@@ -278,10 +288,6 @@ function OrderSummary({
       </div>
     </aside>
   );
-}
-
-function displaySize(weight: string) {
-  return weight.split('/')[0]?.trim() || weight;
 }
 
 function productsLabel(totalQuantity: number) {

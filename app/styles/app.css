@@ -524,6 +524,14 @@ body:has(.gigi-site) {
   scroll-behavior: smooth;
 }
 
+/* For pages that borrow only the GIGI header/footer and keep their own styling
+   in between. The wrapper still supplies the design tokens and the button
+   styling the chrome depends on, but drops the full-page canvas. */
+.gigi-site.is-chrome-only {
+  min-height: 0;
+  background: none;
+}
+
 .gigi-site section,
 .gigi-hero__top,
 .gigi-welcome,
@@ -584,6 +592,114 @@ body:has(.gigi-site) {
   text-transform: uppercase;
   font-size: 0.68rem;
   line-height: 1;
+}
+
+/* ---------------------- SHARED PAGE HEADER ----------------------
+   The canonical logo / bag / menu lockup. Older pages still duplicate this
+   under their own prefix (.gigi-shop-header, .gigi-pd-header, ...); those are
+   identical to this and should migrate to `.gigi-header` over time. */
+.gigi-header {
+  --gigi-header-line: rgba(75, 15, 32, 0.5);
+  display: flex;
+  width: min(100%, 86rem);
+  box-sizing: border-box;
+  margin-inline: auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+  padding-top: clamp(1.4rem, 3vw, 2.2rem);
+  padding-bottom: clamp(0.6rem, 1.5vw, 1rem);
+  color: var(--gigi-burgundy);
+}
+
+/* For pages that sit on the burgundy background. */
+.gigi-header.is-light {
+  --gigi-header-line: rgba(244, 239, 213, 0.6);
+  color: var(--gigi-cream);
+}
+
+.gigi-header__logo {
+  display: block;
+  width: clamp(7.5rem, 11vw, 12rem);
+  line-height: 0;
+}
+
+.gigi-header__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gigi-header__actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 1.8rem);
+}
+
+.gigi-header__bag {
+  position: relative;
+  display: block;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: inherit;
+}
+
+.gigi-header__bag svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gigi-header__bag-count {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.5rem;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 0.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--gigi-rose);
+  color: var(--gigi-paper);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.58rem;
+  line-height: 1;
+}
+
+/* Scoped to `.gigi-site` so it outranks the generic `.gigi-site button` pill. */
+.gigi-site .gigi-header__menu {
+  border: 1px solid var(--gigi-header-line);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  padding: 0.5rem 1.4rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-site .gigi-header__menu:hover,
+.gigi-site .gigi-header__menu:focus-visible {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+}
+
+.gigi-site .gigi-header.is-light .gigi-header__menu:hover,
+.gigi-site .gigi-header.is-light .gigi-header__menu:focus-visible {
+  background: var(--gigi-cream);
+  color: var(--gigi-burgundy);
 }
 
 .gigi-menu-popover {
@@ -1537,19 +1653,46 @@ body:has(.gigi-site) {
   margin: 0.15rem 0 0.2rem;
 }
 
+/* The newsletter field is tinted per page — see the --gigi-newsletter-*
+   tokens below. The fallbacks are the original burgundy-on-burgundy field,
+   used by any page that doesn't opt into a tint. */
 .gigi-footer input {
   width: min(25rem, 70vw);
   border: 0;
   border-radius: 999px;
-  background: #5a1f26;
-  color: var(--gigi-cream);
+  background: var(--gigi-newsletter-bg, #5a1f26);
+  color: var(--gigi-newsletter-fg, var(--gigi-cream));
   text-align: center;
   padding: 0.56rem 1rem;
   font-size: 1rem;
 }
 
 .gigi-footer input::placeholder {
-  color: rgba(245, 237, 207, 0.72);
+  color: var(--gigi-newsletter-placeholder, rgba(245, 237, 207, 0.72));
+}
+
+/* ---- Per-page newsletter field tints ---- */
+
+/* Butter yellow */
+.gigi-home-page,
+.gigi-packages-page,
+.gigi-book-page,
+.gigi-profile-page,
+.gigi-shop-page {
+  --gigi-newsletter-bg: #f2e7bc;
+  --gigi-newsletter-fg: var(--gigi-burgundy);
+  --gigi-newsletter-placeholder: rgba(75, 15, 32, 0.6);
+}
+
+/* White */
+.gigi-product-page,
+.gigi-cart-page,
+.gigi-checkout-page,
+.gigi-confirmed-page,
+.gigi-collab-page {
+  --gigi-newsletter-bg: #ffffff;
+  --gigi-newsletter-fg: var(--gigi-burgundy);
+  --gigi-newsletter-placeholder: rgba(75, 15, 32, 0.55);
 }
 
 .gigi-newsletter button {

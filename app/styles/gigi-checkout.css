@@ -12,43 +12,7 @@
   min-height: 0;
 }
 
-.gigi-checkout-header {
-  display: flex;
-  width: min(100%, 86rem);
-  margin-inline: auto;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: clamp(0.9rem, 2vw, 1.4rem) clamp(1.5rem, 4vw, 3.2rem);
-}
-
-.gigi-checkout-logo {
-  display: block;
-  width: clamp(5.5rem, 8vw, 8rem);
-  line-height: 0;
-}
-
-.gigi-checkout-logo img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.gigi-checkout-header__actions {
-  display: flex;
-  align-items: center;
-  gap: clamp(1rem, 2.2vw, 1.8rem);
-}
-
-.gigi-checkout-bag {
-  position: relative;
-  display: block;
-  width: 1.55rem;
-  height: 1.55rem;
-  color: var(--gigi-cream);
-}
-
-.gigi-checkout-bag svg,
+/* The header itself is the shared `.gigi-header` (is-light) from app.css. */
 .gigi-checkout-page .gigi-menu-actions svg {
   width: 100%;
   height: 100%;
@@ -57,46 +21,6 @@
   stroke-width: 1.4;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.gigi-checkout-bag__count {
-  position: absolute;
-  top: -0.35rem;
-  right: -0.45rem;
-  min-width: 1.05rem;
-  height: 1.05rem;
-  padding: 0 0.2rem;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: var(--gigi-paper);
-  color: var(--gigi-burgundy);
-  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
-  font-size: 0.58rem;
-  line-height: 1;
-}
-
-.gigi-checkout-menu {
-  border: 1px solid rgba(244, 239, 213, 0.6);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--gigi-cream);
-  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
-  font-size: 0.58rem;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  padding: 0.38rem 1.2rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    background-color 180ms ease,
-    color 180ms ease;
-}
-
-.gigi-checkout-menu:hover,
-.gigi-checkout-menu:focus-visible {
-  background: var(--gigi-cream);
-  color: var(--gigi-burgundy);
 }
 
 .gigi-checkout-shell {
@@ -108,7 +32,6 @@
 
 .gigi-checkout-card {
   width: min(100%, 62.5rem);
-  min-height: clamp(34rem, 52vw, 44.5rem);
   background: var(--gigi-paper);
   padding: clamp(2.3rem, 4vw, 3.9rem) clamp(1.35rem, 4vw, 3rem)
     clamp(3.2rem, 5vw, 4.5rem);
@@ -126,8 +49,8 @@
 
 .gigi-checkout-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(14.5rem, 20.8rem);
-  gap: clamp(2rem, 4vw, 3.2rem);
+  grid-template-columns: minmax(0, 1fr) minmax(16.5rem, 22rem);
+  gap: clamp(1.6rem, 3.2vw, 2.8rem);
   align-items: stretch;
 }
 
@@ -140,39 +63,39 @@
 
 .gigi-checkout-form {
   display: flex;
-  min-height: 27.5rem;
   flex-direction: column;
 }
 
 .gigi-checkout-section {
-  padding: 1rem 1.05rem 0.85rem;
+  padding: clamp(1.4rem, 2.4vw, 1.9rem) clamp(1.2rem, 2.4vw, 1.8rem);
   border-bottom: 1px solid rgba(75, 15, 32, 0.32);
 }
 
 .gigi-checkout-section__title {
-  margin-bottom: 0.55rem;
+  margin-bottom: clamp(0.9rem, 1.6vw, 1.2rem);
   font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
-  font-size: 0.72rem;
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
   line-height: 1;
 }
 
 .gigi-checkout-fields {
   display: grid;
-  gap: 0.28rem;
+  gap: 0.75rem;
 }
 
 .gigi-checkout-field-row {
   display: grid;
-  grid-template-columns: 0.68fr 1fr 0.75fr 0.75fr;
-  gap: 0.28rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
 .gigi-checkout-input {
   position: relative;
   display: block;
+  min-width: 0;
 }
 
-.gigi-checkout-input span {
+.gigi-checkout-input__label {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -184,90 +107,119 @@
   display: block;
   width: 100%;
   min-width: 0;
-  height: 1.15rem;
+  height: 2.9rem;
   border: 1px solid rgba(75, 15, 32, 0.44);
   border-radius: 999px;
   background: transparent;
   color: var(--gigi-burgundy);
   font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
-  font-size: 0.48rem;
+  font-size: 0.92rem;
   line-height: 1;
-  padding: 0 0.6rem;
+  padding: 0 1.15rem;
   outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .gigi-checkout-input input::placeholder {
-  color: rgba(75, 15, 32, 0.7);
+  color: rgba(75, 15, 32, 0.62);
   opacity: 1;
 }
 
 .gigi-checkout-input input:focus {
   border-color: var(--gigi-burgundy);
-  box-shadow: 0 0 0 2px rgba(75, 15, 32, 0.1);
+  box-shadow: 0 0 0 3px rgba(75, 15, 32, 0.12);
 }
 
 .gigi-checkout-input.has-error input {
   border-color: #a33145;
 }
 
-.gigi-checkout-fold {
+.gigi-checkout-input.has-error input:focus {
+  box-shadow: 0 0 0 3px rgba(163, 49, 69, 0.16);
+}
+
+.gigi-checkout-input__error {
+  display: block;
+  margin: 0.35rem 0 0 1.15rem;
+  color: #a33145;
+  font-size: 0.72rem;
+  line-height: 1.1;
+}
+
+/* Page-scoped so these outrank the global `.gigi-site button` pill styling,
+   which otherwise adds a full border-radius, uppercase text and its own padding. */
+.gigi-checkout-page .gigi-checkout-fold {
   display: flex;
   width: 100%;
-  min-height: 4.25rem;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   border: 0;
   border-bottom: 1px solid rgba(75, 15, 32, 0.32);
+  border-radius: 0;
   background: transparent;
   color: var(--gigi-burgundy);
-  padding: 0.75rem 1.05rem;
+  font-size: 1rem;
+  padding: clamp(1.15rem, 2.2vw, 1.5rem) clamp(1.2rem, 2.4vw, 1.8rem);
   text-align: left;
+  text-transform: none;
   cursor: pointer;
+  transition: background-color 160ms ease;
 }
 
-.gigi-checkout-fold:last-child {
+.gigi-checkout-page .gigi-checkout-fold:last-child {
   border-bottom: 0;
+}
+
+.gigi-checkout-page .gigi-checkout-fold:hover,
+.gigi-checkout-page .gigi-checkout-fold:focus-visible {
+  background: rgba(75, 15, 32, 0.045);
 }
 
 .gigi-checkout-fold strong {
   display: block;
   font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
-  font-size: 0.78rem;
-  line-height: 1;
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+  line-height: 1.1;
 }
 
 .gigi-checkout-fold small {
   display: block;
-  margin-top: 0.15rem;
+  margin-top: 0.3rem;
+  color: rgba(75, 15, 32, 0.68);
   font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
-  font-size: 0.5rem;
-  line-height: 1.05;
+  font-size: 0.78rem;
+  line-height: 1.15;
 }
 
 .gigi-checkout-fold > span:last-child {
-  font-size: 1rem;
+  font-size: 1.35rem;
   line-height: 1;
 }
 
 .gigi-checkout-summary {
-  min-height: 27.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .gigi-checkout-summary h2 {
   margin: 0;
-  padding: 1.05rem 1rem;
+  padding: clamp(1.2rem, 2.2vw, 1.5rem) clamp(1.2rem, 2.2vw, 1.6rem);
   border-bottom: 1px solid rgba(75, 15, 32, 0.42);
   font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
-  font-size: 0.78rem;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
   line-height: 1;
 }
 
 .gigi-checkout-summary__body {
   display: flex;
-  min-height: calc(27.5rem - 2.9rem);
+  flex: 1;
+  min-height: 15rem;
   flex-direction: column;
-  padding: 1.3rem 1rem 0.9rem;
+  padding: clamp(1.5rem, 2.6vw, 1.9rem) clamp(1.2rem, 2.2vw, 1.6rem)
+    clamp(1.3rem, 2.2vw, 1.6rem);
 }
 
 .gigi-checkout-summary__topline,
@@ -276,19 +228,109 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  font-size: 0.9rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
   line-height: 1.1;
 }
 
 .gigi-checkout-summary__topline strong,
 .gigi-checkout-summary__total strong {
-  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
-  font-size: 0.78rem;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-weight: 400;
   white-space: nowrap;
 }
 
+/* ------------------------ SUMMARY LINE ITEMS -------------------- */
+.gigi-checkout-lines {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1.1rem 0 0;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid rgba(75, 15, 32, 0.24);
+  list-style: none;
+}
+
+.gigi-checkout-line {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gigi-checkout-line__image {
+  position: relative;
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  background: #cec3b0;
+  overflow: visible;
+}
+
+.gigi-checkout-line__image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.gigi-checkout-line__qty {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.4rem;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.22rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--gigi-burgundy);
+  color: var(--gigi-paper);
+  font-size: 0.62rem;
+  line-height: 1;
+}
+
+.gigi-checkout-line__copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.15rem;
+}
+
+.gigi-checkout-line__copy strong {
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.gigi-checkout-line__copy small {
+  color: rgba(75, 15, 32, 0.68);
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.gigi-checkout-line__price {
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+/* Scoped past the global `.gigi-site p { margin: 0 }`. */
+.gigi-checkout-summary .gigi-checkout-lines__empty {
+  margin: 1.1rem 0 0;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid rgba(75, 15, 32, 0.24);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.gigi-checkout-lines__empty a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
 .gigi-checkout-summary dl {
-  margin: 0.55rem 0 auto;
+  margin: 0.8rem 0 auto;
 }
 
 .gigi-checkout-summary dl div {
@@ -296,8 +338,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  font-size: 0.64rem;
-  line-height: 1.1;
+  font-size: clamp(0.85rem, 1.05vw, 0.95rem);
+  line-height: 1.5;
 }
 
 .gigi-checkout-summary dt,
@@ -311,22 +353,26 @@
 }
 
 .gigi-checkout-summary__total {
-  margin-bottom: 0.9rem;
+  margin-top: 1.6rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(75, 15, 32, 0.32);
+  margin-bottom: 1.2rem;
 }
 
-.gigi-checkout-pay {
+.gigi-checkout-page .gigi-checkout-pay {
   display: grid;
   width: 100%;
-  min-height: 2.45rem;
+  min-height: 3.25rem;
   place-items: center;
   border: 0;
   border-radius: 999px;
   background: var(--gigi-burgundy);
   color: var(--gigi-paper);
   font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
-  font-size: 0.64rem;
-  letter-spacing: 0.02em;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
   line-height: 1;
+  padding: 0 1.25rem;
   text-transform: uppercase;
   cursor: pointer;
   transition:
@@ -334,15 +380,16 @@
     background-color 160ms ease;
 }
 
-.gigi-checkout-pay:hover,
-.gigi-checkout-pay:focus-visible {
+.gigi-checkout-page .gigi-checkout-pay:hover,
+.gigi-checkout-page .gigi-checkout-pay:focus-visible {
   background: #5b1730;
   transform: translateY(-1px);
 }
 
-.gigi-checkout-pay:disabled {
+.gigi-checkout-page .gigi-checkout-pay:disabled {
   cursor: wait;
   opacity: 0.72;
+  transform: none;
 }
 
 .gigi-checkout-page .gigi-footer {
@@ -352,42 +399,18 @@
   color: var(--gigi-cream);
 }
 
-.gigi-checkout-page .gigi-footer input {
-  background: var(--gigi-cream);
-  color: var(--gigi-burgundy);
-}
-
-.gigi-checkout-page .gigi-footer input::placeholder {
-  color: rgba(75, 15, 32, 0.7);
-}
-
 @media (max-width: 760px) {
   .gigi-checkout-shell {
     padding-top: 2.6rem;
     padding-bottom: 3rem;
   }
 
-  .gigi-checkout-card {
-    min-height: 0;
-  }
-
   .gigi-checkout-layout {
     grid-template-columns: 1fr;
   }
 
-  .gigi-checkout-form,
-  .gigi-checkout-summary,
   .gigi-checkout-summary__body {
     min-height: 0;
-  }
-
-  .gigi-checkout-field-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .gigi-checkout-input input {
-    height: 1.9rem;
-    font-size: 0.66rem;
   }
 
   .gigi-checkout-page .gigi-footer {
@@ -402,5 +425,11 @@
 
   .gigi-checkout-field-row {
     grid-template-columns: 1fr;
+  }
+
+  /* 16px keeps iOS Safari from zooming in on focus. */
+  .gigi-checkout-input input {
+    height: 2.75rem;
+    font-size: 1rem;
   }
 }

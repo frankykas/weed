@@ -45,7 +45,7 @@ export default function Homepage() {
   }, []);
 
   return (
-    <div className="gigi-site">
+    <div className="gigi-site gigi-home-page">
       <GigiNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       <section className="gigi-hero" id="home" ref={heroRef}>
         <div className="gigi-hero__top">
