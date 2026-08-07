@@ -163,30 +163,26 @@
   place-items: center;
   min-height: clamp(30rem, 50vw, 100rem);
   overflow: hidden;
-  /* Placeholder background image (GIGI merch) tinted to a cohesive burgundy via
-     a multiply blend, so the frame reads on-brand behind the wordmark. */
+  /* Shot is already on-brand burgundy and carries its own light streak, so it
+     needs no multiply tint over a flat colour the way the old placeholder did. */
   background-color: #4d1727;
-  background-image: url('/gigi/mosaic-1.webp');
+  background-image: url('/gigi/shop-hero.webp');
   background-size: cover;
-  background-position: center 38%;
+  background-position: center 42%;
   background-repeat: no-repeat;
-  background-blend-mode: multiply;
 }
 
-/* Light streak + subtle vignette above the image, below the wordmark. */
+/* Subtle vignette above the image, below the wordmark. */
 .gigi-shop-hero::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(
-      116deg,
-      transparent 42%,
-      rgba(255, 240, 230, 0.16) 50%,
-      transparent 58%
-    ),
-    radial-gradient(120% 120% at 50% 50%, transparent 45%, rgba(18, 6, 10, 0.5) 100%);
+  background: radial-gradient(
+    120% 120% at 50% 50%,
+    transparent 45%,
+    rgba(18, 6, 10, 0.45) 100%
+  );
 }
 
 .gigi-shop-hero__mark {

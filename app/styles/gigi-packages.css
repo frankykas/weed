@@ -147,23 +147,25 @@
   padding: clamp(1.4rem, 2.6vw, 2.2rem) clamp(1.6rem, 3.2vw, 3rem);
 }
 
+/* Card fills are specified per tone by the client and deliberately sit outside
+   the shared --gigi-* palette, which is a shade darker across the board. */
 .gigi-pk-card--burgundy-rose {
-  background: var(--gigi-burgundy);
+  background: #3f1724;
   color: var(--gigi-rose);
 }
 
 .gigi-pk-card--burgundy-cream {
-  background: var(--gigi-burgundy);
+  background: #6e1c37;
   color: var(--gigi-cream);
 }
 
 .gigi-pk-card--rose {
-  background: var(--gigi-rose);
+  background: #b06580;
   color: var(--gigi-burgundy);
 }
 
 .gigi-pk-card--olive {
-  background: var(--gigi-olive);
+  background: #beb77b;
   color: var(--gigi-burgundy);
 }
 

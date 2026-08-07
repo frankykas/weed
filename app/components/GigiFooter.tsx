@@ -33,9 +33,9 @@ export function GigiFooter({
         </div>
         <p>Contact Us</p>
         <small>
-          Studio 00, 01234 St, Dubai, UAE
+          Gigi Studio, 1st Floor, Mirdif Avenue Mall, Mirdif, Dubai
           <br />
-          +971 50 111 2222
+          +971-50-366-3723
         </small>
       </div>
       <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />

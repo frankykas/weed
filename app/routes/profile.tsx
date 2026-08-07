@@ -41,13 +41,13 @@ const PROFILE = {
   reservations: [
     {
       cls: 'Lagree Mega Pro',
-      studio: 'Midriff',
+      studio: 'Mirdif',
       date: '09/05/2026',
       time: '8:00 AM',
     },
     {
       cls: 'Lagree Mega Pro',
-      studio: 'Midriff',
+      studio: 'Mirdif',
       date: '10/05/2026',
       time: '8:00 AM',
     },
@@ -303,9 +303,9 @@ function GigiFooter({compact, dark}: {compact?: boolean; dark?: boolean}) {
         </div>
         <p>Contact Us</p>
         <small>
-          Studio 00, 01234 St, Dubai, UAE
+          Gigi Studio, 1st Floor, Mirdif Avenue Mall, Mirdif, Dubai
           <br />
-          +971 50 111 2222
+          +971-50-366-3723
         </small>
       </div>
       <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />

@@ -100,7 +100,7 @@ export default function Homepage() {
         <div className="gigi-section-label">
           <h2><em>our</em> locations</h2>
           <div>
-            <button type="button">Midriff</button>
+            <button type="button">Mirdif</button>
             <button type="button">Nad Al Sheba</button>
             <button type="button">New Location</button>
             <button type="button">New Location</button>
@@ -250,7 +250,7 @@ function GigiFooter({compact, dark}: {compact?: boolean; dark?: boolean}) {
           <button>Send</button>
         </div>
         <p>Contact Us</p>
-        <small>Studio 00, 01234 St, Dubai, UAE<br />+971 50 111 2222</small>
+        <small>Gigi Studio, 1st Floor, Mirdif Avenue Mall, Mirdif, Dubai<br />+971-50-366-3723</small>
       </div>
       <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />
     </footer>

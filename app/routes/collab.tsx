@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, type FormEvent} from 'react';
 import type {Route} from './+types/collab';
 import collabStyles from '~/styles/gigi-collab.css?url';
 
@@ -37,6 +37,48 @@ const galleryFor = (c: Collab): string[] =>
         (_, i) => `collab/${c.slug}/${String(i + 1).padStart(2, '0')}.jpg`,
       )
     : [`collab/collab-${c.slug}.jpg`];
+
+/** Studio locations, echoed under the creative band and on the homepage.
+ *  Ids are explicit because the placeholder rows share a label. */
+const LOCATIONS = [
+  {id: 'mirdif', name: 'Mirdif'},
+  {id: 'nad-al-sheba', name: 'Nad Al Sheba'},
+  {id: 'new-1', name: 'New Location'},
+  {id: 'new-2', name: 'New Location'},
+];
+
+/** The four lifestyle shots under "Move, the Gigi Way." */
+const MOVE_SHOTS = [
+  {src: 'mosaic-1.webp', alt: 'GIGI merch'},
+  {src: 'mosaic-2.webp', alt: 'GIGI tote'},
+  {src: 'mosaic-3.webp', alt: 'Wearing GIGI'},
+  {src: 'mosaic-4.webp', alt: 'GIGI studio'},
+];
+
+type Field = {
+  name: string;
+  label: string;
+  type?: string;
+  /** Renders a textarea across the full width of the card. */
+  wide?: boolean;
+};
+
+const EVENT_FIELDS: Field[] = [
+  {name: 'name', label: 'Full name'},
+  {name: 'email', label: 'Email', type: 'email'},
+  {name: 'phone', label: 'Phone', type: 'tel'},
+  {name: 'eventType', label: 'Event type'},
+  {name: 'date', label: 'Preferred date', wide: true},
+  {name: 'message', label: 'Tell us about your event', wide: true},
+];
+
+const COLLAB_FIELDS: Field[] = [
+  {name: 'name', label: 'Full name'},
+  {name: 'email', label: 'Email', type: 'email'},
+  {name: 'company', label: 'Brand / company'},
+  {name: 'instagram', label: 'Instagram'},
+  {name: 'message', label: 'Tell us about your idea', wide: true},
+];
 
 const COLLABS: Collab[] = [
   {slug: 'burj-khalifa', title: 'GIGI x Burj Khalifa', shots: 8},
@@ -186,31 +228,41 @@ export default function CollabPage() {
       </section>
 
       {/* --------------------------- CREATIVE ----------------------------- */}
-      <section className="gigi-cl-creative">
-        <h2 className="gigi-cl-creative__title">
-          A Creative Expression of Movement and Mindfulness.
-        </h2>
-        <div className="gigi-cl-creative__copy">
-          <p>
-            A sanctuary where movement meets mindfulness, empowering individuals
-            to achieve balance, strength, and holistic well-being. Our Lagree
-            and wellness studio is dedicated to redefining self-care through
-            expertly curated classes, personalized guidance, and an atmosphere
-            of tranquility.
-          </p>
-          <p>
-            Rooted in elegance and innovation, we blend the art of mindful
-            movement with modern wellness practices, creating a transformative
-            experience that nurtures the body, mind, and soul. Gigi is dedicated
-            to take a movement to be the region&apos;s most exclusive Lagree and
-            wellness studio, setting a new standard for luxury, expertise, and
-            holistic transformation.
-          </p>
-          <p>
-            Through community, connection, and conscious living, we inspire our
-            clients to move with intention, embrace vitality, and cultivate
-            lifelong wellness.
-          </p>
+      <section className="gigi-cl-creative-band">
+        <div className="gigi-cl-creative">
+          <h2 className="gigi-cl-creative__title">
+            A Creative Expression of Movement and Mindfulness.
+          </h2>
+          <div className="gigi-cl-creative__copy">
+            <p>
+              A sanctuary where movement meets mindfulness, empowering
+              individuals to achieve balance, strength, and holistic well-being.
+              Our Lagree and wellness studio is dedicated to redefining
+              self-care through expertly curated classes, personalized guidance,
+              and an atmosphere of tranquility.
+            </p>
+            <p>
+              Rooted in elegance and innovation, we blend the art of mindful
+              movement with modern wellness practices, creating a transformative
+              experience that nurtures the body, mind, and soul. Gigi is
+              dedicated to take a movement to be the region&apos;s most
+              exclusive Lagree and wellness studio, setting a new standard for
+              luxury, expertise, and holistic transformation.
+            </p>
+            <p>
+              Through community, connection, and conscious living, we inspire
+              our clients to move with intention, embrace vitality, and
+              cultivate lifelong wellness.
+            </p>
+          </div>
+        </div>
+
+        <div className="gigi-cl-locations">
+          {LOCATIONS.map((loc) => (
+            <button type="button" key={loc.id}>
+              {loc.name}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -270,6 +322,33 @@ export default function CollabPage() {
         </div>
 
         <p className="gigi-cl-outro">Move, the Gigi Way.</p>
+
+        <div className="gigi-cl-mosaic">
+          {MOVE_SHOTS.map((shot) => (
+            <figure key={shot.src}>
+              <img
+                src={img(shot.src)}
+                alt={shot.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------------------- ENQUIRE ----------------------------- */}
+      <section className="gigi-cl-enquire" aria-label="Work with GIGI">
+        <EnquiryForm
+          title="Elevate your next event at GIGI"
+          blurb="Private classes, brand activations and away-days, hosted at the studio or wherever you are."
+          fields={EVENT_FIELDS}
+        />
+        <EnquiryForm
+          title="Collaborate with GIGI"
+          blurb="Partnerships, campaigns and content with the GIGI community."
+          fields={COLLAB_FIELDS}
+        />
       </section>
 
       {active && (
@@ -351,6 +430,78 @@ export default function CollabPage() {
   );
 }
 
+/**
+ * Enquiry card. There is no backend for these yet, so a valid submission
+ * confirms locally rather than pretending to deliver anything.
+ */
+function EnquiryForm({
+  title,
+  blurb,
+  fields,
+}: {
+  title: string;
+  blurb: string;
+  fields: Field[];
+}) {
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [sent, setSent] = useState(false);
+
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSent(true);
+  };
+
+  return (
+    <form className="gigi-cl-card" onSubmit={onSubmit}>
+      <h3>{title}</h3>
+      <p className="gigi-cl-card__blurb">{blurb}</p>
+
+      {sent ? (
+        <p className="gigi-cl-card__sent" role="status">
+          Thank you — we&apos;ll be in touch shortly.
+        </p>
+      ) : (
+        <>
+          <div className="gigi-cl-card__fields">
+            {fields.map((field) => (
+              <label
+                className={`gigi-cl-field ${field.wide ? 'is-wide' : ''}`}
+                key={field.name}
+              >
+                <span>{field.label}</span>
+                {field.name === 'message' ? (
+                  <textarea
+                    rows={3}
+                    required
+                    placeholder={field.label}
+                    value={values[field.name] ?? ''}
+                    onChange={(e) =>
+                      setValues((v) => ({...v, [field.name]: e.target.value}))
+                    }
+                  />
+                ) : (
+                  <input
+                    type={field.type ?? 'text'}
+                    required={field.name === 'name' || field.name === 'email'}
+                    placeholder={field.label}
+                    value={values[field.name] ?? ''}
+                    onChange={(e) =>
+                      setValues((v) => ({...v, [field.name]: e.target.value}))
+                    }
+                  />
+                )}
+              </label>
+            ))}
+          </div>
+          <button className="gigi-cl-card__send" type="submit">
+            Send
+          </button>
+        </>
+      )}
+    </form>
+  );
+}
+
 function GigiNav({
   isOpen,
   onClose,
@@ -408,7 +559,7 @@ function GigiFooter({compact, dark}: {compact?: boolean; dark?: boolean}) {
           <button>Send</button>
         </div>
         <p>Contact Us</p>
-        <small>Studio 00, 01234 St, Dubai, UAE<br />+971 50 111 2222</small>
+        <small>Gigi Studio, 1st Floor, Mirdif Avenue Mall, Mirdif, Dubai<br />+971-50-366-3723</small>
       </div>
       <img className="gigi-footer-mark" src={img('g-footer.png')} alt="GIGI" />
     </footer>

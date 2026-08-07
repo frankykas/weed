@@ -154,11 +154,25 @@
 }
 
 /* --------------------------- CREATIVE ----------------------------- */
+/* The copy sits on a burgundy panel that floats over the studio shot, so the
+   Lagree reformers stay visible below it. */
+.gigi-cl-creative-band {
+  position: relative;
+  background-color: #2c0d17;
+  background-image: url('/gigi/collab-lagree.webp');
+  background-size: cover;
+  background-position: center 62%;
+  background-repeat: no-repeat;
+  padding-bottom: clamp(9rem, 22vw, 17rem);
+}
+
 .gigi-cl-creative {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(2rem, 5vw, 4.5rem);
   align-items: start;
+  background: var(--gigi-burgundy);
   padding-top: clamp(3rem, 6vw, 5.5rem);
   padding-bottom: clamp(3rem, 6vw, 5.5rem);
   border-top: 1px solid rgba(245, 237, 207, 0.16);
@@ -166,13 +180,50 @@
 
 .gigi-cl-creative__title {
   margin: 0;
-  font-family: 'Calmius Sans', 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
   font-size: clamp(1.8rem, 3.6vw, 3.4rem);
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1.02;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
   color: var(--gigi-cream);
+}
+
+/* Locations echoed under the band, over the studio shot. */
+.gigi-cl-locations {
+  position: relative;
+  display: flex;
+  width: min(100%, 86rem);
+  box-sizing: border-box;
+  margin-inline: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.7rem, 2vw, 1.6rem);
+  padding: clamp(2.4rem, 5vw, 4rem) clamp(1.5rem, 4vw, 2.5rem) 0;
+}
+
+.gigi-collab-page .gigi-cl-locations button {
+  min-width: clamp(8rem, 14vw, 12.5rem);
+  border: 1px solid rgba(245, 237, 207, 0.55);
+  border-radius: 999px;
+  background: rgba(28, 10, 16, 0.42);
+  color: var(--gigi-cream);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  padding: 0.6rem 1.4rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-collab-page .gigi-cl-locations button:hover,
+.gigi-collab-page .gigi-cl-locations button:focus-visible {
+  background: var(--gigi-cream);
+  color: var(--gigi-burgundy);
 }
 
 .gigi-cl-creative__copy {
@@ -550,5 +601,175 @@
   .gigi-cl-modal,
   .gigi-cl-lb-figure {
     animation: none;
+  }
+}
+
+/* ------------------------- MOVE MOSAIC ---------------------------- */
+.gigi-cl-mosaic {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.4rem, 1vw, 0.75rem);
+  margin-top: clamp(1.6rem, 4vw, 3rem);
+}
+
+.gigi-cl-mosaic figure {
+  margin: 0;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: rgba(245, 237, 207, 0.06);
+}
+
+.gigi-cl-mosaic img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ------------------------- ENQUIRY FORMS -------------------------- */
+.gigi-cl-enquire {
+  display: grid;
+  width: min(100%, 86rem);
+  box-sizing: border-box;
+  margin-inline: auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.2rem, 3vw, 2.6rem);
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 4vw, 2.5rem)
+    clamp(3.5rem, 8vw, 7rem);
+}
+
+.gigi-cl-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: clamp(1rem, 2vw, 1.6rem);
+  background: var(--gigi-cream);
+  color: var(--gigi-burgundy);
+  padding: clamp(1.5rem, 3vw, 2.4rem);
+}
+
+.gigi-collab-page .gigi-cl-card h3 {
+  margin: 0;
+  font-family: 'Sohne Halbfett', Arial, Helvetica, sans-serif;
+  font-size: clamp(0.92rem, 1.4vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.gigi-collab-page .gigi-cl-card__blurb {
+  margin: 0.55rem 0 clamp(1.1rem, 2.2vw, 1.6rem);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: clamp(0.68rem, 0.9vw, 0.78rem);
+  line-height: 1.45;
+  text-align: center;
+  color: rgba(75, 15, 32, 0.72);
+}
+
+.gigi-cl-card__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.gigi-cl-field {
+  display: block;
+  min-width: 0;
+}
+
+.gigi-cl-field.is-wide {
+  grid-column: 1 / -1;
+}
+
+/* Placeholders carry the label visually; the text stays for screen readers. */
+.gigi-cl-field span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.gigi-cl-field input,
+.gigi-cl-field textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(75, 15, 32, 0.34);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.72rem 1rem;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.gigi-cl-field textarea {
+  border-radius: 1.1rem;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.gigi-cl-field input::placeholder,
+.gigi-cl-field textarea::placeholder {
+  color: rgba(75, 15, 32, 0.55);
+  opacity: 1;
+}
+
+.gigi-cl-field input:focus,
+.gigi-cl-field textarea:focus {
+  border-color: var(--gigi-burgundy);
+  box-shadow: 0 0 0 3px rgba(75, 15, 32, 0.1);
+}
+
+.gigi-collab-page .gigi-cl-card__send {
+  align-self: center;
+  min-width: 8rem;
+  margin-top: clamp(1.1rem, 2.2vw, 1.6rem);
+  border: 1px solid var(--gigi-burgundy);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--gigi-burgundy);
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  padding: 0.62rem 1.6rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.gigi-collab-page .gigi-cl-card__send:hover,
+.gigi-collab-page .gigi-cl-card__send:focus-visible {
+  background: var(--gigi-burgundy);
+  color: var(--gigi-cream);
+}
+
+.gigi-collab-page .gigi-cl-card__sent {
+  margin: auto 0;
+  padding: clamp(2rem, 5vw, 3.5rem) 0;
+  font-family: 'Sohne Buch', Arial, Helvetica, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 820px) {
+  .gigi-cl-enquire {
+    grid-template-columns: 1fr;
+  }
+
+  .gigi-cl-mosaic {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
