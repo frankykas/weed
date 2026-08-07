@@ -82,13 +82,7 @@ export default function ShopPage() {
         </div>
       </nav>
 
-      <section className="gigi-shop-hero" aria-label="GIGI shop">
-        <img
-          className="gigi-shop-hero__mark"
-          src={img('gigi-logo-primary.png')}
-          alt="GIGI"
-        />
-      </section>
+      <section className="gigi-shop-hero" aria-label="GIGI shop" />
       </div>
 
       {showClothing && (

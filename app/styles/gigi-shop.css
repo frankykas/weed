@@ -168,11 +168,11 @@
   background-color: #4d1727;
   background-image: url('/gigi/shop-hero.webp');
   background-size: cover;
-  background-position: center 42%;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
-/* Subtle vignette above the image, below the wordmark. */
+/* Subtle vignette above the image. */
 .gigi-shop-hero::before {
   content: '';
   position: absolute;
@@ -183,17 +183,6 @@
     transparent 45%,
     rgba(18, 6, 10, 0.45) 100%
   );
-}
-
-.gigi-shop-hero__mark {
-  position: relative;
-  z-index: 1;
-}
-
-.gigi-shop-hero__mark {
-  width: clamp(11rem, 26vw, 23rem);
-  height: auto;
-  filter: drop-shadow(0 6px 26px rgba(0, 0, 0, 0.35));
 }
 
 /* ------------------------ PRODUCT GRID -------------------------- */
