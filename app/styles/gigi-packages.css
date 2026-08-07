@@ -154,9 +154,11 @@
   color: var(--gigi-rose);
 }
 
+/* Ten Classes. Its text is a warmer cream than the shared --gigi-cream
+   (#f5edcf), which read as plain white against this fill. */
 .gigi-pk-card--burgundy-cream {
   background: #6e1c37;
-  color: var(--gigi-cream);
+  color: #fdebd7;
 }
 
 .gigi-pk-card--rose {
