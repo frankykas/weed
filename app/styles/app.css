@@ -2229,9 +2229,12 @@ body:has(.gigi-site) {
   object-fit: cover;
 }
 
-.gigi-collab-page h2,
-.gigi-collab-page p {
+.gigi-collab-page h2 {
   padding: 1.5rem 2rem;
+}
+
+.gigi-collab-page p {
+  padding: 1rem 2rem;
 }
 
 .gigi-photo-strip {
